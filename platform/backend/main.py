@@ -117,7 +117,7 @@ def trigger_retrain(req: RetrainRequest):
     """Executes closed-loop retraining demo with preprocessor adaptation."""
     import datetime, time, json
     subset = req.subset or "FD001"
-    history_file = os.path.join(PLATFORM_DIR, "..", "SHIELD_v3_complete", "SHIELD_v3_complete", "outputs", subset, "retrain_history.json")
+    history_file = os.path.join(bridge.outputs_dir, subset, "retrain_history.json")
     
     scenario_data = []
     if os.path.exists(history_file):

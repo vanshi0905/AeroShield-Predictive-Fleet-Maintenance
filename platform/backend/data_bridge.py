@@ -286,9 +286,24 @@ class DataBridge:
             },
         }
 
+    def _get_db_path(self, subset: str) -> str:
+        """Returns path to SQLite database, staging in /tmp when running in read-only serverless environments."""
+        original_path = os.path.join(self.outputs_dir, subset, "work_orders.db")
+        if not os.path.exists(original_path):
+            return original_path
+        if os.environ.get("VERCEL"):
+            import shutil
+            tmp_dir = os.path.join("/tmp", "aeroshield", subset)
+            os.makedirs(tmp_dir, exist_ok=True)
+            tmp_db = os.path.join(tmp_dir, "work_orders.db")
+            if not os.path.exists(tmp_db):
+                shutil.copy2(original_path, tmp_db)
+            return tmp_db
+        return original_path
+
     def get_work_orders(self, subset: str = "FD001", limit: int = 50) -> List[Dict[str, Any]]:
         """Reads work orders from the SQLite database."""
-        db_path = os.path.join(self.outputs_dir, subset, "work_orders.db")
+        db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
             return []
 
@@ -307,7 +322,7 @@ class DataBridge:
 
     def get_human_exceptions(self, subset: str = "FD001") -> List[Dict[str, Any]]:
         """Reads human exceptions from work_orders table where status='NEEDS_HUMAN' or order_id starts with 'EX-'."""
-        db_path = os.path.join(self.outputs_dir, subset, "work_orders.db")
+        db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
             return []
 
@@ -325,7 +340,7 @@ class DataBridge:
 
     def get_audit_log(self, subset: str = "FD001", limit: int = 30) -> Dict[str, Any]:
         """Reads cryptographic audit trail and verifies hash chain integrity."""
-        db_path = os.path.join(self.outputs_dir, subset, "work_orders.db")
+        db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
             return {"entries": [], "verified": False, "message": "No database found"}
 
@@ -406,7 +421,7 @@ class DataBridge:
 
     def dispatch_work_order(self, subset: str, order_id: str, new_status: str, operator: str = "Chief Maintenance Engineer") -> Dict[str, Any]:
         """Updates work order lifecycle and appends a tamper-evident audit log entry."""
-        db_path = os.path.join(self.outputs_dir, subset, "work_orders.db")
+        db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
             return {"success": False, "error": "Database not found"}
 
