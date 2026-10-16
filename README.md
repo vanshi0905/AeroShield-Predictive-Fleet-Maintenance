@@ -10,7 +10,8 @@
 > **Autonomous predictive maintenance, conformal Remaining Useful Life (RUL) estimation, deterministic triage dispatch, and cryptographic audit ledgers for connected industrial turbofans.**  
 > Built for **Tata Elxsi Case Study 1: Self-Healing Machines** evaluated on the full **NASA C-MAPSS (FD001–FD004)** turbofan benchmark suite.
 
-🌐 **Live Cockpit**: **[https://aeroshield-phi.vercel.app](https://aeroshield-phi.vercel.app)**
+🌐 **Live Cockpit**: **[https://aeroshield-phi.vercel.app](https://aeroshield-phi.vercel.app)**  
+📚 **System & Model Architecture Guide**: **[docs/MODEL_AND_SYSTEM_DOCUMENTATION.md](docs/MODEL_AND_SYSTEM_DOCUMENTATION.md)**
 
 ---
 
