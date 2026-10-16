@@ -1,0 +1,237 @@
+[
+  {
+    "scenario": "gentle",
+    "shift_sigma": 0.02,
+    "n_delivered": 30,
+    "n_censored": 6,
+    "n_retrain": 12,
+    "n_gate": 12,
+    "drift": {
+      "drift": false,
+      "drifted_age_bins": [],
+      "max_psi_per_feature": {
+        "s2_ewma": 0.054947468660963776,
+        "s3_ewma": 0.07701098852061955,
+        "s4_ewma": 0.11772230937274288,
+        "s7_ewma": 0.10782591659876004,
+        "s8_ewma": 0.2906930770811001,
+        "s9_ewma": 0.36246116866165595,
+        "s11_ewma": 0.09614291546280676,
+        "s12_ewma": 0.176961116613541,
+        "s13_ewma": 0.25247041740585935,
+        "s14_ewma": 0.3207071355131783,
+        "s15_ewma": 0.09062075588772713,
+        "s17_ewma": 0.12786559804350872,
+        "s20_ewma": 0.08673926136438406,
+        "s21_ewma": 0.10427027917574576
+      },
+      "psi_limit_used": 0.8076610131144695,
+      "noise_floor_psi": 0.5384406754096464
+    },
+    "top_psi": [
+      [
+        "s9_ewma",
+        0.36246116866165595
+      ],
+      [
+        "s14_ewma",
+        0.3207071355131783
+      ],
+      [
+        "s8_ewma",
+        0.2906930770811001
+      ],
+      [
+        "s13_ewma",
+        0.25247041740585935
+      ],
+      [
+        "s12_ewma",
+        0.176961116613541
+      ]
+    ],
+    "residual": {
+      "live_rmse": 11.471637841850935,
+      "validation_rmse": 10.551231280919488,
+      "relative_change": 0.08723214726568274,
+      "trigger": false
+    },
+    "triggers": {
+      "age_matched_drift": false,
+      "residual_rmse": false,
+      "new_engines>=20": true
+    },
+    "retrained": true,
+    "champion_on_gate": {
+      "rmse": 9.142942820216987,
+      "mae": 6.864534477839561,
+      "nasa": 2778.7576494600194,
+      "coverage": 0.8675742574257426,
+      "late_share": 0.2632013201320132,
+      "n_rows": 2424
+    },
+    "champion_on_frozen": {
+      "rmse": 10.566298873509483,
+      "mae": 7.847944173041222,
+      "nasa": 3229.379712357886,
+      "coverage": 0.859843245735362,
+      "late_share": 0.2028584601198709,
+      "n_rows": 2169
+    },
+    "censored_check": {
+      "champion": {
+        "one_sided_rmse": 6.785348887088346,
+        "n_rows": 455
+      },
+      "challenger": {
+        "one_sided_rmse": 5.850836804544098,
+        "n_rows": 455
+      }
+    },
+    "challenger_on_gate": {
+      "rmse": 9.673148299656633,
+      "mae": 7.613148578576975,
+      "nasa": 2848.169082903655,
+      "coverage": 0.8770627062706271,
+      "late_share": 0.21864686468646866,
+      "n_rows": 2424
+    },
+    "challenger_on_frozen": {
+      "rmse": 10.606409431636603,
+      "mae": 8.408175735819027,
+      "nasa": 2918.916823649185,
+      "coverage": 0.8460119870908253,
+      "late_share": 0.1470723835869064,
+      "n_rows": 2169
+    },
+    "gate_checks": {
+      "rmse_not_worse": false,
+      "nasa_within_5pct": true,
+      "coverage_within_5pts": true,
+      "late_share_within_5pts": true,
+      "frozen_val_rmse_within_10pct": true
+    },
+    "promoted": false,
+    "reason": "Rejected: rmse_not_worse"
+  },
+  {
+    "scenario": "strong",
+    "shift_sigma": 0.3,
+    "n_delivered": 30,
+    "n_censored": 6,
+    "n_retrain": 12,
+    "n_gate": 12,
+    "drift": {
+      "drift": true,
+      "drifted_age_bins": [
+        "0-40",
+        "40-80",
+        "80-140",
+        "140-1000"
+      ],
+      "max_psi_per_feature": {
+        "s2_ewma": 0.6638927879466169,
+        "s3_ewma": 0.3497192682234735,
+        "s4_ewma": 0.5335259653599391,
+        "s7_ewma": 0.5885854660448284,
+        "s8_ewma": 1.0206765481772062,
+        "s9_ewma": 1.3328230225691513,
+        "s11_ewma": 0.7501954358665635,
+        "s12_ewma": 0.8967004053950358,
+        "s13_ewma": 0.9178892453084564,
+        "s14_ewma": 1.3566092578147824,
+        "s15_ewma": 0.43781158518344354,
+        "s17_ewma": 0.5181757769162767,
+        "s20_ewma": 0.9063627417322164,
+        "s21_ewma": 0.6907262682338959
+      },
+      "psi_limit_used": 0.8076610131144695,
+      "noise_floor_psi": 0.5384406754096464
+    },
+    "top_psi": [
+      [
+        "s14_ewma",
+        1.3566092578147824
+      ],
+      [
+        "s9_ewma",
+        1.3328230225691513
+      ],
+      [
+        "s8_ewma",
+        1.0206765481772062
+      ],
+      [
+        "s13_ewma",
+        0.9178892453084564
+      ],
+      [
+        "s20_ewma",
+        0.9063627417322164
+      ]
+    ],
+    "residual": {
+      "live_rmse": 11.990404215953177,
+      "validation_rmse": 10.551231280919488,
+      "relative_change": 0.1363985772576366,
+      "trigger": true
+    },
+    "triggers": {
+      "age_matched_drift": true,
+      "residual_rmse": true,
+      "new_engines>=20": true
+    },
+    "retrained": true,
+    "champion_on_gate": {
+      "rmse": 13.705782637460297,
+      "mae": 10.210178866741355,
+      "nasa": 7890.54601404591,
+      "coverage": 0.7341880341880341,
+      "late_share": 0.30427350427350425,
+      "n_rows": 2340
+    },
+    "champion_on_frozen": {
+      "rmse": 10.566298873509483,
+      "mae": 7.847944173041222,
+      "nasa": 3229.379712357886,
+      "coverage": 0.859843245735362,
+      "late_share": 0.2028584601198709,
+      "n_rows": 2169
+    },
+    "censored_check": {
+      "champion": {
+        "one_sided_rmse": 9.50210694729845,
+        "n_rows": 452
+      },
+      "challenger": {
+        "one_sided_rmse": 6.840672636417995,
+        "n_rows": 452
+      }
+    },
+    "challenger_on_gate": {
+      "rmse": 14.217616800560467,
+      "mae": 10.269249398737838,
+      "nasa": 8389.674280918887,
+      "coverage": 0.6854700854700855,
+      "late_share": 0.2901709401709402,
+      "n_rows": 2340
+    },
+    "challenger_on_frozen": {
+      "rmse": 9.537835548058423,
+      "mae": 6.754539201189563,
+      "nasa": 2853.7856510656784,
+      "coverage": 0.8612263715998156,
+      "late_share": 0.23789764868603042,
+      "n_rows": 2169
+    },
+    "gate_checks": {
+      "rmse_not_worse": false,
+      "nasa_within_5pct": false,
+      "coverage_within_5pts": false,
+      "late_share_within_5pts": true,
+      "frozen_val_rmse_within_10pct": true
+    },
+    "promoted": false,
+    "reason": "Rejected: rmse_not_worse, nasa_within_5pct, coverage_within_5pts"
+  }
+]

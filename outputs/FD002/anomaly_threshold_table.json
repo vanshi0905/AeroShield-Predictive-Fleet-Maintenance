@@ -1,0 +1,82 @@
+[
+  {
+    "percentile": 95.0,
+    "threshold": -0.02886342204909048,
+    "engine_false_alarm_rate": 0.38461538461538464,
+    "median_lead_time": 68.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 2.830001192416233
+  },
+  {
+    "percentile": 97.5,
+    "threshold": -0.011390233678202567,
+    "engine_false_alarm_rate": 0.23461538461538461,
+    "median_lead_time": 59.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 1.4467983624150405
+  },
+  {
+    "percentile": 99.0,
+    "threshold": 0.014230718367167484,
+    "engine_false_alarm_rate": 0.12307692307692308,
+    "median_lead_time": 49.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.48491593465559046
+  },
+  {
+    "percentile": 99.5,
+    "threshold": 0.02849955542358302,
+    "engine_false_alarm_rate": 0.06153846153846154,
+    "median_lead_time": 44.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.1748877141380818
+  },
+  {
+    "percentile": 99.6,
+    "threshold": 0.0318336865521388,
+    "engine_false_alarm_rate": 0.05,
+    "median_lead_time": 43.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.10731746094836837
+  },
+  {
+    "percentile": 99.7,
+    "threshold": 0.03560300697737894,
+    "engine_false_alarm_rate": 0.026923076923076925,
+    "median_lead_time": 42.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.04769664931038595
+  },
+  {
+    "percentile": 99.8,
+    "threshold": 0.04257973737364272,
+    "engine_false_alarm_rate": 0.019230769230769232,
+    "median_lead_time": 40.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.03577248698278946
+  },
+  {
+    "percentile": 99.9,
+    "threshold": 0.053677896009821695,
+    "engine_false_alarm_rate": 0.011538461538461539,
+    "median_lead_time": 37.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.01589888310346198
+  }
+]

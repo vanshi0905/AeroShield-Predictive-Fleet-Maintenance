@@ -1,0 +1,25 @@
+{
+  "best": {
+    "CRIT_P10": 5.0,
+    "CRIT_P50": 15.0,
+    "HIGH_P50": 30.0,
+    "MED_P50": 60.0,
+    "cost": 6280.9,
+    "failures": 8.0,
+    "life_discarded": 6176.0,
+    "orders": 249.0
+  },
+  "current_thresholds": {
+    "cost": 11428.9,
+    "failures": 0,
+    "life_discarded": 11404.0,
+    "orders": 249
+  },
+  "engines": 249,
+  "cost_ratio": [
+    10.0,
+    1.0,
+    0.1
+  ],
+  "note": "placeholder costs"
+}

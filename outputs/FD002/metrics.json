@@ -1,0 +1,129 @@
+{
+  "subset": "FD002",
+  "version": "v1",
+  "data_source": "real",
+  "seconds": 268,
+  "n_features": 110,
+  "n_sensors": 15,
+  "regimes": 6,
+  "silhouette": {
+    "4": 0.8545103568955588,
+    "5": 0.933395887196998,
+    "6": 0.9971632413657863,
+    "7": 0.935020351105879,
+    "8": 0.897901546519224
+  },
+  "test_last_window": {
+    "rmse_capped_truth": 13.967316584076624,
+    "mae_capped_truth": 11.045158254428937,
+    "rmse_uncapped_truth": 27.006530069689948,
+    "nasa_capped_truth": 761.3170132154528,
+    "nasa_uncapped_truth": 8519.20204649373,
+    "late_share": 0.19305019305019305,
+    "coverage": 0.8841698841698842,
+    "coverage_rul_le_50": 0.9886363636363636,
+    "coverage_rul_gt_50": 0.8304093567251462,
+    "n_engines": 259,
+    "near_precision": 0.8840579710144928,
+    "near_recall": 1.0,
+    "near_f1": 0.9384615384615385,
+    "near_pr_auc": 0.9989157656706549,
+    "ci95": {
+      "rmse_capped_truth": [
+        12.59876575275201,
+        15.278493230489259
+      ],
+      "nasa_uncapped_truth": [
+        4528.440432466703,
+        13892.607361221251
+      ],
+      "late_share": [
+        0.14671814671814673,
+        0.24324324324324326
+      ]
+    }
+  },
+  "test_all_window": {
+    "rmse": 14.869462827779913,
+    "mae": 11.899713126008372,
+    "nasa_uncapped_truth": 9852936055.23155,
+    "late_share": 0.13294695654732136,
+    "n_windows": 33991
+  },
+  "oof": {
+    "late_shift": 8.0,
+    "smoother_alpha": 0.3,
+    "smoother_u_max": 2,
+    "conformal_q_standard": 0.0,
+    "conformal_q_short": 0.0,
+    "oof_rmse": 14.127793592883696,
+    "oof_nasa": 8740.164151545136,
+    "oof_late_share": 0.25,
+    "oof_coverage": 0.8769230769230769,
+    "oof_coverage_rul_le_50": 0.9489932885906041,
+    "oof_coverage_short_history": 0.9391891891891891,
+    "raw_oof_coverage_before_conformal": 0.8769230769230769,
+    "oof_rmse_before_shift_smoothing": 14.287860959063979,
+    "disagree_threshold": 25.0,
+    "fold_rmse_mean": 12.892511922397258,
+    "fold_rmse_sd": 0.24962029229174176
+  },
+  "anomaly_oof_best": {
+    "percentile": 99.6,
+    "threshold": 0.0318336865521388,
+    "engine_false_alarm_rate": 0.05,
+    "median_lead_time": 43.0,
+    "alerted_engines": 260,
+    "engines": 260,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.10731746094836837
+  },
+  "anomaly_test": {
+    "engine_false_alarm_rate": 0.019305019305019305,
+    "median_lead_time": 50.0,
+    "alerted_engines": 98,
+    "engines": 259,
+    "detection_rate": 0.3783783783783784,
+    "false_alerts_per_100_healthy_cycles": 0.11453296004072283
+  },
+  "severity_mix": {
+    "NORMAL": 124,
+    "CRITICAL": 54,
+    "MEDIUM": 41,
+    "HIGH": 34,
+    "NEEDS_HUMAN": 6
+  },
+  "order_volume": {
+    "work_orders": 137,
+    "orders_per_100_engines_per_100_cycles": 14.413011688216049,
+    "orders_per_100_engines": 52.8957528957529,
+    "stale_escalated": 136
+  },
+  "audit_ok": true,
+  "audit_msg": "Verified 708 audit entries. Integrity 100% intact.",
+  "fault_demo": {
+    "2": {
+      "injected": "dropout",
+      "status": "NEEDS_HUMAN",
+      "reason": "[SIMULATED FAULT: dropout] Data-quality: Sensor dropout 33% > 20%"
+    },
+    "3": {
+      "injected": "stuck sensor s11",
+      "status": "NEEDS_HUMAN",
+      "reason": "[SIMULATED FAULT: stuck sensor s11] Data-quality: stuck sensor(s) s11"
+    },
+    "4": {
+      "injected": "spike s7",
+      "status": "NEEDS_HUMAN",
+      "reason": "[SIMULATED FAULT: spike s7] Data-quality: out-of-range s7; jump s7"
+    }
+  },
+  "data_quality": {
+    "dropout_rate": 0.0,
+    "stuck_rate": 0.0005001323879850549,
+    "range_rate": 0.0,
+    "jump_rate": 0.005795651790179754
+  },
+  "config_hash": "a8017e3c7f1e",
+  "data_hash": "cc47f1d70fa0"
+}

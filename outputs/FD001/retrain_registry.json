@@ -1,0 +1,84 @@
+{
+  "FD001": {
+    "champion": {
+      "version": "v1",
+      "status": "champion",
+      "metrics": {
+        "rmse": 10.566298873509483,
+        "mae": 7.847944173041222,
+        "nasa": 3229.379712357886,
+        "coverage": 0.859843245735362,
+        "late_share": 0.2028584601198709,
+        "n_rows": 2169,
+        "oof_rmse": 10.551231280919488
+      },
+      "path": "",
+      "promoted_at": "2026-10-15T18:55:05.371563+00:00",
+      "note": "60-engine baseline"
+    },
+    "history": [
+      {
+        "version": "v2-gentle",
+        "evaluated_at": "2026-10-15T18:58:17.713437+00:00",
+        "trigger": "new_engines>=20",
+        "challenger": {
+          "rmse": 9.673148299656633,
+          "mae": 7.613148578576975,
+          "nasa": 2848.169082903655,
+          "coverage": 0.8770627062706271,
+          "late_share": 0.21864686468646866,
+          "n_rows": 2424
+        },
+        "champion_version": "v1",
+        "champion": {
+          "rmse": 9.142942820216987,
+          "mae": 6.864534477839561,
+          "nasa": 2778.7576494600194,
+          "coverage": 0.8675742574257426,
+          "late_share": 0.2632013201320132,
+          "n_rows": 2424
+        },
+        "checks": {
+          "rmse_not_worse": false,
+          "nasa_within_5pct": true,
+          "coverage_within_5pts": true,
+          "late_share_within_5pts": true,
+          "frozen_val_rmse_within_10pct": true
+        },
+        "promoted": false,
+        "reason": "Rejected: rmse_not_worse"
+      },
+      {
+        "version": "v2-strong",
+        "evaluated_at": "2026-10-15T19:01:17.396142+00:00",
+        "trigger": "age_matched_drift, residual_rmse, new_engines>=20",
+        "challenger": {
+          "rmse": 14.217616800560467,
+          "mae": 10.269249398737838,
+          "nasa": 8389.674280918887,
+          "coverage": 0.6854700854700855,
+          "late_share": 0.2901709401709402,
+          "n_rows": 2340
+        },
+        "champion_version": "v1",
+        "champion": {
+          "rmse": 13.705782637460297,
+          "mae": 10.210178866741355,
+          "nasa": 7890.54601404591,
+          "coverage": 0.7341880341880341,
+          "late_share": 0.30427350427350425,
+          "n_rows": 2340
+        },
+        "checks": {
+          "rmse_not_worse": false,
+          "nasa_within_5pct": false,
+          "coverage_within_5pts": false,
+          "late_share_within_5pts": true,
+          "frozen_val_rmse_within_10pct": true
+        },
+        "promoted": false,
+        "reason": "Rejected: rmse_not_worse, nasa_within_5pct, coverage_within_5pts"
+      }
+    ]
+  }
+}

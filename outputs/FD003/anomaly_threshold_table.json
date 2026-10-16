@@ -1,0 +1,62 @@
+[
+  {
+    "percentile": 95.0,
+    "threshold": 0.07228328925603121,
+    "engine_false_alarm_rate": 0.15,
+    "median_lead_time": 53.5,
+    "alerted_engines": 100,
+    "engines": 100,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 4.35131195335277
+  },
+  {
+    "percentile": 97.5,
+    "threshold": 0.08994527991325314,
+    "engine_false_alarm_rate": 0.14,
+    "median_lead_time": 48.0,
+    "alerted_engines": 100,
+    "engines": 100,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 1.967930029154519
+  },
+  {
+    "percentile": 99.0,
+    "threshold": 0.11066562092767246,
+    "engine_false_alarm_rate": 0.07,
+    "median_lead_time": 44.0,
+    "alerted_engines": 100,
+    "engines": 100,
+    "detection_rate": 1.0,
+    "false_alerts_per_100_healthy_cycles": 0.8454810495626822
+  },
+  {
+    "percentile": 99.5,
+    "threshold": 0.16628236017629167,
+    "engine_false_alarm_rate": 0.02,
+    "median_lead_time": 39.0,
+    "alerted_engines": 69,
+    "engines": 100,
+    "detection_rate": 0.69,
+    "false_alerts_per_100_healthy_cycles": 0.45918367346938777
+  },
+  {
+    "percentile": 99.8,
+    "threshold": 0.20105182740373118,
+    "engine_false_alarm_rate": 0.02,
+    "median_lead_time": 49.0,
+    "alerted_engines": 44,
+    "engines": 100,
+    "detection_rate": 0.44,
+    "false_alerts_per_100_healthy_cycles": 0.1749271137026239
+  },
+  {
+    "percentile": 99.9,
+    "threshold": 0.21106404565954656,
+    "engine_false_alarm_rate": 0.01,
+    "median_lead_time": 47.5,
+    "alerted_engines": 44,
+    "engines": 100,
+    "detection_rate": 0.44,
+    "false_alerts_per_100_healthy_cycles": 0.08017492711370262
+  }
+]
