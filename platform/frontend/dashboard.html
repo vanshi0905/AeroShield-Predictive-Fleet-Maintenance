@@ -187,7 +187,7 @@
     <!-- Brand / Title -->
     <div class="flex items-center gap-3.5">
       <!-- Artistic Aerospace Turbofan Vortex Logo -->
-      <div onclick="playAudioClick(); toggleLogoSpeed()" class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/90 via-slate-900/95 to-blue-950/90 border border-cyan-400/40 p-1 flex items-center justify-center glow-cyan group cursor-pointer shadow-lg overflow-hidden" title="Click to trigger aerospace vortex burst">
+      <div onclick="toggleLogoSpeed()" class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/90 via-slate-900/95 to-blue-950/90 border border-cyan-400/40 p-1 flex items-center justify-center glow-cyan group cursor-pointer shadow-lg overflow-hidden" title="Click to trigger aerospace vortex burst">
         <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-transparent to-blue-500/20 pointer-events-none"></div>
         <svg id="vortex-svg" class="w-9 h-9 relative z-10 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -253,14 +253,8 @@
       </div>
     </div>
 
-    <!-- Right Controls: Audio Synth + Subset Selector + Telemetry Badges -->
+    <!-- Right Controls: Subset Selector + Telemetry Badges -->
     <div class="flex items-center gap-4 flex-wrap">
-      
-      <!-- Tactile Audio Synthesizer Toggle -->
-      <button onclick="toggleAudio()" id="audio-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 hover:text-white hover:border-slate-600 transition flex items-center gap-1.5 text-xs font-medium" title="Toggle Tactile Web Audio Synthesizer">
-        <i data-lucide="volume-2" id="audio-icon" class="w-3.5 h-3.5 text-slate-400"></i>
-        <span class="text-[11px] font-sans hidden sm:inline" id="audio-label">FX On</span>
-      </button>
 
       <!-- Subset Selector Pills -->
       <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900/90 border border-slate-800">
@@ -1337,7 +1331,7 @@
     </p>
   </footer>
 
-  <!-- Core JavaScript Logic & Web Audio Synthesizer -->
+  <!-- Core JavaScript Logic -->
   <script>
     let currentSubset = "FD001";
     let activeTab = "fleet";
@@ -1348,147 +1342,11 @@
     let rulChartInstance = null;
     let anomChartInstance = null;
     let playbackInterval = null;
-    let audioContext = null;
-    let masterGain = null;
-    let soundEnabled = true;
     let orderViewMode = "cards"; // "cards" or "table"
     let currentSortColumn = "p50_rul";
     let currentSortDirection = "asc";
     let matrixCurrentPage = 1;
     let matrixPageSize = 30;
-    let lastAudioTickTime = 0;
-
-    // Web Audio API Synthesizer (Tactile Aerospace Audio Engine - sounds-on-the-web compliant)
-    function initAudio() {
-      // a11y-reduced-motion-check: respect prefers-reduced-motion as proxy for audio sensitivity
-      const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (prefersReducedMotion && !audioContext) {
-        soundEnabled = false;
-        const icon = document.getElementById('audio-icon');
-        const label = document.getElementById('audio-label');
-        const btn = document.getElementById('audio-toggle-btn');
-        if (icon) icon.setAttribute('data-lucide', 'volume-x');
-        if (label) label.innerText = 'FX OFF';
-        if (btn) btn.classList.add('opacity-60');
-      }
-
-      if (!audioContext) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-          audioContext = new AudioCtx();
-          masterGain = audioContext.createGain();
-          masterGain.gain.setValueAtTime(0.22, audioContext.currentTime); // impl-default-subtle: 0.22 subtle volume
-          masterGain.connect(audioContext.destination);
-        }
-      }
-      if (audioContext && audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-    }
-
-    function toggleAudio() {
-      soundEnabled = !soundEnabled;
-      const btn = document.getElementById('audio-toggle-btn');
-      const icon = document.getElementById('audio-icon');
-      const label = document.getElementById('audio-label');
-      if (soundEnabled) {
-        initAudio();
-        icon.setAttribute('data-lucide', 'volume-2');
-        label.innerText = 'FX ON';
-        btn.classList.remove('opacity-60');
-        showToast('Tactile avionics audio enabled', 'info');
-        playAudioClick();
-      } else {
-        icon.setAttribute('data-lucide', 'volume-x');
-        label.innerText = 'FX OFF';
-        btn.classList.add('opacity-60');
-        showToast('Audio feedback muted', 'info');
-      }
-      lucide.createIcons();
-    }
-
-    function playAudioClick() {
-      if (!soundEnabled) return;
-      initAudio();
-      if (!audioContext || !masterGain) return;
-      try {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(750, audioContext.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(240, audioContext.currentTime + 0.03);
-        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.03);
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start();
-        osc.stop(audioContext.currentTime + 0.035);
-      } catch (e) {}
-    }
-
-    function playAudioTick() {
-      if (!soundEnabled) return;
-      initAudio();
-      if (!audioContext || !masterGain) return;
-      try {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(1200, audioContext.currentTime);
-        gain.gain.setValueAtTime(0.015, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.012);
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start();
-        osc.stop(audioContext.currentTime + 0.015);
-      } catch (e) {}
-    }
-
-    function playAudioLatch() {
-      if (!soundEnabled) return;
-      initAudio();
-      if (!audioContext || !masterGain) return;
-      try {
-        const now = audioContext.currentTime;
-        const osc1 = audioContext.createOscillator();
-        const osc2 = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc1.type = 'square';
-        osc2.type = 'sine';
-        osc1.frequency.setValueAtTime(280, now);
-        osc2.frequency.setValueAtTime(560, now + 0.015);
-        gain.gain.setValueAtTime(0.06, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.065);
-        osc1.connect(gain);
-        osc2.connect(gain);
-        gain.connect(masterGain);
-        osc1.start();
-        osc2.start(now + 0.015);
-        osc1.stop(now + 0.065);
-        osc2.stop(now + 0.065);
-      } catch (e) {}
-    }
-
-    function playAudioVerify() {
-      if (!soundEnabled) return;
-      initAudio();
-      if (!audioContext || !masterGain) return;
-      try {
-        const now = audioContext.currentTime;
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-          const osc = audioContext.createOscillator();
-          const gain = audioContext.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.055);
-          gain.gain.setValueAtTime(0.045, now + idx * 0.055);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.055 + 0.12);
-          osc.connect(gain);
-          gain.connect(masterGain);
-          osc.start(now + idx * 0.055);
-          osc.stop(now + idx * 0.055 + 0.13);
-        });
-      } catch (e) {}
-    }
 
     // Toast Notification Dispatcher
     function showToast(message, type = 'info') {
@@ -1529,7 +1387,6 @@
 
     // Main App Initialization
     async function initDashboard() {
-      initAudio();
       await fetchFleetReadiness();
       await fetchFleetMatrix();
       await fetchWorkOrders();
@@ -1540,7 +1397,6 @@
     }
 
     function showTab(tabId) {
-      playAudioClick();
       activeTab = tabId;
       document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('tab-active');
@@ -1565,7 +1421,6 @@
     }
 
     async function switchSubset(subset) {
-      playAudioClick();
       currentSubset = subset;
       ['FD001', 'FD002', 'FD003', 'FD004'].forEach(s => {
         const pill = document.getElementById(`pill-${s}`);
@@ -1735,7 +1590,6 @@
     }
 
     function sortFleetMatrix(col) {
-      playAudioClick();
       if (currentSortColumn === col) {
         currentSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
       } else {
@@ -1761,7 +1615,6 @@
     }
 
     function setMatrixPage(p) {
-      playAudioClick();
       matrixCurrentPage = p;
       filterFleetMatrix();
     }
@@ -1878,14 +1731,12 @@
     }
 
     function drilldownToUnit(unitId) {
-      playAudioClick();
       document.getElementById('drilldown-unit-select').value = unitId;
       showTab('drilldown');
       loadEngineDrilldown();
     }
 
     function stepUnit(delta) {
-      playAudioClick();
       const select = document.getElementById('drilldown-unit-select');
       const idx = select.selectedIndex;
       const nextIdx = idx + delta;
@@ -1957,7 +1808,6 @@
     }
 
     function togglePlayback() {
-      playAudioClick();
       const btn = document.getElementById('icon-playback');
       if (playbackInterval) {
         clearInterval(playbackInterval);
@@ -1982,7 +1832,6 @@
     }
 
     function stepReplayCycle(delta) {
-      playAudioTick();
       const slider = document.getElementById('replay-slider');
       let val = parseInt(slider.value) + delta;
       val = Math.max(1, Math.min(parseInt(slider.max), val));
@@ -1991,14 +1840,12 @@
     }
 
     function resetReplayStart() {
-      playAudioClick();
       const slider = document.getElementById('replay-slider');
       slider.value = 1;
       updateReplayFrame(1, false);
     }
 
     function jumpReplayEnd() {
-      playAudioClick();
       if (!currentDrilldownData) return;
       const slider = document.getElementById('replay-slider');
       slider.value = currentDrilldownData.total_cycles;
@@ -2007,11 +1854,6 @@
 
     function updateReplayFrame(frameCycle, fromPlayback = false) {
       if (!currentDrilldownData) return;
-      const now = performance.now();
-      if (!fromPlayback || (now - lastAudioTickTime > 140)) {
-        playAudioTick();
-        lastAudioTickTime = now;
-      }
 
       const cycleInt = parseInt(frameCycle);
       document.getElementById('replay-cycle-label').innerText = `Cycle ${cycleInt} of ${currentDrilldownData.total_cycles}`;
@@ -2283,7 +2125,6 @@
 
     // 4. Autonomous Triage & Work Orders
     function setOrderViewMode(mode) {
-      playAudioClick();
       orderViewMode = mode;
       const cardsBtn = document.getElementById('view-mode-cards');
       const tableBtn = document.getElementById('view-mode-table');
@@ -2451,7 +2292,6 @@
     }
 
     async function dispatchOrder(orderId, status) {
-      playAudioLatch();
       try {
         const res = await fetch('/api/work-orders/dispatch', {
           method: 'POST',
@@ -2571,7 +2411,6 @@
     }
 
     async function verifyAuditChain() {
-      playAudioVerify();
       const btn = document.getElementById('btn-verify-audit');
       btn.disabled = true;
       btn.innerText = "VERIFYING CRYPTOGRAPHIC BLOCKS...";
@@ -2605,7 +2444,6 @@
     }
 
     function switchDriftScenario(scenario) {
-      playAudioClick();
       selectedDriftScenario = scenario;
       renderMlopsViews();
       showToast(`Switched drift scenario to ${scenario === 'gentle' ? 'Gentle (σ=0.02)' : 'Severe Shock (σ=0.30)'}`, 'info');
@@ -2936,7 +2774,6 @@
     }
 
     async function triggerRetrainDemo() {
-      playAudioLatch();
       const btn = document.getElementById('retrain-btn');
       const consoleBox = document.getElementById('retrain-console');
       btn.disabled = true;
@@ -2956,7 +2793,6 @@
         btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> EXECUTE RETRAINING & PREPROCESSOR ADAPTATION DEMO`;
 
         if (data.success) {
-          playAudioVerify();
           showToast(`Retraining pipeline execution completed on ${currentSubset}`, 'success');
           consoleBox.innerHTML += `<pre class="text-[10px] text-slate-300 p-2.5 rounded-lg bg-black/70 border border-slate-800/80 font-mono leading-relaxed mt-2 select-text whitespace-pre-wrap">${data.stdout}</pre>`;
           consoleBox.scrollTop = consoleBox.scrollHeight;
