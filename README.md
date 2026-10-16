@@ -1,6 +1,5 @@
 # AeroShield: Autonomous Predictive Fleet Maintenance Platform
 
-[![CI Test Suite](https://github.com/vanshi0905/AeroShield-Predictive-Fleet-Maintenance/actions/workflows/ci.yml/badge.svg)](https://github.com/vanshi0905/AeroShield-Predictive-Fleet-Maintenance/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
 [![Tests: 57/57 Passed](https://img.shields.io/badge/Tests-57%2F57%20Passed-emerald.svg)](pytest.ini)
@@ -118,9 +117,6 @@ The platform includes a tactile, aerospace-grade cockpit served via FastAPI at `
 
 ```
 AeroShield-Predictive-Fleet-Maintenance/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                     # GitHub Actions CI workflow (pytest across Python 3.11/3.12)
 ├── .gitignore                         # Comprehensive exclusion of all cache, temp, and logs
 ├── LICENSE                            # MIT License
 ├── README.md                          # Defense-grade architectural and benchmark documentation
