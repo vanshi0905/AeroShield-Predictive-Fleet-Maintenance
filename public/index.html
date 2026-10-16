@@ -253,16 +253,37 @@
       </div>
     </div>
 
-    <!-- Right Controls: Voice Toggle + Subset Selector + Telemetry Badges -->
-    <div class="flex items-center gap-4 flex-wrap">
+    <!-- Right Controls: Voice Toggle + Persona + Copilot + Subset Selector + Telemetry Badges -->
+    <div class="flex items-center gap-3 flex-wrap">
 
-      <!-- Cockpit Voice & Audio Controls -->
+      <!-- Sarvam AI Voice Controls -->
       <div class="flex items-center gap-1.5">
+        <!-- Voice Toggle -->
         <button onclick="toggleVoiceAudio()" id="voice-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-cyan-500/50 transition flex items-center gap-2 text-xs font-medium shadow-sm group" title="Toggle Tactical Voice & Avionics Audio (Click to test)">
           <i data-lucide="volume-2" id="voice-icon" class="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform"></i>
           <span class="text-[11px] font-sans" id="voice-label">Voice: Active</span>
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="voice-indicator"></span>
         </button>
+
+        <!-- Persona Selector -->
+        <select id="voice-persona-select" onchange="changeVoicePersona(this.value)" class="bg-slate-900/90 border border-slate-700/80 text-cyan-300 text-[11px] font-medium rounded-lg px-2 py-1.5 focus:outline-none focus:border-cyan-500 shadow-sm cursor-pointer hidden md:inline-block" title="Select Sarvam AI Voice Persona">
+          <option value="shubh">Shubh (Commander)</option>
+          <option value="priya">Priya (Copilot)</option>
+          <option value="aditya">Aditya (Engineer)</option>
+          <option value="neha">Neha (Controller)</option>
+        </select>
+
+        <!-- Interactive Voice Copilot Trigger -->
+        <button onclick="openVoiceCopilotModal()" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600/30 to-blue-600/30 border border-cyan-500/50 text-cyan-200 hover:text-white hover:border-cyan-400 transition flex items-center gap-1.5 text-xs font-semibold shadow-lg shadow-cyan-950/40 group active:scale-95" title="Open Interactive Sarvam Voice Copilot">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+          </span>
+          <i data-lucide="radio" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Voice Copilot</span>
+        </button>
+
+        <!-- Test Annunciation Button -->
         <button onclick="testVoiceAnnouncement()" class="px-2 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-cyan-300 hover:border-slate-700 transition text-[10px] font-medium hidden sm:inline-flex items-center gap-1" title="Test Cockpit Voice Broadcast">
           <i data-lucide="mic" class="w-3 h-3 text-cyan-400"></i>
           Test
@@ -1332,7 +1353,97 @@
       </div>
     </div>
 
-  </main>
+  <!-- ========================================== -->
+  <!-- SARVAM AI INTERACTIVE VOICE COPILOT MODAL  -->
+  <!-- ========================================== -->
+  <div id="voice-copilot-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
+    <div class="relative w-full max-w-2xl rounded-2xl vision-glass border border-cyan-500/30 shadow-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
+      <!-- Background Glow Radar Effect -->
+      <div class="absolute -top-24 -right-24 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 relative z-10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center glow-cyan">
+            <i data-lucide="radio" class="w-5 h-5 text-cyan-400 animate-pulse"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-bold text-white tracking-tight">AeroShield Voice Copilot</h3>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Sarvam 105B • Bulbul v3</span>
+            </div>
+            <p class="text-xs text-slate-400 font-sans">Tactical real-time fleet intelligence grounded in NASA C-MAPSS telemetry</p>
+          </div>
+        </div>
+        <button onclick="closeVoiceCopilotModal()" class="w-8 h-8 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center border border-slate-700/60">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Quick Telemetry Prompts -->
+      <div class="py-3 flex items-center gap-2 overflow-x-auto border-b border-slate-800/60 text-xs">
+        <span class="text-[11px] text-slate-500 shrink-0 flex items-center gap-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i> Prompts:
+        </span>
+        <button onclick="sendQuickPrompt('Report fleet readiness and critical risk status')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+          <span>Fleet Readiness</span>
+        </button>
+        <button onclick="sendQuickPrompt('What is the health and RUL of Engine 1?')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+          <span>Engine #1 RUL</span>
+        </button>
+        <button onclick="sendQuickPrompt('Explain the baseline anomaly detection lead time')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+          <span>Anomaly Lead Time</span>
+        </button>
+        <button onclick="sendQuickPrompt('List open work orders and suspect subsystems')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+          <span>Work Orders Briefing</span>
+        </button>
+      </div>
+
+      <!-- Chat Log Stream -->
+      <div id="copilot-chat-stream" class="flex-1 overflow-y-auto py-4 space-y-3 pr-1 text-xs max-h-[45vh]">
+        <!-- Initial Welcome Message -->
+        <div class="flex items-start gap-3">
+          <div class="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 mt-0.5">
+            <i data-lucide="shield" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <div class="flex-1 rounded-xl bg-slate-900/80 border border-slate-800/80 p-3 space-y-1.5 shadow-sm">
+            <div class="flex items-center justify-between text-[11px] border-b border-slate-800/60 pb-1">
+              <span class="font-semibold text-cyan-300">AeroShield Copilot</span>
+              <span class="text-slate-500 text-[10px]">Online</span>
+            </div>
+            <p class="text-slate-200 leading-relaxed font-sans">
+              Cockpit voice systems online. Ask me about fleet readiness, single-engine RUL predictions, anomaly lead times, or work-order triage actions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Waveform Audio Active Indicator -->
+      <div id="copilot-waveform" class="hidden items-center justify-center gap-1 py-1.5 text-xs text-cyan-300">
+        <span class="w-1 h-3 bg-cyan-400 rounded-full animate-pulse"></span>
+        <span class="w-1 h-5 bg-cyan-400 rounded-full animate-pulse delay-75"></span>
+        <span class="w-1 h-2 bg-cyan-400 rounded-full animate-pulse delay-150"></span>
+        <span class="w-1 h-6 bg-cyan-400 rounded-full animate-pulse delay-100"></span>
+        <span class="w-1 h-3 bg-cyan-400 rounded-full animate-pulse delay-200"></span>
+        <span class="ml-2 font-mono text-[10px] tracking-wide uppercase" id="copilot-voice-status-text">Transmitting audio...</span>
+      </div>
+
+      <!-- Input Bar (Speech-To-Text Mic + Typed Text Input) -->
+      <div class="pt-3 border-t border-slate-800 flex items-center gap-2">
+        <button id="copilot-mic-btn" onclick="toggleCopilotMic()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700/80 flex items-center justify-center transition shrink-0 group shadow-md" title="Click to Speak (Speech-to-Text)">
+          <i data-lucide="mic" id="copilot-mic-icon" class="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+        </button>
+
+        <input type="text" id="copilot-query-input" onkeydown="handleCopilotKeyDown(event)" placeholder="Ask about engine status, RUL, or anomaly triage..." class="flex-1 bg-slate-900/90 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner" />
+
+        <button onclick="submitCopilotQuery()" id="copilot-send-btn" class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs transition flex items-center gap-1.5 shadow-md active:scale-95 shrink-0">
+          <span>Ask</span>
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="px-6 py-4 text-center text-xs border-t border-slate-800/80 text-slate-500 mt-auto">
@@ -1362,12 +1473,16 @@
     let matrixPageSize = 30;
 
     // ==========================================
-    // TACTICAL COCKPIT VOICE & AUDIO ENGINE
-    // Web Speech API + Web Audio Synthesizer
+    // TACTICAL COCKPIT VOICE & SARVAM AI ENGINE
+    // Sarvam Neural TTS (Bulbul v3) + 105B Copilot + Web Audio
     // ==========================================
     let voiceAudioEnabled = true;
     let audioCtx = null;
     let availableVoices = [];
+    let currentSpeaker = "shubh";
+    let activeAudioPlayer = null;
+    let recognition = null;
+    let isRecognizing = false;
 
     function initVoiceAudio() {
       if (!audioCtx) {
@@ -1398,6 +1513,21 @@
       initVoiceAudio();
     }, { once: true });
 
+    function changeVoicePersona(speakerId) {
+      currentSpeaker = speakerId;
+      initVoiceAudio();
+      const speakerNames = {
+        shubh: "Shubh (Lead Commander)",
+        priya: "Priya (Avionics Copilot)",
+        aditya: "Aditya (Fleet Engineer)",
+        neha: "Neha (Flight Controller)"
+      };
+      const name = speakerNames[speakerId] || speakerId;
+      showToast(`Voice persona switched to ${name}`, 'info');
+      playAvionicsChime('confirm');
+      speakCockpit(`Voice persona ${speakerId} active.`);
+    }
+
     function toggleVoiceAudio() {
       voiceAudioEnabled = !voiceAudioEnabled;
       const btn = document.getElementById('voice-toggle-btn');
@@ -1412,10 +1542,14 @@
         if (label) label.innerText = 'Voice: Active';
         if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
         if (btn) btn.classList.remove('opacity-60');
-        showToast('Cockpit Voice & Audio Enabled', 'info');
+        showToast('Cockpit Voice & Audio Enabled (Sarvam Bulbul)', 'info');
         playAvionicsChime('confirm');
         speakCockpit('Avionics voice online. Telemetry systems nominal.', 'high');
       } else {
+        if (activeAudioPlayer) {
+          activeAudioPlayer.pause();
+          activeAudioPlayer = null;
+        }
         if (window.speechSynthesis) {
           window.speechSynthesis.cancel();
         }
@@ -1443,7 +1577,40 @@
 
       playAvionicsChime('confirm');
       speakCockpit('AeroShield defense voice telemetry test. All four fleet partitions operational.', 'high');
-      showToast('Broadcasting cockpit audio test...', 'info');
+      showToast('Broadcasting Sarvam Bulbul neural audio...', 'info');
+    }
+
+    function playBase64Audio(base64Audio, onEndedCallback) {
+      try {
+        if (activeAudioPlayer) {
+          activeAudioPlayer.pause();
+          activeAudioPlayer = null;
+        }
+        const audioUrl = "data:audio/wav;base64," + base64Audio;
+        activeAudioPlayer = new Audio(audioUrl);
+        activeAudioPlayer.volume = 1.0;
+
+        const wave = document.getElementById('copilot-waveform');
+        const statusText = document.getElementById('copilot-voice-status-text');
+        if (wave) wave.classList.remove('hidden');
+        if (statusText) statusText.innerText = "Transmitting voice transmission...";
+
+        activeAudioPlayer.onended = () => {
+          if (wave) wave.classList.add('hidden');
+          activeAudioPlayer = null;
+          if (onEndedCallback) onEndedCallback();
+        };
+        activeAudioPlayer.onerror = (e) => {
+          if (wave) wave.classList.add('hidden');
+          console.warn('Audio element error:', e);
+        };
+        activeAudioPlayer.play().catch(e => {
+          if (wave) wave.classList.add('hidden');
+          console.warn('Playback error / auto-play blocked:', e);
+        });
+      } catch (e) {
+        console.warn('Error creating audio from base64:', e);
+      }
     }
 
     function playAvionicsChime(type = 'ping') {
@@ -1492,44 +1659,275 @@
       }
     }
 
-    function speakCockpit(text, priority = 'normal') {
-      if (!voiceAudioEnabled || !('speechSynthesis' in window)) return;
+    async function speakCockpit(text, priority = 'normal') {
+      if (!voiceAudioEnabled || !text || !text.trim()) return;
       initVoiceAudio();
 
+      // 1. Try Sarvam Neural TTS Endpoint
       try {
-        if (priority === 'high' || window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
+        const res = await fetch('/api/voice/synthesize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: text.trim(),
+            speaker: currentSpeaker,
+            model: 'bulbul:v3'
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.audio_base64) {
+            playBase64Audio(data.audio_base64);
+            return;
+          }
         }
-
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.rate = 1.05; // clear tactical pace
-        utter.pitch = 0.95; // calm, authoritative avionics tone
-        utter.volume = 1.0;
-
-        if (!availableVoices || availableVoices.length === 0) {
-          availableVoices = window.speechSynthesis.getVoices();
-        }
-
-        // Prioritize natural English voices (Google, Samantha, David, Daniel, Victoria, etc.)
-        const enVoice = availableVoices.find(v => 
-          v.lang && v.lang.startsWith('en') && (
-            v.name.includes('Natural') || 
-            v.name.includes('Google') || 
-            v.name.includes('Samantha') || 
-            v.name.includes('David') || 
-            v.name.includes('Zira') ||
-            v.name.includes('Daniel')
-          )
-        ) || availableVoices.find(v => v.lang && v.lang.startsWith('en'));
-
-        if (enVoice) {
-          utter.voice = enVoice;
-        }
-
-        window.speechSynthesis.speak(utter);
-      } catch (e) {
-        console.warn('Speech synthesis error:', e);
+      } catch (err) {
+        console.warn('Sarvam TTS API failed, falling back to Web Speech API:', err);
       }
+
+      // 2. Web Speech API Fallback
+      try {
+        if ('speechSynthesis' in window) {
+          if (priority === 'high' || window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+          }
+
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.rate = 1.05;
+          utter.pitch = 0.95;
+          utter.volume = 1.0;
+
+          if (!availableVoices || availableVoices.length === 0) {
+            availableVoices = window.speechSynthesis.getVoices();
+          }
+
+          const enVoice = availableVoices.find(v => 
+            v.lang && v.lang.startsWith('en') && (
+              v.name.includes('Natural') || 
+              v.name.includes('Google') || 
+              v.name.includes('Samantha') || 
+              v.name.includes('David') || 
+              v.name.includes('Zira') ||
+              v.name.includes('Daniel')
+            )
+          ) || availableVoices.find(v => v.lang && v.lang.startsWith('en'));
+
+          if (enVoice) {
+            utter.voice = enVoice;
+          }
+
+          window.speechSynthesis.speak(utter);
+        }
+      } catch (e) {
+        console.warn('Speech synthesis fallback error:', e);
+      }
+    }
+
+    // ==========================================
+    // INTERACTIVE VOICE COPILOT MODAL LOGIC
+    // ==========================================
+    function openVoiceCopilotModal() {
+      initVoiceAudio();
+      const modal = document.getElementById('voice-copilot-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.remove('opacity-0'));
+      }
+      playAvionicsChime('ping');
+      const input = document.getElementById('copilot-query-input');
+      if (input) setTimeout(() => input.focus(), 150);
+      lucide.createIcons();
+    }
+
+    function closeVoiceCopilotModal() {
+      const modal = document.getElementById('voice-copilot-modal');
+      if (modal) {
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+      }
+      stopCopilotMic();
+    }
+
+    function sendQuickPrompt(promptText) {
+      const input = document.getElementById('copilot-query-input');
+      if (input) input.value = promptText;
+      submitCopilotQuery(promptText);
+    }
+
+    function handleCopilotKeyDown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitCopilotQuery();
+      }
+    }
+
+    function appendCopilotMessage(sender, text, audioBase64 = null) {
+      const stream = document.getElementById('copilot-chat-stream');
+      if (!stream) return;
+
+      const isUser = sender === 'user';
+      const timeStr = new Date().toISOString().slice(11, 16) + " UTC";
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`;
+
+      let iconHtml = isUser 
+        ? `<div class="w-7 h-7 rounded-lg bg-blue-600/30 border border-blue-500/40 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="user" class="w-4 h-4 text-blue-300"></i></div>`
+        : `<div class="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="radio" class="w-4 h-4 text-cyan-400"></i></div>`;
+
+      let bubbleBg = isUser 
+        ? `bg-blue-600/20 border-blue-500/30 text-blue-100` 
+        : `bg-slate-900/90 border-slate-800 text-slate-100`;
+
+      let playBtnHtml = '';
+      if (!isUser && audioBase64) {
+        // Store audio base64 on window cache for replay
+        const audioKey = "audio_" + Date.now();
+        window[audioKey] = audioBase64;
+        playBtnHtml = `
+          <button onclick="playBase64Audio(window['${audioKey}'])" class="mt-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-cyan-950/60 hover:bg-cyan-900/80 border border-cyan-500/30 text-cyan-300 text-[10px] font-medium transition active:scale-95" title="Replay voice response">
+            <i data-lucide="volume-2" class="w-3 h-3 text-cyan-400"></i>
+            <span>Replay Voice</span>
+          </button>
+        `;
+      }
+
+      msgDiv.innerHTML = `
+        ${iconHtml}
+        <div class="max-w-[80%] rounded-xl ${bubbleBg} border p-3 space-y-1 shadow-md">
+          <div class="flex items-center justify-between gap-3 text-[10px] text-slate-400 pb-0.5 border-b border-slate-800/40">
+            <span class="font-semibold ${isUser ? 'text-blue-300' : 'text-cyan-300'}">${isUser ? 'Flight Controller' : 'AeroShield Copilot (' + currentSpeaker + ')'}</span>
+            <span>${timeStr}</span>
+          </div>
+          <p class="text-xs leading-relaxed font-sans select-text whitespace-pre-wrap">${text}</p>
+          ${playBtnHtml}
+        </div>
+      `;
+
+      stream.appendChild(msgDiv);
+      stream.scrollTop = stream.scrollHeight;
+      lucide.createIcons();
+    }
+
+    async function submitCopilotQuery(overrideText = null) {
+      const input = document.getElementById('copilot-query-input');
+      const query = (overrideText || (input ? input.value : '')).trim();
+      if (!query) return;
+
+      if (input) input.value = '';
+      appendCopilotMessage('user', query);
+
+      const sendBtn = document.getElementById('copilot-send-btn');
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.classList.add('opacity-50');
+      }
+
+      const wave = document.getElementById('copilot-waveform');
+      const statusText = document.getElementById('copilot-voice-status-text');
+      if (wave) wave.classList.remove('hidden');
+      if (statusText) statusText.innerText = "Querying Sarvam 105B Reasoning Agent...";
+
+      try {
+        const res = await fetch('/api/voice/copilot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: query,
+            subset: currentSubset,
+            speaker: currentSpeaker
+          })
+        });
+
+        const data = await res.json();
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.classList.remove('opacity-50');
+        }
+
+        if (data.success && data.reply) {
+          appendCopilotMessage('copilot', data.reply, data.audio_base64);
+          if (data.audio_base64) {
+            playBase64Audio(data.audio_base64);
+          } else {
+            if (wave) wave.classList.add('hidden');
+          }
+        } else {
+          const fallback = data.reply || "Telemetry system was unable to parse that request. Please try again.";
+          appendCopilotMessage('copilot', fallback);
+          if (wave) wave.classList.add('hidden');
+        }
+      } catch (e) {
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.classList.remove('opacity-50');
+        }
+        if (wave) wave.classList.add('hidden');
+        appendCopilotMessage('copilot', `Connection failure: Unable to contact voice server (${e.message}).`);
+      }
+      lucide.createIcons();
+    }
+
+    // Speech-to-Text via Web Speech Recognition
+    function initSpeechRecognition() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) return;
+
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        isRecognizing = true;
+        const btn = document.getElementById('copilot-mic-btn');
+        if (btn) btn.classList.add('bg-rose-600/30', 'border-rose-500', 'text-rose-300');
+        const wave = document.getElementById('copilot-waveform');
+        const statusText = document.getElementById('copilot-voice-status-text');
+        if (wave) wave.classList.remove('hidden');
+        if (statusText) statusText.innerText = "Listening to cockpit microphone...";
+      };
+
+      recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        const input = document.getElementById('copilot-query-input');
+        if (input) input.value = transcript;
+        submitCopilotQuery(transcript);
+      };
+
+      recognition.onerror = (e) => {
+        console.warn('Speech recognition error:', e.error);
+        stopCopilotMic();
+      };
+
+      recognition.onend = () => {
+        stopCopilotMic();
+      };
+    }
+
+    function toggleCopilotMic() {
+      initVoiceAudio();
+      if (!recognition) initSpeechRecognition();
+      if (!recognition) {
+        showToast('Speech recognition not supported in this browser. Please type your query.', 'alert');
+        return;
+      }
+      if (isRecognizing) {
+        recognition.stop();
+      } else {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.warn('Recognition start error:', e);
+        }
+      }
+    }
+
+    function stopCopilotMic() {
+      isRecognizing = false;
+      const btn = document.getElementById('copilot-mic-btn');
+      if (btn) btn.classList.remove('bg-rose-600/30', 'border-rose-500', 'text-rose-300');
+      const wave = document.getElementById('copilot-waveform');
+      if (wave) wave.classList.add('hidden');
     }
 
     // Toast Notification Dispatcher

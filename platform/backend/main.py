@@ -15,8 +15,6 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PLATFORM_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 FRONTEND_HTML = os.path.join(PLATFORM_DIR, "frontend", "dashboard.html")
 
-from .data_bridge import DataBridge
-
 app = FastAPI(
     title="Tata Elxsi Predictive Fleet Maintenance API (Case Study 1)",
     description="Autonomous Predictive Maintenance, Conformal RUL & Triage System for Industrial Connected Fleet (NASA C-MAPSS)",
@@ -32,7 +30,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from .data_bridge import DataBridge
+from .voice_agent import SarvamVoiceEngine, AVAILABLE_SPEAKERS
+
 bridge = DataBridge()
+voice_engine = SarvamVoiceEngine()
 
 class OrderActionRequest(BaseModel):
     subset: str = "FD001"
@@ -42,6 +44,17 @@ class OrderActionRequest(BaseModel):
 
 class RetrainRequest(BaseModel):
     subset: str = "FD001"
+
+class VoiceSynthesizeRequest(BaseModel):
+    text: str
+    speaker: str = "shubh"
+    model: str = "bulbul:v3"
+
+class VoiceCopilotRequest(BaseModel):
+    query: str
+    subset: str = "FD001"
+    unit: Optional[int] = None
+    speaker: str = "shubh"
 
 @app.get("/")
 @app.get("/dashboard")
@@ -157,3 +170,44 @@ def trigger_retrain(req: RetrainRequest):
         "stderr": "",
         "subset": subset
     }
+
+@app.get("/api/voice/status")
+def get_voice_status():
+    """Returns Sarvam AI voice engine status and available speaker personas."""
+    return {
+        "configured": voice_engine.is_configured(),
+        "provider": "Sarvam AI",
+        "chat_model": "sarvam-105b-conversations",
+        "tts_model": "bulbul:v3",
+        "speakers": AVAILABLE_SPEAKERS,
+        "default_speaker": "shubh"
+    }
+
+@app.post("/api/voice/synthesize")
+def synthesize_voice(req: VoiceSynthesizeRequest):
+    """Synthesizes tactical cockpit audio using Sarvam Bulbul neural TTS."""
+    clean_text = req.text.strip()
+    if not clean_text:
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    audio = voice_engine.synthesize_speech(clean_text, speaker=req.speaker, model=req.model)
+    return {
+        "success": bool(audio),
+        "audio_base64": audio,
+        "speaker": req.speaker,
+        "format": "audio/wav"
+    }
+
+@app.post("/api/voice/copilot")
+def query_voice_copilot(req: VoiceCopilotRequest):
+    """Interacts with the grounded AeroShield Voice Copilot (Sarvam 105B + Bulbul)."""
+    clean_query = req.query.strip()
+    if not clean_query:
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+    res = voice_engine.query_copilot(
+        query=clean_query,
+        subset=req.subset,
+        unit=req.unit,
+        speaker=req.speaker,
+        bridge=bridge
+    )
+    return res

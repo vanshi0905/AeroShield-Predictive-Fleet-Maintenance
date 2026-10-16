@@ -122,3 +122,38 @@ def test_api_dispatch_work_order():
         assert v_res.status_code == 200
         assert v_res.json()["verified"] is True
 
+def test_api_voice_status():
+    res = client.get("/api/voice/status")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["provider"] == "Sarvam AI"
+    assert data["configured"] is True
+    assert len(data["speakers"]) >= 4
+    speaker_ids = [s["id"] for s in data["speakers"]]
+    assert "shubh" in speaker_ids
+    assert "priya" in speaker_ids
+
+def test_api_voice_synthesize():
+    res = client.post("/api/voice/synthesize", json={
+        "text": "AeroShield telemetry systems nominal.",
+        "speaker": "shubh"
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["success"] is True
+    assert data["audio_base64"] is not None
+    assert len(data["audio_base64"]) > 100
+
+def test_api_voice_copilot():
+    res = client.post("/api/voice/copilot", json={
+        "query": "What is the status of Engine 1 in FD001?",
+        "subset": "FD001",
+        "speaker": "shubh"
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["success"] is True
+    assert "reply" in data
+    assert len(data["reply"]) > 10
+    assert data["audio_base64"] is not None
+
