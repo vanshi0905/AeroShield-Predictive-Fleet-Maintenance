@@ -1,0 +1,14 @@
+services:
+  pipeline:            # docker compose run --rm pipeline
+    build: .
+    command: python run_all.py --all --reset
+    volumes: ["./outputs:/app/outputs", "./data:/app/data"]
+  dashboard:           # http://localhost:8501
+    build: .
+    ports: ["8501:8501"]
+    volumes: ["./outputs:/app/outputs"]
+  mlflow:              # http://localhost:5000
+    build: .
+    command: mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///outputs/mlflow.db
+    ports: ["5000:5000"]
+    volumes: ["./outputs:/app/outputs"]
