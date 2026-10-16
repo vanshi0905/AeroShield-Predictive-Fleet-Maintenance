@@ -11,7 +11,8 @@
 > Built for **Tata Elxsi Case Study 1: Self-Healing Machines** evaluated on the full **NASA C-MAPSS (FD001–FD004)** turbofan benchmark suite.
 
 🌐 **Live Cockpit**: **[https://aeroshield-phi.vercel.app](https://aeroshield-phi.vercel.app)**  
-📚 **System & Model Architecture Guide**: **[docs/MODEL_AND_SYSTEM_DOCUMENTATION.md](docs/MODEL_AND_SYSTEM_DOCUMENTATION.md)**
+📚 **System & Model Architecture Guide**: **[docs/MODEL_AND_SYSTEM_DOCUMENTATION.md](docs/MODEL_AND_SYSTEM_DOCUMENTATION.md)**  
+📂 **Layer-by-Layer Architectural Docs**: **[layer_documentation/](layer_documentation/)**
 
 ---
 
