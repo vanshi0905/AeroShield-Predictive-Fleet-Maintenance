@@ -1,0 +1,6 @@
+subset: FD004
+description: "Six operating conditions, two fault modes (HPC + Fan)"
+n_regimes: 6            # default k; silhouette check over k=4..8 is logged for multi-regime subsets
+clustering: true
+fault_modes: 2          # >1 enables the fault-mode score feature (Section 5.4, problem A8)
+rul_cap: 125

@@ -1,0 +1,93 @@
+# SHIELD thresholds - ONE file a maintenance expert can tune without reading code.
+RULE_VERSION: "rules-2.1"
+
+# RUL labelling / modelling
+CAP: 125                    # RUL label cap (cycles); cross-validate with `run_all.py --tune-cap`
+CONFORMAL_LEVEL: 0.80       # target interval coverage
+CALIB_REPEATS: 10           # random truncation points per engine used for calibration
+SHORT_HISTORY_CYCLES: 40    # below this age an engine uses the short-history conformal bucket
+NEAR_FAILURE_RUL: 30        # secondary label for near-failure precision/recall
+NEAR_WEIGHT_RUL: 50         # rows with capped RUL <= this get double sample weight
+
+# Severity (cycles)
+CRIT_P10: 15
+CRIT_P50: 25
+HIGH_P50: 50
+MED_P50: 80
+ANOM_MED_P50: 100
+CONFLICT_P50: 110
+MAX_WIDTH: 60               # interval width above which HIGH/CRITICAL goes to a human
+PERSIST: 3                  # cycles to confirm an upgrade
+DOWNGRADE_PERSIST: 5        # cycles to confirm a downgrade
+DISAGREE_CYCLES: 25         # |P50_main - P50_second| that raises an exception
+USE_CALIBRATED_THRESHOLDS: false   # true = use the cost-optimal severity thresholds found in replay
+
+# Data-quality / sensor-agreement gates
+MAX_NAN: 0.20
+STUCK_WINDOW: 5
+RANGE_MARGIN: 0.30
+JUMP_K: 10.0
+MIN_AGREE_SENSORS: 3        # k sensors beyond AGREE_SD robust SD for HIGH/CRITICAL
+AGREE_SD: 3.0
+SENSOR_SPEARMAN_MIN: 0.30   # sensor selection: median per-engine |Spearman(cycle, sensor)|
+SENSOR_REL_STD_MIN: 1.0e-6  # sensor selection: within-regime variance floor (std/|mean|)
+
+# Bounded-step smoother (alpha / u_max are tuned on OOF; these are the grid defaults)
+SMOOTHER_ALPHA: 0.3
+D_MAX: 5
+U_MAX: 1
+SMOOTHER_GRID_ALPHA: [0.2, 0.3, 0.5]
+SMOOTHER_GRID_UMAX: [1, 2]
+
+# Late-bias shift grid (cycles); applied to P10 and P50 (P90 left unshifted, see pipeline.RULSystem)
+LATE_SHIFT_GRID: [0, 1, 2, 3, 4, 5, 6, 8]
+LATE_SHIFT_MAX_RMSE_RISE: 0.10
+
+# Anomaly detector
+ANOM_PERCENTILES: [95.0, 97.5, 99.0, 99.5, 99.6, 99.7, 99.8, 99.9]
+ANOM_PERSIST: 3
+ANOM_MAX_ENGINE_FA: 0.05
+HEALTHY_RUL: 110
+
+# Order volume / lifecycle
+WINDOW_CYCLES: 20
+MEDIUM_BUDGET: 10           # MEDIUM orders per maintenance window (CRITICAL/HIGH never capped)
+STALE_FACTOR: 2.0           # open > STALE_FACTOR x due window with no acknowledgement -> human
+REOPEN_WINDOW: 20
+REOPEN_LIMIT: 3
+COST_RATIO: [10.0, 1.0, 0.1]   # C_fail : C_early : C_order  (PLACEHOLDER until real costs known)
+
+# Drift / retraining
+PSI_LIMIT: 0.2
+PSI_MIN_FEATURES: 3
+KS_P: 0.01
+RESIDUAL_RMSE_RISE: 0.10
+MIN_NEW_ENGINES: 20
+AGE_BINS: [0, 40, 80, 140, 1000]
+
+# Dashboard roles (PoC level)
+ROLES: {viewer: [read], operator: [read, acknowledge, complete], admin: [read, acknowledge, complete, thresholds, promote]}
+
+# Sensor catalogue (NASA C-MAPSS documentation) -> subsystem used in work orders
+SENSORS:
+  s1:  {symbol: T2,      desc: "Total temperature at fan inlet",        subsystem: "Fan inlet"}
+  s2:  {symbol: T24,     desc: "Total temperature at LPC outlet",       subsystem: "Low-Pressure Compressor (LPC)"}
+  s3:  {symbol: T30,     desc: "Total temperature at HPC outlet",       subsystem: "High-Pressure Compressor (HPC)"}
+  s4:  {symbol: T50,     desc: "Total temperature at LPT outlet",       subsystem: "Low-Pressure Turbine (LPT)"}
+  s5:  {symbol: P2,      desc: "Pressure at fan inlet",                 subsystem: "Fan inlet"}
+  s6:  {symbol: P15,     desc: "Total pressure in bypass duct",         subsystem: "Bypass duct"}
+  s7:  {symbol: P30,     desc: "Total pressure at HPC outlet",          subsystem: "High-Pressure Compressor (HPC)"}
+  s8:  {symbol: Nf,      desc: "Physical fan speed",                    subsystem: "Fan / LP shaft"}
+  s9:  {symbol: Nc,      desc: "Physical core speed",                   subsystem: "Core / HP shaft"}
+  s10: {symbol: epr,     desc: "Engine pressure ratio",                 subsystem: "Engine overall"}
+  s11: {symbol: Ps30,    desc: "Static pressure at HPC outlet",         subsystem: "High-Pressure Compressor (HPC)"}
+  s12: {symbol: phi,     desc: "Ratio of fuel flow to Ps30",            subsystem: "Combustor / fuel system"}
+  s13: {symbol: NRf,     desc: "Corrected fan speed",                   subsystem: "Fan / LP shaft"}
+  s14: {symbol: NRc,     desc: "Corrected core speed",                  subsystem: "Core / HP shaft"}
+  s15: {symbol: BPR,     desc: "Bypass ratio",                          subsystem: "Fan / bypass flow"}
+  s16: {symbol: farB,    desc: "Burner fuel-air ratio",                 subsystem: "Combustor / fuel system"}
+  s17: {symbol: htBleed, desc: "Bleed enthalpy",                        subsystem: "Bleed air system"}
+  s18: {symbol: Nf_dmd,  desc: "Demanded fan speed",                    subsystem: "Control demand"}
+  s19: {symbol: PCNfR_dmd, desc: "Demanded corrected fan speed",        subsystem: "Control demand"}
+  s20: {symbol: W31,     desc: "HPT coolant bleed",                     subsystem: "High-Pressure Turbine (HPT) cooling"}
+  s21: {symbol: W32,     desc: "LPT coolant bleed",                     subsystem: "Low-Pressure Turbine (LPT) cooling"}
