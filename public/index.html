@@ -187,7 +187,7 @@
     <!-- Brand / Title -->
     <div class="flex items-center gap-3.5">
       <!-- Artistic Aerospace Turbofan Vortex Logo -->
-      <div onclick="toggleLogoSpeed()" class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/90 via-slate-900/95 to-blue-950/90 border border-cyan-400/40 p-1 flex items-center justify-center glow-cyan group cursor-pointer shadow-lg overflow-hidden" title="Click to trigger aerospace vortex burst">
+      <div onclick="playAvionicsChime('confirm'); speakCockpit('AeroShield turbofan digital twin nominal.'); toggleLogoSpeed()" class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/90 via-slate-900/95 to-blue-950/90 border border-cyan-400/40 p-1 flex items-center justify-center glow-cyan group cursor-pointer shadow-lg overflow-hidden" title="Click to trigger aerospace vortex burst and audio report">
         <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-transparent to-blue-500/20 pointer-events-none"></div>
         <svg id="vortex-svg" class="w-9 h-9 relative z-10 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -253,8 +253,21 @@
       </div>
     </div>
 
-    <!-- Right Controls: Subset Selector + Telemetry Badges -->
+    <!-- Right Controls: Voice Toggle + Subset Selector + Telemetry Badges -->
     <div class="flex items-center gap-4 flex-wrap">
+
+      <!-- Cockpit Voice & Audio Controls -->
+      <div class="flex items-center gap-1.5">
+        <button onclick="toggleVoiceAudio()" id="voice-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-cyan-500/50 transition flex items-center gap-2 text-xs font-medium shadow-sm group" title="Toggle Tactical Voice & Avionics Audio (Click to test)">
+          <i data-lucide="volume-2" id="voice-icon" class="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+          <span class="text-[11px] font-sans" id="voice-label">Voice: Active</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="voice-indicator"></span>
+        </button>
+        <button onclick="testVoiceAnnouncement()" class="px-2 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-cyan-300 hover:border-slate-700 transition text-[10px] font-medium hidden sm:inline-flex items-center gap-1" title="Test Cockpit Voice Broadcast">
+          <i data-lucide="mic" class="w-3 h-3 text-cyan-400"></i>
+          Test
+        </button>
+      </div>
 
       <!-- Subset Selector Pills -->
       <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900/90 border border-slate-800">
@@ -1348,6 +1361,177 @@
     let matrixCurrentPage = 1;
     let matrixPageSize = 30;
 
+    // ==========================================
+    // TACTICAL COCKPIT VOICE & AUDIO ENGINE
+    // Web Speech API + Web Audio Synthesizer
+    // ==========================================
+    let voiceAudioEnabled = true;
+    let audioCtx = null;
+    let availableVoices = [];
+
+    function initVoiceAudio() {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          audioCtx = new AudioCtx();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+        availableVoices = window.speechSynthesis.getVoices();
+      }
+    }
+
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        availableVoices = window.speechSynthesis.getVoices();
+      };
+    }
+
+    // Auto-unlock on first user interaction anywhere on the page
+    document.addEventListener('click', () => {
+      initVoiceAudio();
+    }, { once: true });
+
+    function toggleVoiceAudio() {
+      voiceAudioEnabled = !voiceAudioEnabled;
+      const btn = document.getElementById('voice-toggle-btn');
+      const icon = document.getElementById('voice-icon');
+      const label = document.getElementById('voice-label');
+      const ind = document.getElementById('voice-indicator');
+
+      initVoiceAudio();
+
+      if (voiceAudioEnabled) {
+        if (icon) icon.setAttribute('data-lucide', 'volume-2');
+        if (label) label.innerText = 'Voice: Active';
+        if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+        if (btn) btn.classList.remove('opacity-60');
+        showToast('Cockpit Voice & Audio Enabled', 'info');
+        playAvionicsChime('confirm');
+        speakCockpit('Avionics voice online. Telemetry systems nominal.', 'high');
+      } else {
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+        if (icon) icon.setAttribute('data-lucide', 'volume-x');
+        if (label) label.innerText = 'Voice: Muted';
+        if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-slate-500';
+        if (btn) btn.classList.add('opacity-60');
+        showToast('Voice and Audio Muted', 'info');
+      }
+      lucide.createIcons();
+    }
+
+    function testVoiceAnnouncement() {
+      initVoiceAudio();
+      voiceAudioEnabled = true;
+      const btn = document.getElementById('voice-toggle-btn');
+      const icon = document.getElementById('voice-icon');
+      const label = document.getElementById('voice-label');
+      const ind = document.getElementById('voice-indicator');
+      if (icon) icon.setAttribute('data-lucide', 'volume-2');
+      if (label) label.innerText = 'Voice: Active';
+      if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+      if (btn) btn.classList.remove('opacity-60');
+      lucide.createIcons();
+
+      playAvionicsChime('confirm');
+      speakCockpit('AeroShield defense voice telemetry test. All four fleet partitions operational.', 'high');
+      showToast('Broadcasting cockpit audio test...', 'info');
+    }
+
+    function playAvionicsChime(type = 'ping') {
+      if (!voiceAudioEnabled) return;
+      initVoiceAudio();
+      if (!audioCtx) return;
+
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        if (type === 'alert') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.16);
+        } else if (type === 'confirm') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, now); // D5
+          osc.frequency.setValueAtTime(880, now + 0.08); // A5
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        } else {
+          // Subtle ping / chime
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        }
+      } catch (e) {
+        console.warn('Avionics chime error:', e);
+      }
+    }
+
+    function speakCockpit(text, priority = 'normal') {
+      if (!voiceAudioEnabled || !('speechSynthesis' in window)) return;
+      initVoiceAudio();
+
+      try {
+        if (priority === 'high' || window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+        }
+
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 1.05; // clear tactical pace
+        utter.pitch = 0.95; // calm, authoritative avionics tone
+        utter.volume = 1.0;
+
+        if (!availableVoices || availableVoices.length === 0) {
+          availableVoices = window.speechSynthesis.getVoices();
+        }
+
+        // Prioritize natural English voices (Google, Samantha, David, Daniel, Victoria, etc.)
+        const enVoice = availableVoices.find(v => 
+          v.lang && v.lang.startsWith('en') && (
+            v.name.includes('Natural') || 
+            v.name.includes('Google') || 
+            v.name.includes('Samantha') || 
+            v.name.includes('David') || 
+            v.name.includes('Zira') ||
+            v.name.includes('Daniel')
+          )
+        ) || availableVoices.find(v => v.lang && v.lang.startsWith('en'));
+
+        if (enVoice) {
+          utter.voice = enVoice;
+        }
+
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        console.warn('Speech synthesis error:', e);
+      }
+    }
+
     // Toast Notification Dispatcher
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
@@ -1436,6 +1620,8 @@
       if (badge) badge.innerText = `${subset} Active`;
       currentDrilldownData = null;
       showToast(`Switched telemetry pipeline to ${subset}`, 'info');
+      playAvionicsChime('ping');
+      speakCockpit(`Telemetry switched to ${subset}.`);
       await initDashboard();
     }
 
@@ -1760,6 +1946,19 @@
         else if (data.status === "HIGH") badgeColor = "bg-amber-500/20 text-amber-300 border border-amber-500/40 glow-amber";
         else if (data.status === "NEEDS_HUMAN") badgeColor = "bg-purple-500/20 text-purple-300 border border-purple-500/40 glow-purple";
         document.getElementById('drilldown-status-badge').className = `px-3 py-1 rounded-lg text-xs font-extrabold mono ${badgeColor}`;
+
+        if (data.status === "CRITICAL") {
+          playAvionicsChime('alert');
+          speakCockpit(`Warning. Unit ${unit} flagged critical. Remaining useful life estimated at ${Math.round(data.latest_p50)} flight cycles.`, 'high');
+        } else if (data.status === "HIGH") {
+          playAvionicsChime('alert');
+          speakCockpit(`Caution. Unit ${unit} elevated sensor deviation detected.`, 'normal');
+        } else if (data.status === "NEEDS_HUMAN") {
+          playAvionicsChime('confirm');
+          speakCockpit(`Unit ${unit} escalated to human exception review queue.`, 'normal');
+        } else {
+          playAvionicsChime('ping');
+        }
 
         const slider = document.getElementById('replay-slider');
         slider.min = 1;
@@ -2300,6 +2499,8 @@
         });
         const data = await res.json();
         if (data.success) {
+          playAvionicsChime('confirm');
+          speakCockpit(`Work order ${orderId} dispatched to ${status}. Block committed.`, 'high');
           showToast(`Order ${orderId} updated to ${status}. Block appended to audit ledger.`, 'success');
           await fetchWorkOrders();
           await fetchHumanExceptions();
@@ -2422,6 +2623,8 @@
         btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> VERIFY AUDIT INTEGRITY`;
         lucide.createIcons();
 
+        playAvionicsChime('confirm');
+        speakCockpit(`Cryptographic audit verified. All ${data.total_entries || ''} ledger blocks intact and tamper free.`, 'high');
         showToast(`[SHA-256 LEDGER VERIFIED] ${data.message} (${data.total_entries} blocks intact)`, 'success');
         await fetchAuditLog();
       } catch (e) {
@@ -2781,6 +2984,7 @@
       
       const ts = new Date().toISOString().slice(11, 19);
       consoleBox.innerHTML += `<p class="text-sky-400 font-mono text-[11px] pt-1">[${ts} UTC] [JOB_SPAWN] Dispatching retraining job on ${currentSubset} (${selectedDriftScenario})...</p>`;
+      speakCockpit(`Retraining pipeline dispatched for fleet partition ${currentSubset}.`, 'normal');
 
       try {
         const res = await fetch('/api/retrain/trigger', {
@@ -2793,6 +2997,8 @@
         btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> EXECUTE RETRAINING & PREPROCESSOR ADAPTATION DEMO`;
 
         if (data.success) {
+          playAvionicsChime('confirm');
+          speakCockpit(`Retraining job completed for ${currentSubset}. Candidate evaluated against champion gate.`, 'high');
           showToast(`Retraining pipeline execution completed on ${currentSubset}`, 'success');
           consoleBox.innerHTML += `<pre class="text-[10px] text-slate-300 p-2.5 rounded-lg bg-black/70 border border-slate-800/80 font-mono leading-relaxed mt-2 select-text whitespace-pre-wrap">${data.stdout}</pre>`;
           consoleBox.scrollTop = consoleBox.scrollHeight;
