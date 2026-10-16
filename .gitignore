@@ -94,3 +94,5 @@ test_script.js
 live_test_script.js
 temp_*
 *.zip
+
+.vercel
