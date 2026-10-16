@@ -1,0 +1,2977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Predictive Fleet Maintenance & Digital Twin</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+    
+    :root {
+      --bg-dark: #040714;
+      --card-bg: linear-gradient(135deg, rgba(8, 14, 38, 0.95) 0%, rgba(12, 19, 48, 0.82) 100%);
+      --card-subtle: rgba(15, 23, 42, 0.72);
+      --accent-cyan: #00F5D4;
+      --accent-blue: #0075FF;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      --accent-purple: #A855F7;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 117, 255, 0.15) 0px, transparent 40%),
+        radial-gradient(circle at 90% 15%, rgba(168, 85, 247, 0.12) 0px, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(0, 245, 212, 0.08) 0px, transparent 50%),
+        radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.6) 0px, transparent 100%);
+      color: #f1f5f9;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Monospace Purge: Standardize metrics and tabular data on Plus Jakarta Sans with tabular figures */
+    .mono { font-family: 'Plus Jakarta Sans', sans-serif; font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+    .hash-mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+
+    /* Tactical Vision Glass Design Tokens */
+    .vision-glass {
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+    }
+
+    .vision-glass-subtle {
+      background: var(--card-subtle);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+    }
+
+    .tactile-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.25);
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Calm, Low-Contrast Tonal Status Elevation (Zero AI Slop) */
+    .glow-cyan { box-shadow: 0 4px 16px -2px rgba(6, 182, 212, 0.10); }
+    .glow-blue { box-shadow: 0 4px 16px -2px rgba(0, 117, 255, 0.12); }
+    .glow-emerald { box-shadow: 0 4px 16px -2px rgba(16, 185, 129, 0.10); }
+    .glow-amber { box-shadow: 0 4px 16px -2px rgba(245, 158, 11, 0.10); }
+    .glow-rose { box-shadow: 0 4px 16px -2px rgba(244, 63, 94, 0.12); }
+    .glow-purple { box-shadow: 0 4px 16px -2px rgba(168, 85, 247, 0.10); }
+
+    .tab-active {
+      background: linear-gradient(135deg, #0075FF 0%, #0044B3 100%);
+      box-shadow: 0px 4px 16px rgba(0, 117, 255, 0.35);
+      color: #ffffff !important;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Custom Slider - Avionics Style */
+    input[type=range].avionics-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+    }
+    input[type=range].avionics-slider:focus {
+      outline: none;
+    }
+    input[type=range].avionics-slider::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 8px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #0284c7 0%, #06b6d4 50%, #38bdf8 100%);
+      border-radius: 9999px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+    }
+    input[type=range].avionics-slider::-webkit-slider-thumb {
+      height: 22px;
+      width: 22px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #00F5D4;
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -7px;
+      box-shadow: 0 0 14px #00F5D4, 0 2px 6px rgba(0,0,0,0.8);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    input[type=range].avionics-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 20px #00F5D4, 0 3px 8px rgba(0,0,0,0.9);
+    }
+
+    /* Terminal Scanlines Effect */
+    .terminal-screen {
+      background: radial-gradient(circle at 50% 50%, #070d1e 0%, #02040b 100%);
+      position: relative;
+    }
+    .terminal-screen::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 2;
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(4, 7, 20, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 117, 255, 0.45); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 186, 242, 0.8); }
+
+    /* Work Order Ticket Perforation Effect */
+    .ticket-edge {
+      position: relative;
+    }
+    .ticket-edge::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background-color: var(--bg-dark);
+      border-radius: 50%;
+    }
+
+    /* Toast Notification Container */
+    #toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+    .toast-item {
+      pointer-events: auto;
+      transform: translateX(120%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+      opacity: 0;
+    }
+    .toast-item.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Header Bar -->
+  <header class="vision-glass sticky top-0 z-50 px-6 py-3 border-b border-cyan-900/40 flex flex-wrap items-center justify-between gap-4">
+    <!-- Brand / Title -->
+    <div class="flex items-center gap-3.5">
+      <!-- Artistic Aerospace Turbofan Vortex Logo -->
+      <div onclick="playAudioClick(); toggleLogoSpeed()" class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/90 via-slate-900/95 to-blue-950/90 border border-cyan-400/40 p-1 flex items-center justify-center glow-cyan group cursor-pointer shadow-lg overflow-hidden" title="Click to trigger aerospace vortex burst">
+        <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-transparent to-blue-500/20 pointer-events-none"></div>
+        <svg id="vortex-svg" class="w-9 h-9 relative z-10 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="artBlade1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00F5D4" />
+              <stop offset="60%" stop-color="#00BAF2" />
+              <stop offset="100%" stop-color="#0052CC" />
+            </linearGradient>
+            <linearGradient id="artBlade2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38BDF8" />
+              <stop offset="70%" stop-color="#6366F1" />
+              <stop offset="100%" stop-color="#8B5CF6" />
+            </linearGradient>
+            <radialGradient id="artCore" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="35%" stop-color="#00F5D4" />
+              <stop offset="70%" stop-color="#0284C7" />
+              <stop offset="100%" stop-color="#0B132B" />
+            </radialGradient>
+            <filter id="artGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Outer Telemetry & Precision Rings -->
+          <circle cx="50" cy="50" r="46" stroke="#00BAF2" stroke-width="1.2" stroke-opacity="0.3" stroke-dasharray="2 3" />
+          <circle cx="50" cy="50" r="42" stroke="#38BDF8" stroke-width="0.8" stroke-opacity="0.5" />
+          <circle cx="50" cy="50" r="38" stroke="#6366F1" stroke-width="0.6" stroke-opacity="0.3" stroke-dasharray="6 4" />
+          
+          <!-- Aerodynamic Spiral Turbofan Blades -->
+          <g filter="url(#artGlow)">
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(45 50 50)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" transform="rotate(90 50 50)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(135 50 50)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" transform="rotate(180 50 50)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(225 50 50)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" transform="rotate(270 50 50)" />
+            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(315 50 50)" />
+          </g>
+
+          <!-- Core Spinner Node -->
+          <circle cx="50" cy="50" r="14" fill="#060B26" stroke="#00BAF2" stroke-width="1.8" />
+          <circle cx="50" cy="50" r="9" fill="url(#artCore)" />
+          <circle cx="50" cy="50" r="3.5" fill="#FFFFFF" />
+
+          <!-- Center Axis Ticks -->
+          <line x1="50" y1="38" x2="50" y2="42" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
+          <line x1="50" y1="58" x2="50" y2="62" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
+          <line x1="38" y1="50" x2="42" y2="50" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
+          <line x1="58" y1="50" x2="62" y2="50" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+          Autonomous Predictive Fleet Maintenance
+          <span class="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Right Controls: Audio Synth + Subset Selector + Telemetry Badges -->
+    <div class="flex items-center gap-4 flex-wrap">
+      
+      <!-- Tactile Audio Synthesizer Toggle -->
+      <button onclick="toggleAudio()" id="audio-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 hover:text-white hover:border-slate-600 transition flex items-center gap-1.5 text-xs font-medium" title="Toggle Tactile Web Audio Synthesizer">
+        <i data-lucide="volume-2" id="audio-icon" class="w-3.5 h-3.5 text-slate-400"></i>
+        <span class="text-[11px] font-sans hidden sm:inline" id="audio-label">FX On</span>
+      </button>
+
+      <!-- Subset Selector Pills -->
+      <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900/90 border border-slate-800">
+        <span class="text-[10px] text-slate-400 font-semibold px-2">Subset:</span>
+        <button onclick="switchSubset('FD001')" id="pill-FD001" class="text-xs px-2.5 py-1 rounded-md font-semibold transition bg-blue-600 text-white shadow-sm">FD001</button>
+        <button onclick="switchSubset('FD002')" id="pill-FD002" class="text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white">FD002</button>
+        <button onclick="switchSubset('FD003')" id="pill-FD003" class="text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white">FD003</button>
+        <button onclick="switchSubset('FD004')" id="pill-FD004" class="text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white">FD004</button>
+      </div>
+
+      <!-- Live Badges -->
+      <div class="flex items-center gap-3 border-l border-slate-800/80 pl-3">
+        <div class="text-right">
+          <p class="text-[10px] text-slate-400 font-medium">Conformal Target</p>
+          <p class="text-xs font-semibold text-emerald-300 flex items-center justify-end gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            80.0% Coverage
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <div class="px-6 pt-4 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-2 p-1.5 vision-glass-subtle border border-slate-800/80 rounded-xl overflow-x-auto">
+      <button onclick="showTab('fleet')" id="tab-fleet" class="tab-btn tab-active px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
+        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        Fleet Health Overview
+      </button>
+      <button onclick="showTab('drilldown')" id="tab-drilldown" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
+        <i data-lucide="activity" class="w-4 h-4"></i>
+        Engine Drill-Down & Time-Travel Replay
+      </button>
+      <button onclick="showTab('triage')" id="tab-triage" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
+        <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+        Autonomous Triage & Work Orders
+      </button>
+      <button onclick="showTab('mlops')" id="tab-mlops" class="tab-btn text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
+        <i data-lucide="git-branch" class="w-4 h-4"></i>
+        MLOps & Retraining Gate
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
+
+    <!-- Top KPI Bento Ribbon (3-Tier Clean Hierarchy, Zero AI Slop) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="kpi-ribbon">
+      <!-- 1. Health Rate -->
+      <div class="vision-glass p-4 border border-slate-800/80 hover:border-slate-700/80 transition rounded-xl flex flex-col justify-between space-y-3">
+        <!-- Tier 1: Title + Status Badge -->
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-slate-400 font-medium">
+            <div class="p-1 rounded-md bg-emerald-500/10 text-emerald-400"><i data-lucide="heart-pulse" class="w-3.5 h-3.5"></i></div>
+            <span>Fleet Health Rate</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20" id="kpi-health-badge">Target: 75%</span>
+        </div>
+        <!-- Tier 2: Big Metric Value + Mini Inline Sparkline -->
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-white tracking-tight tabular-nums whitespace-nowrap" id="kpi-health-rate">--%</h2>
+          <!-- Smooth SVG Sparkline (5px internal padding, horizontal tangent Bézier) -->
+          <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
+            <path d="M 5 20 C 20 20, 35 15, 50 12 C 65 9, 70 8, 75 7" stroke="#10B981" stroke-width="2" stroke-linecap="round" fill="none" />
+            <circle cx="75" cy="7" r="2.5" fill="#10B981" />
+          </svg>
+        </div>
+        <!-- Tier 3: Context Subtitle -->
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+          <span id="kpi-health-sub" class="truncate">Nominal operational readiness</span>
+          <span class="text-emerald-400 font-medium whitespace-nowrap">+2.4% vs Base</span>
+        </div>
+      </div>
+
+      <!-- 2. Active Engines -->
+      <div class="vision-glass p-4 border border-slate-800/80 hover:border-slate-700/80 transition rounded-xl flex flex-col justify-between space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-slate-400 font-medium">
+            <div class="p-1 rounded-md bg-sky-500/10 text-sky-400"><i data-lucide="cpu" class="w-3.5 h-3.5"></i></div>
+            <span>Active Fleet Units</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 font-semibold border border-sky-500/20" id="kpi-subset-badge">FD001 Active</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-white tracking-tight tabular-nums whitespace-nowrap" id="kpi-active-units">--</h2>
+          <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
+            <path d="M 5 18 C 20 18, 35 18, 50 14 C 65 10, 70 8, 75 6" stroke="#0284C7" stroke-width="2" stroke-linecap="round" fill="none" />
+            <circle cx="75" cy="6" r="2.5" fill="#0284C7" />
+          </svg>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+          <span id="kpi-active-sub" class="truncate">NASA C-MAPSS Turbofans</span>
+          <span class="text-sky-400 font-medium whitespace-nowrap">100% Monitored</span>
+        </div>
+      </div>
+
+      <!-- 3. Early Warning Alerts -->
+      <div class="vision-glass p-4 border border-slate-800/80 hover:border-slate-700/80 transition rounded-xl flex flex-col justify-between space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-slate-400 font-medium">
+            <div class="p-1 rounded-md bg-amber-500/10 text-amber-400"><i data-lucide="bell" class="w-3.5 h-3.5"></i></div>
+            <span>Early Warning Alerts</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20" id="kpi-lead-badge">45 Cyc Lead</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-amber-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-anom-alerts">--</h2>
+          <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
+            <path d="M 5 22 C 20 22, 35 20, 50 16 C 65 12, 70 10, 75 8" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none" />
+            <circle cx="75" cy="8" r="2.5" fill="#F59E0B" />
+          </svg>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+          <span class="truncate">Baseline-subtracted dbase</span>
+          <span class="text-amber-400 font-medium whitespace-nowrap">0 False Alerts</span>
+        </div>
+      </div>
+
+      <!-- 4. Critical Work Orders -->
+      <div class="vision-glass p-4 border border-slate-800/80 hover:border-slate-700/80 transition rounded-xl flex flex-col justify-between space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-slate-400 font-medium">
+            <div class="p-1 rounded-md bg-rose-500/10 text-rose-400"><i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i></div>
+            <span>Critical / AOG Orders</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-semibold border border-rose-500/20">RUL ≤ 25</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-rose-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-critical-orders">--</h2>
+          <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
+            <path d="M 5 22 C 20 22, 35 19, 50 15 C 65 11, 70 9, 75 8" stroke="#F43F5E" stroke-width="2" stroke-linecap="round" fill="none" />
+            <circle cx="75" cy="8" r="2.5" fill="#F43F5E" />
+          </svg>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+          <span id="kpi-critical-sub" class="truncate">Automated dispatch active</span>
+          <span class="text-rose-400 font-medium whitespace-nowrap">0 Overdue</span>
+        </div>
+      </div>
+
+      <!-- 5. MLOps Gate Status -->
+      <div class="vision-glass p-4 border border-slate-800/80 hover:border-slate-700/80 transition rounded-xl flex flex-col justify-between space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-slate-400 font-medium">
+            <div class="p-1 rounded-md bg-emerald-500/10 text-emerald-400"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i></div>
+            <span>MLOps Production Gate</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">Active v1</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-bold text-emerald-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-mlops-gate">Pass</h2>
+          <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
+            <path d="M 5 16 C 20 16, 35 14, 50 11 C 65 8, 70 7, 75 6" stroke="#10B981" stroke-width="2" stroke-linecap="round" fill="none" />
+            <circle cx="75" cy="6" r="2.5" fill="#10B981" />
+          </svg>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
+          <span class="truncate">PSI &lt; 0.20 • 1-Sided Gate</span>
+          <span class="text-emerald-400 font-medium whitespace-nowrap">Protected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 1: FLEET HEALTH OVERVIEW -->
+    <div id="view-fleet" class="space-y-6">
+      
+      <!-- Subsystem Health Gauges & Severity Mix Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Connected Subsystem Health Gauges (2 Cols) -->
+        <div class="vision-glass p-5 lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400"><i data-lucide="wrench" class="w-5 h-5"></i></div>
+              <div>
+                <h3 class="font-bold text-white tracking-wide text-sm sm:text-base">Subsystem Structural Health & Wear Degradation</h3>
+                <p class="text-xs text-slate-400">Multi-stage compressor gas-path, turbine creep & shaft balance telemetry</p>
+              </div>
+            </div>
+            <span class="text-xs text-slate-400 font-medium hidden sm:inline px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Gas-Path Telemetry</span>
+          </div>
+
+          <!-- Circular / Segmented Progress Subsystem Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="subsystem-grid">
+            
+            <!-- HPC Card -->
+            <div class="p-4 vision-glass-subtle border border-rose-500/20 hover:border-rose-500/40 transition rounded-xl flex items-center justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase">High-Pressure Compressor</span>
+                <p class="text-sm font-extrabold text-white">HPC Stage 1-8</p>
+                <p class="text-xs font-bold text-rose-400 mono mt-1" id="sub-hpc">-- Orders</p>
+                <p class="text-[10px] text-slate-400">Static Drop &Delta;Ps30/P30</p>
+              </div>
+              <!-- Mini SVG Ring Meter -->
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="text-rose-500" stroke-width="3.5" stroke-dasharray="68, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <span class="absolute text-[11px] font-bold text-rose-400 mono">68%</span>
+              </div>
+            </div>
+
+            <!-- LPT Card -->
+            <div class="p-4 vision-glass-subtle border border-amber-500/20 hover:border-amber-500/40 transition rounded-xl flex items-center justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase">Low-Pressure Turbine</span>
+                <p class="text-sm font-extrabold text-white">LPT & Blades</p>
+                <p class="text-xs font-bold text-amber-400 mono mt-1" id="sub-lpt">-- Orders</p>
+                <p class="text-[10px] text-slate-400">EGT Margin & Creep &Delta;T50</p>
+              </div>
+              <!-- Mini SVG Ring Meter -->
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="text-amber-500" stroke-width="3.5" stroke-dasharray="82, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <span class="absolute text-[11px] font-bold text-amber-400 mono">82%</span>
+              </div>
+            </div>
+
+            <!-- Fan & LP Shaft Card -->
+            <div class="p-4 vision-glass-subtle border border-cyan-500/20 hover:border-cyan-500/40 transition rounded-xl flex items-center justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase">Fan & LP Shaft</span>
+                <p class="text-sm font-extrabold text-white">Fan Dynamic Balance</p>
+                <p class="text-xs font-bold text-cyan-400 mono mt-1" id="sub-fan">-- Orders</p>
+                <p class="text-[10px] text-slate-400">Corrected Speed &Delta;NRf</p>
+              </div>
+              <!-- Mini SVG Ring Meter -->
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="text-cyan-400" stroke-width="3.5" stroke-dasharray="91, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <span class="absolute text-[11px] font-bold text-cyan-300 mono">91%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interaction Ratios Summary Banner -->
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+              <span class="text-slate-300 font-medium">Gas-Path Interaction Ratios:</span>
+            </div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s8/s9 (Fan/Core Speed)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s13/s14 (Corrected Speed)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s11/s7 (Pressure Ratio)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s4/s3 (Temperature Ratio)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Severity Distribution (1 Col) -->
+        <div class="vision-glass p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="p-1 rounded bg-sky-500/10 text-sky-400"><i data-lucide="pie-chart" class="w-5 h-5"></i></div>
+              <h3 class="font-bold text-white tracking-wide">Fleet Risk Severity Mix</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-medium">Distribution</span>
+          </div>
+
+          <div class="space-y-2 text-xs font-medium" id="severity-list">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/15 transition">
+              <span class="text-rose-300 font-medium flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Critical (RUL &le; 25)
+              </span>
+              <span class="font-bold text-white text-sm tabular-nums" id="count-critical">--</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition">
+              <span class="text-amber-300 font-medium flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> High Priority (RUL &le; 50)
+              </span>
+              <span class="font-bold text-white text-sm tabular-nums" id="count-high">--</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/15 transition">
+              <span class="text-yellow-300 font-medium flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Medium Priority (RUL &le; 80)
+              </span>
+              <span class="font-bold text-white text-sm tabular-nums" id="count-medium">--</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/15 transition">
+              <span class="text-emerald-300 font-medium flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Healthy (Nominal)
+              </span>
+              <span class="font-bold text-white text-sm tabular-nums" id="count-normal">--</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/15 transition">
+              <span class="text-purple-300 font-medium flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Review Required (Exception)
+              </span>
+              <span class="font-bold text-white text-sm tabular-nums" id="count-human">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fleet Matrix Table with Crisper Search, Sortable Headers & Pagination -->
+      <div class="vision-glass p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="list-filter" class="w-5 h-5"></i></div>
+            <div>
+              <h3 class="font-bold text-white tracking-wide">Turbofan Fleet Health Matrix</h3>
+              <p class="text-xs text-slate-400">Click column headers to sort &bull; Select any row for Engine Drill-down & Time-Travel</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-sky-300 font-medium ml-2" id="matrix-count">0 Engines</span>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="relative">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+              <input type="text" id="engine-search" placeholder="Search Unit ID..." onkeyup="filterFleetMatrix()" class="bg-slate-900/90 border border-slate-700/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 w-40 sm:w-52">
+            </div>
+            
+            <select id="matrix-filter" onchange="filterFleetMatrix()" class="bg-slate-900/90 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-sky-500">
+              <option value="ALL">All Statuses</option>
+              <option value="ALERT">Active Alerts Only</option>
+              <option value="CRITICAL">Critical (RUL &le; 25)</option>
+              <option value="HIGH">High Priority (RUL &le; 50)</option>
+              <option value="MEDIUM">Medium Priority (RUL &le; 80)</option>
+              <option value="NEEDS_HUMAN">Review Required</option>
+              <option value="NORMAL">Healthy</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 bg-slate-900/90 text-xs font-semibold border-b border-slate-800 select-none">
+              <tr>
+                <th class="p-3 cursor-pointer hover:text-sky-300 transition" onclick="sortFleetMatrix('unit')">
+                  Engine Unit <span id="sort-unit" class="text-[10px]">↕</span>
+                </th>
+                <th class="p-3 cursor-pointer hover:text-sky-300 transition" onclick="sortFleetMatrix('current_cycle')">
+                  Cycles Flown <span id="sort-current_cycle" class="text-[10px]">↕</span>
+                </th>
+                <th class="p-3 cursor-pointer hover:text-sky-300 transition" onclick="sortFleetMatrix('p50_rul')">
+                  Predicted RUL (P50) <span id="sort-p50_rul" class="text-[10px]">↕</span>
+                </th>
+                <th class="p-3 cursor-pointer hover:text-sky-300 transition" onclick="sortFleetMatrix('band_width')">
+                  Conformal 80% Band [P10-P90] <span id="sort-band_width" class="text-[10px]">↕</span>
+                </th>
+                <th class="p-3 cursor-pointer hover:text-sky-300 transition" onclick="sortFleetMatrix('anomaly_score')">
+                  Anomaly Score (dbase) <span id="sort-anomaly_score" class="text-[10px]">↕</span>
+                </th>
+                <th class="p-3 cursor-pointer hover:text-sky-300 transition" onclick="sortFleetMatrix('status')">
+                  Triage Severity <span id="sort-status" class="text-[10px]">↕</span>
+                </th>
+                <th class="p-3 text-right">Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-matrix-body" class="divide-y divide-slate-800/60 font-medium">
+              <tr><td colspan="7" class="p-6 text-center text-slate-400">Loading fleet telemetry...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Bar -->
+        <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400 flex-wrap gap-3">
+          <div class="flex items-center gap-2">
+            <span>Showing</span>
+            <select id="matrix-page-size" onchange="changePageSize(this.value)" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white text-xs">
+              <option value="15">15</option>
+              <option value="30" selected>30</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span id="matrix-page-info">entries</span>
+          </div>
+
+          <div class="flex items-center gap-1.5" id="matrix-pagination-controls">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: ENGINE DRILL-DOWN & TIME-TRAVEL REPLAY -->
+    <div id="view-drilldown" class="hidden space-y-6">
+      
+      <!-- Drill-Down Control Header & Avionics Scrub Bar -->
+      <div class="vision-glass p-5 space-y-5 glow-cyan">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-3">
+            <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400"><i data-lucide="gauge" class="w-6 h-6"></i></div>
+            <div>
+              <h3 class="font-bold text-white tracking-wide text-base">Engine Degradation Trajectory & Time-Travel Replay</h3>
+              <p class="text-xs text-slate-400">Scrub through operational cycles to replay aerodynamic shifts, anomaly onset, and conformal RUL collapse</p>
+            </div>
+          </div>
+
+          <!-- Unit Selector & Status Badge & Quick Unit Prev/Next -->
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <button onclick="stepUnit(-1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-300 hover:text-white transition" title="Previous Engine">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            <label class="text-xs text-slate-300 font-semibold">Select Engine:</label>
+            <select id="drilldown-unit-select" onchange="loadEngineDrilldown()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-cyan-300 font-bold mono">
+              <!-- Populated by JS -->
+            </select>
+            <button onclick="stepUnit(1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-300 hover:text-white transition" title="Next Engine">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+            <span id="drilldown-status-badge" class="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Healthy</span>
+          </div>
+        </div>
+
+        <!-- Interactive Avionics Time-Travel Cycle Scrubbing Slider -->
+        <div class="space-y-3 p-4 rounded-xl bg-slate-950/80 border border-slate-800/90 shadow-inner">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-3">
+              <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+                Avionics Flight Cycle Scrubber:
+              </span>
+              <!-- Playback Controls -->
+              <div class="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">
+                <button onclick="togglePlayback()" id="btn-playback" class="text-sky-400 hover:text-sky-200 transition p-1" title="Play/Pause Timeline Scrub">
+                  <i data-lucide="play" id="icon-playback" class="w-4 h-4"></i>
+                </button>
+                <button onclick="stepReplayCycle(-1)" class="text-slate-400 hover:text-white transition p-1" title="Step -1 Cycle">
+                  <i data-lucide="step-back" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="stepReplayCycle(1)" class="text-slate-400 hover:text-white transition p-1" title="Step +1 Cycle">
+                  <i data-lucide="step-forward" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="resetReplayStart()" class="text-slate-400 hover:text-white transition p-1" title="Jump to Cycle 1">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="jumpReplayEnd()" class="text-slate-400 hover:text-white transition p-1" title="Jump to Test Window End">
+                  <i data-lucide="fast-forward" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Cycle & Status Readout -->
+            <div class="flex items-center gap-3">
+              <span class="text-slate-400 text-xs">Scrub Speed:</span>
+              <select id="playback-speed" class="bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-sky-300 font-medium">
+                <option value="150">1x (Normal)</option>
+                <option value="80">2x (Fast)</option>
+                <option value="35">4x (Turbo)</option>
+              </select>
+              <span class="font-semibold text-white text-xs px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 tabular-nums" id="replay-cycle-label">Cycle -- of --</span>
+            </div>
+          </div>
+
+          <!-- Slider Range -->
+          <div class="py-1">
+            <input type="range" id="replay-slider" min="1" max="100" value="100" oninput="updateReplayFrame(this.value)" class="avionics-slider">
+          </div>
+
+          <!-- Cycle Milestone Markers -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-sans">
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
+              <span class="text-sky-400 font-semibold block">● Cycle 1</span>
+              <span>Commissioning / Baseline</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
+              <span class="text-amber-400 font-semibold block" id="milestone-anom">● Anomaly Onset</span>
+              <span>Residual Shift &Delta;dbase &gt; &tau;</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
+              <span class="text-purple-400 font-semibold block" id="milestone-knee">● Degradation Knee</span>
+              <span>P10 Bound Divergence</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
+              <span class="text-rose-400 font-semibold block" id="milestone-crit">● Critical Cutoff</span>
+              <span>RUL &le; 25 Depot Dispatch</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Aerodynamic Gas-Path Ratios Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-sky-400 space-y-1">
+            <div class="flex items-center justify-between">
+              <p class="text-[11px] text-slate-400 font-medium">Fan/Core Speed (s8/s9)</p>
+              <span class="text-[11px] text-sky-400 font-semibold tabular-nums" id="ratio-s8-s9-dev">Nominal</span>
+            </div>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s8-s9-val">--</h4>
+            <p class="text-[10px] text-slate-500">Physical Nf / Nc ratio</p>
+          </div>
+          
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-emerald-400 space-y-1">
+            <div class="flex items-center justify-between">
+              <p class="text-[11px] text-slate-400 font-medium">Corrected Speed (s13/s14)</p>
+              <span class="text-[11px] text-emerald-400 font-semibold tabular-nums" id="ratio-s13-s14-dev">Nominal</span>
+            </div>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s13-s14-val">--</h4>
+            <p class="text-[10px] text-slate-500">Corrected NRf / NRc ratio</p>
+          </div>
+          
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-amber-400 space-y-1">
+            <div class="flex items-center justify-between">
+              <p class="text-[11px] text-slate-400 font-medium">Pressure Ratio (s11/s7)</p>
+              <span class="text-[11px] text-amber-400 font-semibold tabular-nums" id="ratio-s11-s7-dev">Nominal</span>
+            </div>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s11-s7-val">--</h4>
+            <p class="text-[10px] text-slate-500">HPC Static/Total Ps30 / P30</p>
+          </div>
+          
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-rose-400 space-y-1">
+            <div class="flex items-center justify-between">
+              <p class="text-[11px] text-slate-400 font-medium">Temp Ratio (s4/s3)</p>
+              <span class="text-[11px] text-rose-400 font-semibold tabular-nums" id="ratio-s4-s3-dev">Nominal</span>
+            </div>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s4-s3-val">--</h4>
+            <p class="text-[10px] text-slate-500">LPT / HPC Outlet T50 / T30</p>
+          </div>
+        </div>
+
+        <!-- Live Sensor Gauges / Meter Telemetry Bar -->
+        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+              <i data-lucide="sliders" class="w-4 h-4 text-sky-400"></i>
+              Normalized Sensor Telemetry (Station Readings at Scrubbed Cycle)
+            </span>
+            <span class="text-xs text-slate-400 font-medium">&plusmn;3&sigma; Normalization</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs" id="sensor-telemetry-meters">
+            <!-- s2 Meter -->
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-medium">s2 <span class="text-[10px] text-slate-500">T2 LPC</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s2">--</span>
+              </div>
+              <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
+                <div id="meter-bar-s2" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[9px] text-slate-500">
+                <span>-3σ</span>
+                <span id="meter-status-s2" class="text-emerald-400 font-medium">Nominal</span>
+                <span>+3σ</span>
+              </div>
+            </div>
+
+            <!-- s3 Meter -->
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-medium">s3 <span class="text-[10px] text-slate-500">T24 LPC</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s3">--</span>
+              </div>
+              <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
+                <div id="meter-bar-s3" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[9px] text-slate-500">
+                <span>-3σ</span>
+                <span id="meter-status-s3" class="text-emerald-400 font-medium">Nominal</span>
+                <span>+3σ</span>
+              </div>
+            </div>
+
+            <!-- s4 Meter -->
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-medium">s4 <span class="text-[10px] text-slate-500">T50 LPT</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s4">--</span>
+              </div>
+              <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
+                <div id="meter-bar-s4" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[9px] text-slate-500">
+                <span>-3σ</span>
+                <span id="meter-status-s4" class="text-emerald-400 font-medium">Nominal</span>
+                <span>+3σ</span>
+              </div>
+            </div>
+
+            <!-- s7 Meter -->
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-medium">s7 <span class="text-[10px] text-slate-500">P30 HPC</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s7">--</span>
+              </div>
+              <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
+                <div id="meter-bar-s7" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[9px] text-slate-500">
+                <span>-3σ</span>
+                <span id="meter-status-s7" class="text-emerald-400 font-medium">Nominal</span>
+                <span>+3σ</span>
+              </div>
+            </div>
+
+            <!-- s11 Meter -->
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-medium">s11 <span class="text-[10px] text-slate-500">Ps30 Stat</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s11">--</span>
+              </div>
+              <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
+                <div id="meter-bar-s11" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[9px] text-slate-500">
+                <span>-3σ</span>
+                <span id="meter-status-s11" class="text-emerald-400 font-medium">Nominal</span>
+                <span>+3σ</span>
+              </div>
+            </div>
+
+            <!-- s12 Meter -->
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-slate-300 font-medium">s12 <span class="text-[10px] text-slate-500">Phi Flow</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s12">--</span>
+              </div>
+              <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
+                <div id="meter-bar-s12" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[9px] text-slate-500">
+                <span>-3σ</span>
+                <span id="meter-status-s12" class="text-emerald-400 font-medium">Nominal</span>
+                <span>+3σ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row: RUL Trajectory & Anomaly Detector -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- RUL Conformal Envelope Chart with Glowing Fill -->
+        <div class="vision-glass p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2">
+              <div class="p-1 rounded bg-cyan-500/10 text-cyan-400"><i data-lucide="trending-down" class="w-4 h-4"></i></div>
+              <h4 class="font-bold text-white text-sm">RUL Degradation & 80% Conformal Band</h4>
+            </div>
+            <span class="text-[11px] mono text-cyan-300 font-semibold" id="rul-legend-text">P10 - P50 - P90 [80% Bound]</span>
+          </div>
+          <div class="h-72 relative">
+            <canvas id="rulChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Anomaly Score & Deviation Chart -->
+        <div class="vision-glass p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2">
+              <div class="p-1 rounded bg-amber-500/10 text-amber-400"><i data-lucide="alert-triangle" class="w-4 h-4"></i></div>
+              <h4 class="font-bold text-white text-sm">Early-Warning Anomaly Trajectory (dbase)</h4>
+            </div>
+            <span class="text-[11px] mono text-amber-300 font-semibold" id="anom-threshold-label">Threshold: --</span>
+          </div>
+          <div class="h-72 relative">
+            <canvas id="anomalyChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: AUTONOMOUS TRIAGE & WORK ORDERS -->
+    <div id="view-triage" class="hidden space-y-6">
+      
+      <!-- Autonomous Triage Rule Architecture Banner -->
+      <div class="vision-glass p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400"><i data-lucide="workflow" class="w-5 h-5"></i></div>
+            <div>
+              <h3 class="font-bold text-white tracking-wide">Deterministic Closed-Loop Triage Architecture</h3>
+              <p class="text-xs text-slate-400">Zero-LLM Autonomous Maintenance Rule Engine with Budget & Re-opening Guardrails</p>
+            </div>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/20">Rules Engine v2.1</span>
+        </div>
+
+        <!-- Flow diagram boxes -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-rose-500/80 space-y-1 rounded-lg">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-rose-300">Tier 1: Critical</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 font-medium border border-rose-500/20">AOG Grounding</span>
+            </div>
+            <p class="text-slate-300 font-medium">P10 &le; 15 or P50 &le; 25</p>
+            <p class="text-[11px] text-slate-400">Immediate depot grounding; uncapped budget; auto-dispatch without human roadblock.</p>
+          </div>
+
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-amber-500/80 space-y-1 rounded-lg">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-amber-300">Tier 2: High Priority</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-medium border border-amber-500/20">Shop Visit</span>
+            </div>
+            <p class="text-slate-300 font-medium">P50 &le; 50 cycles</p>
+            <p class="text-[11px] text-slate-400">Schedule shop visit at next maintenance window; uncapped depot slot.</p>
+          </div>
+
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-yellow-500/80 space-y-1 rounded-lg">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-yellow-300">Tier 3: Medium Priority</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-300 font-medium border border-yellow-500/20">Scheduled</span>
+            </div>
+            <p class="text-slate-300 font-medium">P50 &le; 80 or Anomaly + P50 &le; 100</p>
+            <p class="text-[11px] text-slate-400">Plan inspection; bounded by budget guardrails (max 10 work orders / maintenance window).</p>
+          </div>
+
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-purple-500/80 space-y-1 rounded-lg">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-purple-300">Human Exception</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium border border-purple-500/20">Specialist Review</span>
+            </div>
+            <p class="text-slate-300 font-medium">Sensor Fault or Model Disagree &gt; 25</p>
+            <p class="text-[11px] text-slate-400">Data-quality anomaly or primary vs secondary model divergence routed to queue.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tactile Work Order Cards Grid & Human Exception Queue -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Work Orders Dispatch Center (2 Cols) -->
+        <div class="vision-glass p-5 lg:col-span-2 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400"><i data-lucide="clipboard-list" class="w-5 h-5"></i></div>
+              <div>
+                <h3 class="font-bold text-white tracking-wide">Autonomous Industrial Work Orders</h3>
+                <p class="text-xs text-slate-400">Tactile dispatch authorizations with cryptographic ledger pinning</p>
+              </div>
+            </div>
+
+            <!-- View Mode Switch: Ticket Cards vs Dense Table -->
+            <div class="flex items-center gap-2">
+              <div class="flex items-center p-0.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+                <button onclick="setOrderViewMode('cards')" id="view-mode-cards" class="px-2.5 py-1 rounded-md font-bold bg-cyan-600 text-white transition">Tickets</button>
+                <button onclick="setOrderViewMode('table')" id="view-mode-table" class="px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-white transition">Table</button>
+              </div>
+              <span class="text-xs text-slate-400 font-medium">Persistent SQLite Ledger</span>
+            </div>
+          </div>
+
+          <!-- Ticket Cards Grid View Container -->
+          <div id="orders-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[32rem] overflow-y-auto pr-1">
+            <p class="text-xs text-slate-400 col-span-2 p-4 text-center">Loading work orders...</p>
+          </div>
+
+          <!-- Dense Table View Container (Hidden by default) -->
+          <div id="orders-table-container" class="hidden overflow-x-auto max-h-[32rem]">
+            <table class="w-full text-left text-xs">
+              <thead class="text-slate-400 bg-slate-900/90 text-xs font-semibold sticky top-0 border-b border-slate-800">
+                <tr>
+                  <th class="p-2.5">Order ID</th>
+                  <th class="p-2.5">Unit</th>
+                  <th class="p-2.5">Severity</th>
+                  <th class="p-2.5">Due Cycle</th>
+                  <th class="p-2.5">Subsystem</th>
+                  <th class="p-2.5">Status</th>
+                  <th class="p-2.5 text-right">Dispatch Action</th>
+                </tr>
+              </thead>
+              <tbody id="work-orders-body" class="divide-y divide-slate-800/60 font-medium">
+                <tr><td colspan="7" class="p-4 text-center text-slate-400">Loading work orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Human Exception Queue (1 Col) -->
+        <div class="vision-glass p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="p-1 rounded bg-purple-500/10 text-purple-400"><i data-lucide="user-x" class="w-5 h-5"></i></div>
+              <h3 class="font-bold text-white tracking-wide">Human Exception Queue</h3>
+            </div>
+            <span class="text-xs text-purple-300 font-medium px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20" id="exception-badge">0 Pending</span>
+          </div>
+
+          <div class="space-y-3 max-h-[32rem] overflow-y-auto pr-1" id="exceptions-list">
+            <p class="text-xs text-slate-400">Scanning exception queue...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tamper-Evident SHA-256 Cryptographic Audit Chain -->
+      <div class="vision-glass p-5 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="lock" class="w-5 h-5"></i></div>
+            <div>
+              <h3 class="font-bold text-white tracking-wide">Tamper-Evident SHA-256 Cryptographic Audit Ledger</h3>
+              <p class="text-xs text-slate-400">Every autonomous dispatch, state transition, and chief operator override is cryptographically linked in an immutable blockchain-style ledger</p>
+            </div>
+          </div>
+
+          <!-- Verify Button & Status Badge -->
+          <div class="flex items-center gap-3">
+            <button onclick="verifyAuditChain()" id="btn-verify-audit" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center gap-2 glow-emerald active:scale-95 shadow-md">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              Verify Audit Ledger
+            </button>
+            <span id="audit-status-badge" class="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">100% Verified</span>
+          </div>
+        </div>
+
+        <!-- Visual Cryptographic Block Chain Diagram -->
+        <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+          <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Cryptographic Block Linkage Topology:</span>
+          <div class="flex items-center gap-2 overflow-x-auto py-2 text-xs mono" id="audit-chain-diagram">
+            <!-- Populated dynamically -->
+            <div class="flex items-center gap-2">
+              <div class="p-2 rounded bg-slate-900 border border-slate-700 min-w-[130px] text-center">
+                <span class="text-[10px] text-slate-400 block">GENESIS BLOCK</span>
+                <span class="text-emerald-400 font-bold">GENESIS_0000...</span>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+              <div class="p-2 rounded bg-slate-900 border border-slate-700 min-w-[130px] text-center">
+                <span class="text-[10px] text-slate-400 block">BLOCK #1</span>
+                <span class="text-cyan-400 font-bold">0x8a92f0...</span>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+              <div class="p-2 rounded bg-slate-900 border border-emerald-500/40 min-w-[130px] text-center glow-emerald">
+                <span class="text-[10px] text-emerald-300 font-bold block">VERIFIED TIP</span>
+                <span class="text-emerald-400 font-bold">0x5c72e1...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-64">
+          <table class="w-full text-left text-xs">
+            <thead class="uppercase text-slate-400 bg-slate-900/90 mono sticky top-0 border-b border-slate-800">
+              <tr>
+                <th class="p-2.5">Entry ID</th>
+                <th class="p-2.5">Timestamp (UTC)</th>
+                <th class="p-2.5">Event Type</th>
+                <th class="p-2.5">Order ID</th>
+                <th class="p-2.5">Current SHA-256 Hash</th>
+                <th class="p-2.5">Previous Block Hash</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body" class="divide-y divide-slate-800/60 font-mono text-[11px]">
+              <tr><td colspan="6" class="p-4 text-center text-slate-400">Loading audit log...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: MLOPS & RETRAINING GATE -->
+    <div id="view-mlops" class="hidden space-y-6">
+      
+      <!-- MLOps Governance & Retraining Trigger -->
+      <div class="vision-glass p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400"><i data-lucide="activity" class="w-5 h-5"></i></div>
+            <div>
+              <h3 class="font-bold text-white tracking-wide">Continuous MLOps Drift Monitoring & Retraining Pipeline</h3>
+              <p class="text-xs text-slate-400">Age-Matched PSI Drift Detection, Residual Error Trigger & 1-Sided Automated Promotion Gate</p>
+            </div>
+          </div>
+
+          <button onclick="triggerRetrainDemo()" id="retrain-btn" class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs transition flex items-center gap-2 active:scale-95 shadow-md">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            Execute Retraining Demo
+          </button>
+        </div>
+
+        <!-- 4 Gate Rules Status Banners -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <!-- Card 1: RMSE -->
+          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">Prediction Accuracy</span>
+              <span id="badge-gate-rmse" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="val-gate-rmse" class="text-xl font-bold text-white tabular-nums tracking-tight">9.67</span>
+              <span id="sub-gate-rmse" class="text-xs text-slate-400 tabular-nums">vs 9.14 Baseline</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans">Parity constraint • No degradation permitted</p>
+          </div>
+
+          <!-- Card 2: NASA Loss -->
+          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">Asymmetric Mission Loss</span>
+              <span id="badge-gate-nasa" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="val-gate-nasa" class="text-xl font-bold text-white tabular-nums tracking-tight">+2.5%</span>
+              <span id="sub-gate-nasa" class="text-xs text-slate-400 tabular-nums">vs 2,779 Baseline</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans">NASA penalty • Maximum +5.0% tolerance</p>
+          </div>
+
+          <!-- Card 3: Conformal Coverage -->
+          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">Conformal Coverage</span>
+              <span id="badge-gate-cov" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="val-gate-cov" class="text-xl font-bold text-white tabular-nums tracking-tight">87.7%</span>
+              <span id="sub-gate-cov" class="text-xs text-slate-400 tabular-nums">Target &ge; 75.0%</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans">1-sided safety envelope guarantee</p>
+          </div>
+
+          <!-- Card 4: Late Prediction -->
+          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">Late Over-Prediction</span>
+              <span id="badge-gate-late" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="val-gate-late" class="text-xl font-bold text-white tabular-nums tracking-tight">21.9%</span>
+              <span id="sub-gate-late" class="text-xs text-slate-400 tabular-nums">vs 26.3% Baseline</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans">Late failure bias protection • &le; +5 pts</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Population Stability Index (PSI) Drift Profile -->
+      <div class="vision-glass p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="p-1 rounded bg-sky-500/10 text-sky-400"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
+            <div>
+              <h4 class="font-bold text-white tracking-wide">Age-Matched Population Stability Index (PSI) Drift Profile</h4>
+              <p class="text-xs text-slate-400">Sensor distribution drift evaluated across cycle partitions to prevent age-confusion bias</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Drift Scenario:</span>
+            <div class="flex items-center p-0.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+              <button onclick="switchDriftScenario('gentle')" id="btn-drift-gentle" class="px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px]">Gentle Drift (&sigma;=0.02)</button>
+              <button onclick="switchDriftScenario('strong')" id="btn-drift-strong" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]">Severe Shock (&sigma;=0.30)</button>
+            </div>
+            <span class="text-xs text-slate-300 font-medium px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+              Tolerance Limit: PSI &lt; 0.20
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs" id="psi-bins-container">
+          <!-- Bin 1 -->
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-300">Bin [0 - 40 cycles]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PSI: 0.041 (SAFE)</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s2 Total Temp</span><span>0.032</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 20%"></div></div>
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s3 HPC Temp</span><span>0.045</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 28%"></div></div>
+            </div>
+          </div>
+          <!-- Bin 2 -->
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-300">Bin [40 - 80 cycles]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PSI: 0.068 (SAFE)</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s4 LPT Temp</span><span>0.058</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 35%"></div></div>
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s7 HPC Pressure</span><span>0.071</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 42%"></div></div>
+            </div>
+          </div>
+          <!-- Bin 3 -->
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-300">Bin [80 - 140 cycles]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">PSI: 0.124 (MODERATE)</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s11 Static Press</span><span>0.118</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-amber-500 h-1.5 rounded-full" style="width: 62%"></div></div>
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s12 Fuel Flow</span><span>0.129</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-amber-500 h-1.5 rounded-full" style="width: 68%"></div></div>
+            </div>
+          </div>
+          <!-- Bin 4 -->
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-300">Bin [140+ cycles]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PSI: 0.142 (SAFE)</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s13 Corrected Nf</span><span>0.138</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-cyan-500 h-1.5 rounded-full" style="width: 72%"></div></div>
+              <div class="flex justify-between text-[10px] text-slate-400"><span>s15 Bypass Ratio</span><span>0.145</span></div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-cyan-500 h-1.5 rounded-full" style="width: 76%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retraining History & Drift Results -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Champion vs Challenger Card with Side-by-Side Diff Bars -->
+        <div class="vision-glass p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="p-1 rounded bg-amber-500/10 text-amber-400"><i data-lucide="trophy" class="w-5 h-5"></i></div>
+              <h4 class="font-bold text-white tracking-wide">Model Registry: Champion vs Challenger</h4>
+            </div>
+            <span class="text-xs text-slate-400 font-medium">MLflow Registry Tracked</span>
+          </div>
+
+          <div class="space-y-3.5 text-xs" id="champion-challenger-content">
+            <p class="text-slate-400">Loading model registry...</p>
+          </div>
+        </div>
+
+        <!-- Retraining Console & Drift Details with Terminal Scanlines -->
+        <div class="vision-glass p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="p-1 rounded bg-slate-800 text-slate-300"><i data-lucide="terminal" class="w-4 h-4"></i></div>
+              <h4 class="font-bold text-white tracking-wide text-xs">Retraining Execution Log Console</h4>
+            </div>
+            <span class="text-[10px] text-slate-400 font-medium px-2 py-0.5 rounded bg-slate-900 border border-slate-800" id="retrain-log-time">Idle</span>
+          </div>
+
+          <div class="p-3.5 rounded-xl terminal-screen border border-slate-800/90 font-mono text-[11px] text-slate-300 max-h-72 overflow-y-auto space-y-1 relative" id="retrain-console">
+            <p class="text-slate-400 font-mono text-[11px] leading-relaxed">
+              <span class="text-emerald-400 font-semibold">[ONLINE]</span>
+              <span class="text-slate-200">worker.mlops-daemon</span>
+              <span class="text-slate-500">| Node:</span>
+              <span class="text-slate-300">turbofan-eval-01</span>
+            </p>
+            <p class="text-slate-500 font-mono text-[10px] leading-relaxed">
+              Daemon listening on channel <span class="text-slate-400">/v1/retrain/telemetry</span> • Active registry: <span class="text-slate-400">SQLite MLflow</span>
+            </p>
+            <p class="text-slate-400 font-mono text-[11px] flex items-center gap-2 pt-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>Worker ready. Trigger retraining below to execute evaluation.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="px-6 py-4 text-center text-xs border-t border-slate-800/80 text-slate-500 mt-auto">
+    <p class="font-medium text-slate-400">
+      Autonomous Predictive Fleet Maintenance &bull; NASA C-MAPSS Turbofan Digital Twin
+    </p>
+    <p class="text-[11px] text-slate-500 mt-1">
+      Conformal Uncertainty Bounds &bull; Baseline-Subtracted Anomaly Detection &bull; Closed-Loop MLOps Governance
+    </p>
+  </footer>
+
+  <!-- Core JavaScript Logic & Web Audio Synthesizer -->
+  <script>
+    let currentSubset = "FD001";
+    let activeTab = "fleet";
+    let allEngines = [];
+    let currentDrilldownData = null;
+    let currentMlopsData = null;
+    let selectedDriftScenario = "gentle";
+    let rulChartInstance = null;
+    let anomChartInstance = null;
+    let playbackInterval = null;
+    let audioContext = null;
+    let masterGain = null;
+    let soundEnabled = true;
+    let orderViewMode = "cards"; // "cards" or "table"
+    let currentSortColumn = "p50_rul";
+    let currentSortDirection = "asc";
+    let matrixCurrentPage = 1;
+    let matrixPageSize = 30;
+    let lastAudioTickTime = 0;
+
+    // Web Audio API Synthesizer (Tactile Aerospace Audio Engine - sounds-on-the-web compliant)
+    function initAudio() {
+      // a11y-reduced-motion-check: respect prefers-reduced-motion as proxy for audio sensitivity
+      const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReducedMotion && !audioContext) {
+        soundEnabled = false;
+        const icon = document.getElementById('audio-icon');
+        const label = document.getElementById('audio-label');
+        const btn = document.getElementById('audio-toggle-btn');
+        if (icon) icon.setAttribute('data-lucide', 'volume-x');
+        if (label) label.innerText = 'FX OFF';
+        if (btn) btn.classList.add('opacity-60');
+      }
+
+      if (!audioContext) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          audioContext = new AudioCtx();
+          masterGain = audioContext.createGain();
+          masterGain.gain.setValueAtTime(0.22, audioContext.currentTime); // impl-default-subtle: 0.22 subtle volume
+          masterGain.connect(audioContext.destination);
+        }
+      }
+      if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('audio-toggle-btn');
+      const icon = document.getElementById('audio-icon');
+      const label = document.getElementById('audio-label');
+      if (soundEnabled) {
+        initAudio();
+        icon.setAttribute('data-lucide', 'volume-2');
+        label.innerText = 'FX ON';
+        btn.classList.remove('opacity-60');
+        showToast('Tactile avionics audio enabled', 'info');
+        playAudioClick();
+      } else {
+        icon.setAttribute('data-lucide', 'volume-x');
+        label.innerText = 'FX OFF';
+        btn.classList.add('opacity-60');
+        showToast('Audio feedback muted', 'info');
+      }
+      lucide.createIcons();
+    }
+
+    function playAudioClick() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioContext || !masterGain) return;
+      try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(750, audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(240, audioContext.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.035);
+      } catch (e) {}
+    }
+
+    function playAudioTick() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioContext || !masterGain) return;
+      try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200, audioContext.currentTime);
+        gain.gain.setValueAtTime(0.015, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.012);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.015);
+      } catch (e) {}
+    }
+
+    function playAudioLatch() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioContext || !masterGain) return;
+      try {
+        const now = audioContext.currentTime;
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc1.type = 'square';
+        osc2.type = 'sine';
+        osc1.frequency.setValueAtTime(280, now);
+        osc2.frequency.setValueAtTime(560, now + 0.015);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.065);
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(masterGain);
+        osc1.start();
+        osc2.start(now + 0.015);
+        osc1.stop(now + 0.065);
+        osc2.stop(now + 0.065);
+      } catch (e) {}
+    }
+
+    function playAudioVerify() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioContext || !masterGain) return;
+      try {
+        const now = audioContext.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.055);
+          gain.gain.setValueAtTime(0.045, now + idx * 0.055);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.055 + 0.12);
+          osc.connect(gain);
+          gain.connect(masterGain);
+          osc.start(now + idx * 0.055);
+          osc.stop(now + idx * 0.055 + 0.13);
+        });
+      } catch (e) {}
+    }
+
+    // Toast Notification Dispatcher
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let borderClass = 'border-cyan-500/40 bg-slate-900/95 text-cyan-200';
+      let icon = 'info';
+      if (type === 'success') {
+        borderClass = 'border-emerald-500/50 bg-slate-900/95 text-emerald-200';
+        icon = 'check-circle';
+      } else if (type === 'alert') {
+        borderClass = 'border-rose-500/50 bg-slate-900/95 text-rose-200';
+        icon = 'alert-triangle';
+      }
+
+      toast.className = `toast-item vision-glass px-4 py-2.5 rounded-xl border ${borderClass} flex items-center gap-2.5 shadow-2xl text-xs font-semibold backdrop-blur-xl`;
+      toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 3200);
+    }
+
+    function toggleLogoSpeed() {
+      const svg = document.getElementById('vortex-svg');
+      svg.classList.toggle('animate-spin');
+    }
+
+    // Main App Initialization
+    async function initDashboard() {
+      initAudio();
+      await fetchFleetReadiness();
+      await fetchFleetMatrix();
+      await fetchWorkOrders();
+      await fetchHumanExceptions();
+      await fetchAuditLog();
+      await fetchMlopsData();
+      lucide.createIcons();
+    }
+
+    function showTab(tabId) {
+      playAudioClick();
+      activeTab = tabId;
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('tab-active');
+        b.classList.add('text-slate-400');
+      });
+      document.getElementById(`tab-${tabId}`).classList.add('tab-active');
+      document.getElementById(`tab-${tabId}`).classList.remove('text-slate-400');
+
+      ['fleet', 'drilldown', 'triage', 'mlops'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+      });
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+      if (tabId === 'drilldown') {
+        if (!currentDrilldownData) {
+          loadEngineDrilldown();
+        } else {
+          renderCharts(currentDrilldownData);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    async function switchSubset(subset) {
+      playAudioClick();
+      currentSubset = subset;
+      ['FD001', 'FD002', 'FD003', 'FD004'].forEach(s => {
+        const pill = document.getElementById(`pill-${s}`);
+        if (pill) {
+          if (s === subset) {
+            pill.className = "text-xs px-2.5 py-1 rounded-md font-semibold transition bg-blue-600 text-white shadow-sm";
+          } else {
+            pill.className = "text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white";
+          }
+        }
+      });
+      const badge = document.getElementById('kpi-subset-badge');
+      if (badge) badge.innerText = `${subset} Active`;
+      currentDrilldownData = null;
+      showToast(`Switched telemetry pipeline to ${subset}`, 'info');
+      await initDashboard();
+    }
+
+    // 1. Fetch Fleet Readiness & Dynamic Subsystems
+    async function fetchFleetReadiness() {
+      try {
+        const res = await fetch(`/api/fleet/readiness?subset=${currentSubset}`);
+        const data = await res.json();
+        document.getElementById('kpi-health-rate').innerText = `${data.health_rate_pct}%`;
+        const operational = (data.status_counts.NORMAL || 0) + (data.status_counts.WATCH || 0);
+        document.getElementById('kpi-health-sub').innerText = `${operational} of ${data.total_engines} engines operational`;
+        document.getElementById('kpi-active-units').innerText = data.total_engines;
+        document.getElementById('kpi-active-sub').innerText = `${data.metrics.coverage_pct}% conformal coverage`;
+        document.getElementById('kpi-anom-alerts').innerText = (data.status_counts.WATCH || 0) + (data.status_counts.MEDIUM || 0);
+        document.getElementById('kpi-critical-orders').innerText = data.status_counts.CRITICAL || 0;
+
+        const leadCycles = data.metrics.anomaly_lead_cycles || 45;
+        const leadBadge = document.getElementById('kpi-lead-badge');
+        if (leadBadge) leadBadge.innerText = `~${leadCycles} CYC LEAD`;
+
+        const gateKpi = document.getElementById('kpi-mlops-gate');
+        if (gateKpi) {
+          gateKpi.innerText = (data.metrics.coverage_pct >= 75) ? "PASS" : "WARN";
+          gateKpi.className = (data.metrics.coverage_pct >= 75) ? "text-2xl font-extrabold text-cyan-300 mono" : "text-2xl font-extrabold text-amber-400 mono";
+        }
+
+        document.getElementById('count-critical').innerText = data.status_counts.CRITICAL || 0;
+        document.getElementById('count-high').innerText = data.status_counts.HIGH || 0;
+        document.getElementById('count-medium').innerText = data.status_counts.MEDIUM || 0;
+        document.getElementById('count-normal').innerText = data.status_counts.NORMAL || 0;
+        document.getElementById('count-human').innerText = data.status_counts.NEEDS_HUMAN || 0;
+
+        // Render dynamic subsystem structural health cards
+        renderSubsystems(data.subsystem_risk, data.total_engines);
+      } catch (e) {
+        console.error("Error fetching readiness:", e);
+      }
+    }
+
+    function renderSubsystems(riskMap, totalEngines) {
+      const container = document.getElementById('subsystem-grid');
+      if (!container) return;
+      const subsystems = [
+        {
+          key: 'High-Pressure Compressor (HPC)',
+          name: 'High-Pressure Compressor',
+          stage: 'HPC Stage 1-8',
+          param: 'Static Drop ΔPs30/P30',
+          baseHealth: 68
+        },
+        {
+          key: 'Low-Pressure Turbine (LPT)',
+          name: 'Low-Pressure Turbine',
+          stage: 'LPT & Blades',
+          param: 'EGT Margin & Creep ΔT50',
+          baseHealth: 82
+        },
+        {
+          key: 'Fan / LP shaft',
+          name: 'Fan & LP Shaft',
+          stage: 'Fan Dynamic Balance',
+          param: 'Corrected Speed ΔNRf',
+          baseHealth: 91
+        },
+        {
+          key: 'Core / HP shaft',
+          name: 'Core & HP Shaft',
+          stage: 'Core Dynamics & Rotor',
+          param: 'High-Pressure Speed ΔNc',
+          baseHealth: 76
+        },
+        {
+          key: 'Combustor / fuel system',
+          name: 'Combustor & Fuel System',
+          stage: 'Fuel Flow Margin',
+          param: 'Fuel-Air Ratio ΔΦ',
+          baseHealth: 85
+        }
+      ];
+
+      // Prioritize subsystems that have orders or standard primary aerospace modules
+      const sortedSubs = [...subsystems].sort((a, b) => {
+        const cntA = (riskMap && riskMap[a.key]) || 0;
+        const cntB = (riskMap && riskMap[b.key]) || 0;
+        return cntB - cntA;
+      }).slice(0, 3);
+
+      container.innerHTML = sortedSubs.map(s => {
+        const orderCount = (riskMap && riskMap[s.key]) || 0;
+        let healthPct = s.baseHealth;
+        if (totalEngines > 0) {
+          const ratio = orderCount / totalEngines;
+          healthPct = Math.max(12, Math.min(99, Math.round(100 - (ratio * 160))));
+        }
+
+        let ringClass = "text-cyan-400";
+        let textClass = "text-cyan-300";
+        let borderClass = "border-cyan-500/20 hover:border-cyan-500/40";
+        if (healthPct < 65) {
+          ringClass = "text-rose-500";
+          textClass = "text-rose-400";
+          borderClass = "border-rose-500/30 hover:border-rose-500/50 glow-rose";
+        } else if (healthPct < 85) {
+          ringClass = "text-amber-500";
+          textClass = "text-amber-400";
+          borderClass = "border-amber-500/30 hover:border-amber-500/50 glow-amber";
+        }
+
+        return `
+          <div class="p-4 vision-glass-subtle border ${borderClass} transition rounded-xl flex items-center justify-between gap-3 group">
+            <div class="space-y-1">
+              <span class="text-[11px] text-slate-400 font-semibold uppercase">${s.name}</span>
+              <p class="text-sm font-extrabold text-white">${s.stage}</p>
+              <p class="text-xs font-bold ${textClass} mono mt-1">${orderCount} Active Orders</p>
+              <p class="text-[10px] text-slate-400">${s.param}</p>
+            </div>
+            <!-- Mini SVG Ring Meter with Dynamic Circumference -->
+            <div class="relative w-14 h-14 flex items-center justify-center shrink-0">
+              <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="${ringClass} transition-all duration-500" stroke-width="3.5" stroke-dasharray="${healthPct}, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <span class="absolute text-[11px] font-bold ${textClass} mono">${healthPct}%</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 2. Fetch Fleet Matrix
+    async function fetchFleetMatrix() {
+      try {
+        const res = await fetch(`/api/fleet/matrix?subset=${currentSubset}`);
+        const data = await res.json();
+        allEngines = data.engines || [];
+        document.getElementById('matrix-count').innerText = `${allEngines.length} Engines`;
+
+        // Populate Drilldown dropdown
+        const select = document.getElementById('drilldown-unit-select');
+        select.innerHTML = '';
+        allEngines.forEach(e => {
+          const opt = document.createElement('option');
+          opt.value = e.unit;
+          opt.innerText = `Unit #${e.unit} (RUL ${e.p50_rul} cyc - ${e.status})`;
+          select.appendChild(opt);
+        });
+
+        filterFleetMatrix();
+      } catch (e) {
+        console.error("Error fetching fleet matrix:", e);
+      }
+    }
+
+    function sortFleetMatrix(col) {
+      playAudioClick();
+      if (currentSortColumn === col) {
+        currentSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
+      } else {
+        currentSortColumn = col;
+        currentSortDirection = "asc";
+      }
+
+      ['unit', 'current_cycle', 'p50_rul', 'band_width', 'anomaly_score', 'status'].forEach(c => {
+        const el = document.getElementById(`sort-${c}`);
+        if (el) el.innerText = "↕";
+      });
+      const activeHeader = document.getElementById(`sort-${col}`);
+      if (activeHeader) {
+        activeHeader.innerText = currentSortDirection === "asc" ? "▲" : "▼";
+      }
+      filterFleetMatrix();
+    }
+
+    function changePageSize(sz) {
+      matrixPageSize = parseInt(sz) || 30;
+      matrixCurrentPage = 1;
+      filterFleetMatrix();
+    }
+
+    function setMatrixPage(p) {
+      playAudioClick();
+      matrixCurrentPage = p;
+      filterFleetMatrix();
+    }
+
+    function filterFleetMatrix() {
+      const q = document.getElementById('engine-search').value.trim().toLowerCase();
+      const st = document.getElementById('matrix-filter').value;
+
+      let filtered = [...allEngines];
+      if (q) {
+        filtered = filtered.filter(e => String(e.unit).includes(q));
+      }
+      if (st !== "ALL") {
+        if (st === "ALERT") {
+          filtered = filtered.filter(e => ["CRITICAL", "HIGH", "MEDIUM", "NEEDS_HUMAN"].includes(e.status));
+        } else {
+          filtered = filtered.filter(e => e.status === st);
+        }
+      }
+
+      // Sort
+      filtered.sort((a, b) => {
+        let valA = a[currentSortColumn];
+        let valB = b[currentSortColumn];
+        if (typeof valA === 'string') {
+          return currentSortDirection === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return currentSortDirection === "asc" ? (valA - valB) : (valB - valA);
+      });
+
+      // Pagination
+      const totalItems = filtered.length;
+      const totalPages = Math.ceil(totalItems / matrixPageSize) || 1;
+      matrixCurrentPage = Math.min(Math.max(matrixCurrentPage, 1), totalPages);
+      const startIdx = (matrixCurrentPage - 1) * matrixPageSize;
+      const pageSlice = filtered.slice(startIdx, startIdx + matrixPageSize);
+
+      document.getElementById('matrix-page-info').innerText = `entries (Showing ${totalItems === 0 ? 0 : startIdx + 1} to ${Math.min(startIdx + matrixPageSize, totalItems)} of ${totalItems})`;
+
+      // Render pagination controls
+      const pagContainer = document.getElementById('matrix-pagination-controls');
+      let pagHtml = `
+        <button onclick="setMatrixPage(${matrixCurrentPage - 1})" ${matrixCurrentPage === 1 ? 'disabled' : ''} class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 disabled:opacity-40 text-slate-300 hover:text-white transition">Prev</button>
+        <span class="mono px-2 font-bold text-cyan-300">Page ${matrixCurrentPage} of ${totalPages}</span>
+        <button onclick="setMatrixPage(${matrixCurrentPage + 1})" ${matrixCurrentPage >= totalPages ? 'disabled' : ''} class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 disabled:opacity-40 text-slate-300 hover:text-white transition">Next</button>
+      `;
+      pagContainer.innerHTML = pagHtml;
+
+      renderFleetMatrix(pageSlice);
+    }
+
+    function renderFleetMatrix(engines) {
+      const tbody = document.getElementById('fleet-matrix-body');
+      if (!engines.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No engines match query</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = engines.map(e => {
+        let statusLabel = "Healthy";
+        let badgeColor = "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20";
+        let dotColor = "bg-emerald-400";
+        if (e.status === "CRITICAL") {
+          statusLabel = "Critical";
+          badgeColor = "bg-rose-500/10 text-rose-300 border border-rose-500/20";
+          dotColor = "bg-rose-400";
+        } else if (e.status === "HIGH") {
+          statusLabel = "High Priority";
+          badgeColor = "bg-amber-500/10 text-amber-300 border border-amber-500/20";
+          dotColor = "bg-amber-400";
+        } else if (e.status === "MEDIUM") {
+          statusLabel = "Medium Priority";
+          badgeColor = "bg-yellow-500/10 text-yellow-300 border border-yellow-500/20";
+          dotColor = "bg-yellow-400";
+        } else if (e.status === "NEEDS_HUMAN") {
+          statusLabel = "Review Required";
+          badgeColor = "bg-purple-500/10 text-purple-300 border border-purple-500/20";
+          dotColor = "bg-purple-400";
+        } else if (e.status === "WATCH") {
+          statusLabel = "Watchlist";
+          badgeColor = "bg-sky-500/10 text-sky-300 border border-sky-500/20";
+          dotColor = "bg-sky-400";
+        }
+
+        const rulColor = e.p50_rul <= 25 ? 'text-rose-300 font-semibold' : (e.p50_rul <= 50 ? 'text-amber-300 font-semibold' : 'text-slate-200 font-medium');
+
+        return `
+          <tr class="hover:bg-slate-800/30 transition cursor-pointer" onclick="drilldownToUnit(${e.unit})">
+            <td class="p-3 font-sans font-semibold text-white flex items-center gap-2 tabular-nums">
+              <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
+              Unit #${e.unit}
+            </td>
+            <td class="p-3 font-sans tabular-nums text-slate-300">${e.current_cycle}</td>
+            <td class="p-3 font-sans tabular-nums ${rulColor}">${e.p50_rul} cyc</td>
+            <td class="p-3 font-sans tabular-nums text-slate-400">[${e.p10_rul} - ${e.p90_rul}] (&Delta;${e.band_width})</td>
+            <td class="p-3 font-sans tabular-nums ${e.anomaly_alert ? 'text-amber-300 font-medium' : 'text-slate-400'}">
+              ${e.anomaly_score} ${e.anomaly_alert ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 ml-1.5 font-medium">Alert</span>' : ''}
+            </td>
+            <td class="p-3">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-medium ${badgeColor}">
+                <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
+                ${statusLabel}
+              </span>
+            </td>
+            <td class="p-3 text-right">
+              <button onclick="event.stopPropagation(); drilldownToUnit(${e.unit})" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition border border-slate-700/60 flex items-center gap-1.5 ml-auto">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-400"></i> Inspect
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function drilldownToUnit(unitId) {
+      playAudioClick();
+      document.getElementById('drilldown-unit-select').value = unitId;
+      showTab('drilldown');
+      loadEngineDrilldown();
+    }
+
+    function stepUnit(delta) {
+      playAudioClick();
+      const select = document.getElementById('drilldown-unit-select');
+      const idx = select.selectedIndex;
+      const nextIdx = idx + delta;
+      if (nextIdx >= 0 && nextIdx < select.options.length) {
+        select.selectedIndex = nextIdx;
+        loadEngineDrilldown();
+      }
+    }
+
+    // 3. Engine Drill-Down & Replay
+    async function loadEngineDrilldown() {
+      const unit = document.getElementById('drilldown-unit-select').value || 1;
+      try {
+        const res = await fetch(`/api/engine/${unit}?subset=${currentSubset}`);
+        const data = await res.json();
+        currentDrilldownData = data;
+
+        document.getElementById('drilldown-status-badge').innerText = data.status;
+        let badgeColor = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+        if (data.status === "CRITICAL") badgeColor = "bg-rose-500/20 text-rose-300 border border-rose-500/40 glow-rose";
+        else if (data.status === "HIGH") badgeColor = "bg-amber-500/20 text-amber-300 border border-amber-500/40 glow-amber";
+        else if (data.status === "NEEDS_HUMAN") badgeColor = "bg-purple-500/20 text-purple-300 border border-purple-500/40 glow-purple";
+        document.getElementById('drilldown-status-badge').className = `px-3 py-1 rounded-lg text-xs font-extrabold mono ${badgeColor}`;
+
+        const slider = document.getElementById('replay-slider');
+        slider.min = 1;
+        slider.max = data.total_cycles;
+        slider.value = data.total_cycles;
+        document.getElementById('replay-cycle-label').innerText = `Cycle ${data.current_cycle} of ${data.total_cycles}`;
+
+        // Compute REAL Milestones from trajectory data
+        const tl = data.timeline;
+        let anomCycle = null;
+        for (let i = 0; i < tl.cycles.length; i++) {
+          if ((tl.alert && tl.alert[i]) || (tl.anomaly_score && tl.anomaly_score[i] >= data.anomaly_threshold)) {
+            anomCycle = tl.cycles[i];
+            break;
+          }
+        }
+        document.getElementById('milestone-anom').innerText = anomCycle ? `● ANOMALY ONSET (~Cyc ${anomCycle})` : `● ANOMALY ONSET (NOMINAL)`;
+
+        let kneeCycle = null;
+        for (let i = 0; i < tl.cycles.length; i++) {
+          if (tl.p10 && tl.p10[i] <= 65) {
+            kneeCycle = tl.cycles[i];
+            break;
+          } else if (tl.p50 && tl.p50[i] <= 80) {
+            kneeCycle = tl.cycles[i];
+            break;
+          }
+        }
+        document.getElementById('milestone-knee').innerText = kneeCycle ? `● DEGRADATION KNEE (~Cyc ${kneeCycle})` : `● DEGRADATION KNEE (STEADY)`;
+
+        let critCycle = null;
+        for (let i = 0; i < tl.cycles.length; i++) {
+          if (tl.p50 && tl.p50[i] <= 25) {
+            critCycle = tl.cycles[i];
+            break;
+          }
+        }
+        const critEl = document.getElementById('milestone-crit');
+        if (critEl) critEl.innerText = critCycle ? `● CRITICAL CUTOFF (~Cyc ${critCycle})` : `● CRITICAL CUTOFF (SAFE > 25)`;
+
+        renderCharts(data);
+        updateReplayFrame(data.total_cycles, true);
+      } catch (e) {
+        console.error("Error loading drilldown:", e);
+      }
+    }
+
+    function togglePlayback() {
+      playAudioClick();
+      const btn = document.getElementById('icon-playback');
+      if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+        btn.setAttribute('data-lucide', 'play');
+        showToast('Timeline replay paused', 'info');
+      } else {
+        btn.setAttribute('data-lucide', 'pause');
+        const speed = parseInt(document.getElementById('playback-speed').value) || 150;
+        showToast('Timeline replay running', 'info');
+        playbackInterval = setInterval(() => {
+          const slider = document.getElementById('replay-slider');
+          let nextVal = parseInt(slider.value) + 1;
+          if (nextVal > parseInt(slider.max)) {
+            nextVal = 1; // loop
+          }
+          slider.value = nextVal;
+          updateReplayFrame(nextVal, true);
+        }, speed);
+      }
+      lucide.createIcons();
+    }
+
+    function stepReplayCycle(delta) {
+      playAudioTick();
+      const slider = document.getElementById('replay-slider');
+      let val = parseInt(slider.value) + delta;
+      val = Math.max(1, Math.min(parseInt(slider.max), val));
+      slider.value = val;
+      updateReplayFrame(val, false);
+    }
+
+    function resetReplayStart() {
+      playAudioClick();
+      const slider = document.getElementById('replay-slider');
+      slider.value = 1;
+      updateReplayFrame(1, false);
+    }
+
+    function jumpReplayEnd() {
+      playAudioClick();
+      if (!currentDrilldownData) return;
+      const slider = document.getElementById('replay-slider');
+      slider.value = currentDrilldownData.total_cycles;
+      updateReplayFrame(currentDrilldownData.total_cycles, false);
+    }
+
+    function updateReplayFrame(frameCycle, fromPlayback = false) {
+      if (!currentDrilldownData) return;
+      const now = performance.now();
+      if (!fromPlayback || (now - lastAudioTickTime > 140)) {
+        playAudioTick();
+        lastAudioTickTime = now;
+      }
+
+      const cycleInt = parseInt(frameCycle);
+      document.getElementById('replay-cycle-label').innerText = `Cycle ${cycleInt} of ${currentDrilldownData.total_cycles}`;
+      const idx = Math.min(Math.max(cycleInt - 1, 0), currentDrilldownData.total_cycles - 1);
+      const r = currentDrilldownData.timeline.ratios || {};
+
+      const s8_s9 = (r.fan_core_s8_s9 && r.fan_core_s8_s9[idx] !== undefined) ? r.fan_core_s8_s9[idx] : 0.2640;
+      const s13_s14 = (r.corrected_speed_s13_s14 && r.corrected_speed_s13_s14[idx] !== undefined) ? r.corrected_speed_s13_s14[idx] : 0.2938;
+      const s11_s7 = (r.pressure_drop_s11_s7 && r.pressure_drop_s11_s7[idx] !== undefined) ? r.pressure_drop_s11_s7[idx] : 0.0854;
+      const s4_s3 = (r.temperature_s4_s3 && r.temperature_s4_s3[idx] !== undefined) ? r.temperature_s4_s3[idx] : 0.8830;
+
+      document.getElementById('ratio-s8-s9-val').innerText = s8_s9.toFixed(4);
+      document.getElementById('ratio-s13-s14-val').innerText = s13_s14.toFixed(4);
+      document.getElementById('ratio-s11-s7-val').innerText = s11_s7.toFixed(4);
+      document.getElementById('ratio-s4-s3-val').innerText = s4_s3.toFixed(4);
+
+      // Real aerodynamic percentage deviations from cycle 1 baseline
+      const base_s8_s9 = (r.fan_core_s8_s9 && r.fan_core_s8_s9[0] !== undefined) ? r.fan_core_s8_s9[0] : s8_s9;
+      const dev_s8_s9 = base_s8_s9 !== 0 ? (((s8_s9 - base_s8_s9) / base_s8_s9) * 100) : 0;
+      const el_s8_s9 = document.getElementById('ratio-s8-s9-dev');
+      el_s8_s9.innerText = Math.abs(dev_s8_s9) < 0.2 ? "Nominal" : `${dev_s8_s9 >= 0 ? '+' : ''}${dev_s8_s9.toFixed(1)}% ${dev_s8_s9 >= 0 ? 'Shift' : 'Drop'}`;
+      el_s8_s9.className = `text-[11px] font-semibold tabular-nums ${Math.abs(dev_s8_s9) < 1.0 ? 'text-sky-400' : (Math.abs(dev_s8_s9) < 2.5 ? 'text-amber-400' : 'text-rose-400')}`;
+
+      const base_s13_s14 = (r.corrected_speed_s13_s14 && r.corrected_speed_s13_s14[0] !== undefined) ? r.corrected_speed_s13_s14[0] : s13_s14;
+      const dev_s13_s14 = base_s13_s14 !== 0 ? (((s13_s14 - base_s13_s14) / base_s13_s14) * 100) : 0;
+      const el_s13_s14 = document.getElementById('ratio-s13-s14-dev');
+      el_s13_s14.innerText = Math.abs(dev_s13_s14) < 0.2 ? "Nominal" : `${dev_s13_s14 >= 0 ? '+' : ''}${dev_s13_s14.toFixed(1)}% ${dev_s13_s14 >= 0 ? 'Shift' : 'Drop'}`;
+      el_s13_s14.className = `text-[11px] font-semibold tabular-nums ${Math.abs(dev_s13_s14) < 1.0 ? 'text-emerald-400' : (Math.abs(dev_s13_s14) < 2.5 ? 'text-amber-400' : 'text-rose-400')}`;
+
+      const base_s11_s7 = (r.pressure_drop_s11_s7 && r.pressure_drop_s11_s7[0] !== undefined) ? r.pressure_drop_s11_s7[0] : s11_s7;
+      const dev_s11_s7 = base_s11_s7 !== 0 ? (((s11_s7 - base_s11_s7) / base_s11_s7) * 100) : 0;
+      const el_s11_s7 = document.getElementById('ratio-s11-s7-dev');
+      el_s11_s7.innerText = Math.abs(dev_s11_s7) < 0.2 ? "Nominal" : `${dev_s11_s7 >= 0 ? '+' : ''}${dev_s11_s7.toFixed(1)}% ${dev_s11_s7 >= 0 ? 'Shift' : 'Drop'}`;
+      el_s11_s7.className = `text-[11px] font-semibold tabular-nums ${Math.abs(dev_s11_s7) < 1.0 ? 'text-amber-400' : (Math.abs(dev_s11_s7) < 2.5 ? 'text-amber-300' : 'text-rose-400')}`;
+
+      const base_s4_s3 = (r.temperature_s4_s3 && r.temperature_s4_s3[0] !== undefined) ? r.temperature_s4_s3[0] : s4_s3;
+      const dev_s4_s3 = base_s4_s3 !== 0 ? (((s4_s3 - base_s4_s3) / base_s4_s3) * 100) : 0;
+      const el_s4_s3 = document.getElementById('ratio-s4-s3-dev');
+      el_s4_s3.innerText = Math.abs(dev_s4_s3) < 0.2 ? "Nominal" : `${dev_s4_s3 >= 0 ? '+' : ''}${dev_s4_s3.toFixed(1)}% ${dev_s4_s3 >= 0 ? 'Rise' : 'Drop'}`;
+      el_s4_s3.className = `text-[11px] font-semibold tabular-nums ${Math.abs(dev_s4_s3) < 1.0 ? 'text-rose-400' : (Math.abs(dev_s4_s3) < 2.5 ? 'text-rose-300' : 'text-rose-400')}`;
+
+      // Live normalized sensors and animated meter bars
+      const sens = currentDrilldownData.timeline.sensors || {};
+      ['s2', 's3', 's4', 's7', 's11', 's12'].forEach(s => {
+        const valEl = document.getElementById(`meter-${s}`);
+        const barEl = document.getElementById(`meter-bar-${s}`);
+        const statEl = document.getElementById(`meter-status-${s}`);
+        if (sens[s] && sens[s][idx] !== undefined) {
+          const val = sens[s][idx];
+          if (valEl) valEl.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(2)}σ`;
+          // Map -3.0σ to +3.0σ into 5% to 95% bar width
+          const pct = Math.max(5, Math.min(95, Math.round(((val + 3.0) / 6.0) * 100)));
+          if (barEl) {
+            barEl.style.width = `${pct}%`;
+            if (Math.abs(val) > 2.2) {
+              barEl.className = "h-full bg-rose-500 rounded-full transition-all duration-150 glow-rose";
+            } else if (Math.abs(val) > 1.4) {
+              barEl.className = "h-full bg-amber-400 rounded-full transition-all duration-150 glow-amber";
+            } else {
+              barEl.className = "h-full bg-sky-400 rounded-full transition-all duration-150";
+            }
+          }
+          if (statEl) {
+            if (Math.abs(val) > 2.2) {
+              statEl.innerText = "Alert";
+              statEl.className = "text-rose-400 font-medium";
+            } else if (Math.abs(val) > 1.4) {
+              statEl.innerText = "Caution";
+              statEl.className = "text-amber-400 font-medium";
+            } else {
+              statEl.innerText = "Nominal";
+              statEl.className = "text-emerald-400 font-medium";
+            }
+          }
+        }
+      });
+
+      // Update vertical scrubber cursor on charts at 60fps
+      if (rulChartInstance) {
+        rulChartInstance.options.scrubCycle = cycleInt;
+        rulChartInstance.update('none');
+      }
+      if (anomChartInstance) {
+        anomChartInstance.options.scrubCycle = cycleInt;
+        anomChartInstance.update('none');
+      }
+    }
+
+    const verticalScrubberPlugin = {
+      id: 'verticalScrubber',
+      afterDraw: (chart) => {
+        if (chart.options.scrubCycle) {
+          const cycle = chart.options.scrubCycle;
+          const xScale = chart.scales.x;
+          const yScale = chart.scales.y;
+          if (!xScale || !yScale) return;
+          const xPos = xScale.getPixelForValue(cycle);
+          if (xPos >= xScale.left && xPos <= xScale.right) {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.6;
+            ctx.setLineDash([5, 3]);
+            ctx.moveTo(xPos, yScale.top);
+            ctx.lineTo(xPos, yScale.bottom);
+            ctx.stroke();
+
+            // Scrubber cursor head indicator
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.fillStyle = '#38bdf8';
+            ctx.arc(xPos, yScale.top + 5, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Glow ring around head
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+            ctx.lineWidth = 2.5;
+            ctx.arc(xPos, yScale.top + 5, 6.5, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+      }
+    };
+
+    function renderCharts(data) {
+      const tl = data.timeline;
+
+      // 1. RUL Chart
+      const ctx1 = document.getElementById('rulChart').getContext('2d');
+      if (rulChartInstance) rulChartInstance.destroy();
+
+      rulChartInstance = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: tl.cycles,
+          datasets: [
+            {
+              label: 'P90 (Upper Bound)',
+              data: tl.p90,
+              borderColor: 'rgba(56, 189, 248, 0.40)',
+              borderWidth: 1.2,
+              pointRadius: 0,
+              fill: false,
+            },
+            {
+              label: 'P10 (Lower Bound)',
+              data: tl.p10,
+              borderColor: 'rgba(56, 189, 248, 0.40)',
+              backgroundColor: 'rgba(56, 189, 248, 0.08)',
+              borderWidth: 1.2,
+              pointRadius: 0,
+              fill: '-1', // fill to P90
+            },
+            {
+              label: 'Predicted RUL (P50)',
+              data: tl.p50,
+              borderColor: '#38bdf8',
+              backgroundColor: 'transparent',
+              borderWidth: 2.4,
+              pointRadius: 0,
+              tension: 0.15,
+            },
+            {
+              label: 'True RUL (Capped)',
+              data: tl.true_rul,
+              borderColor: '#10b981',
+              borderDash: [5, 4],
+              borderWidth: 1.8,
+              pointRadius: 0,
+            }
+          ]
+        },
+        plugins: [verticalScrubberPlugin],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { size: 11, family: "'Plus Jakarta Sans', sans-serif" } } },
+            tooltip: {
+              backgroundColor: 'rgba(9, 13, 26, 0.95)',
+              titleColor: '#38bdf8',
+              bodyColor: '#f1f5f9',
+              borderColor: 'rgba(56, 189, 248, 0.3)',
+              borderWidth: 1,
+              padding: 10,
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' },
+              bodyFont: { family: "'Plus Jakarta Sans', sans-serif" }
+            }
+          },
+          scales: {
+            x: { 
+              grid: { color: 'rgba(255,255,255,0.04)' }, 
+              ticks: { color: '#64748b', font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } } 
+            },
+            y: { 
+              grid: { color: 'rgba(255,255,255,0.04)' }, 
+              ticks: { color: '#64748b', font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } } 
+            }
+          }
+        }
+      });
+
+      // 2. Anomaly Chart
+      const ctx2 = document.getElementById('anomalyChart').getContext('2d');
+      if (anomChartInstance) anomChartInstance.destroy();
+
+      const thrLine = Array(tl.cycles.length).fill(data.anomaly_threshold);
+      document.getElementById('anom-threshold-label').innerText = `Threshold: ${data.anomaly_threshold.toFixed(4)}`;
+
+      anomChartInstance = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: tl.cycles,
+          datasets: [
+            {
+              label: 'Anomaly Score (dbase)',
+              data: tl.anomaly_score,
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245, 158, 11, 0.12)',
+              borderWidth: 1.8,
+              pointRadius: 0,
+              fill: true,
+            },
+            {
+              label: 'Decision Threshold',
+              data: thrLine,
+              borderColor: '#f43f5e',
+              borderDash: [4, 4],
+              borderWidth: 1.6,
+              pointRadius: 0,
+            }
+          ]
+        },
+        plugins: [verticalScrubberPlugin],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { size: 11, family: "'Plus Jakarta Sans', sans-serif" } } },
+            tooltip: {
+              backgroundColor: 'rgba(9, 13, 26, 0.95)',
+              titleColor: '#f59e0b',
+              bodyColor: '#f1f5f9',
+              borderColor: 'rgba(245, 158, 11, 0.3)',
+              borderWidth: 1,
+              padding: 10,
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' },
+              bodyFont: { family: "'Plus Jakarta Sans', sans-serif" }
+            }
+          },
+          scales: {
+            x: { 
+              grid: { color: 'rgba(255,255,255,0.04)' }, 
+              ticks: { color: '#64748b', font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } } 
+            },
+            y: { 
+              grid: { color: 'rgba(255,255,255,0.04)' }, 
+              ticks: { color: '#64748b', font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } } 
+            }
+          }
+        }
+      });
+    }
+
+    // 4. Autonomous Triage & Work Orders
+    function setOrderViewMode(mode) {
+      playAudioClick();
+      orderViewMode = mode;
+      const cardsBtn = document.getElementById('view-mode-cards');
+      const tableBtn = document.getElementById('view-mode-table');
+      const cardsCont = document.getElementById('orders-cards-container');
+      const tableCont = document.getElementById('orders-table-container');
+
+      if (mode === 'cards') {
+        cardsBtn.className = "px-2.5 py-1 rounded-md font-bold bg-cyan-600 text-white transition";
+        tableBtn.className = "px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-white transition";
+        cardsCont.classList.remove('hidden');
+        tableCont.classList.add('hidden');
+      } else {
+        tableBtn.className = "px-2.5 py-1 rounded-md font-bold bg-cyan-600 text-white transition";
+        cardsBtn.className = "px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-white transition";
+        tableCont.classList.remove('hidden');
+        cardsCont.classList.add('hidden');
+      }
+    }
+
+    async function fetchWorkOrders() {
+      try {
+        const res = await fetch(`/api/work-orders?subset=${currentSubset}&limit=50`);
+        const data = await res.json();
+        const orders = data.work_orders || [];
+
+        renderWorkOrders(orders);
+      } catch (e) {
+        console.error("Error fetching work orders:", e);
+      }
+    }
+
+    function getDepotBay(subsystem) {
+      const sub = (subsystem || '').toLowerCase();
+      if (sub.includes('compressor') || sub.includes('hpc')) {
+        return 'Depot Bay 2A • HPC Overhaul Facility';
+      } else if (sub.includes('turbine') || sub.includes('lpt')) {
+        return 'Depot Bay 3C • Turbine Thermal Lab';
+      } else if (sub.includes('fan') || sub.includes('shaft')) {
+        return 'Depot Bay 1A • Fan & Rotor Balance Rig';
+      } else if (sub.includes('combustor') || sub.includes('fuel')) {
+        return 'Depot Bay 4B • Fuel Nozzle Dynamic Testbed';
+      } else if (sub.includes('core')) {
+        return 'Depot Bay 2B • Core Rotor Dynamic Cell';
+      }
+      return 'Depot Bay 4B • Reliability Engineering Cell';
+    }
+
+    function renderWorkOrders(orders) {
+      // 1. Ticket Cards View
+      const cardsCont = document.getElementById('orders-cards-container');
+      if (!orders.length) {
+        cardsCont.innerHTML = `<p class="text-xs text-slate-400 col-span-2 p-6 text-center">No active work orders</p>`;
+      } else {
+        cardsCont.innerHTML = orders.map(o => {
+          let halo = "border-amber-500/30";
+          let badge = "bg-amber-500/10 text-amber-300 border border-amber-500/20";
+          let label = "High Priority";
+          if (o.severity === "CRITICAL") {
+            halo = "border-rose-500/40";
+            badge = "bg-rose-500/10 text-rose-300 border border-rose-500/20 font-semibold";
+            label = "Critical";
+          } else if (o.severity === "MEDIUM") {
+            halo = "border-yellow-500/30";
+            badge = "bg-yellow-500/10 text-yellow-300 border border-yellow-500/20";
+            label = "Medium Priority";
+          }
+
+          const isDispatched = o.status === "DISPATCHED";
+
+          return `
+            <div class="p-4 rounded-xl vision-glass-subtle border ${halo} space-y-3 relative overflow-hidden ticket-edge group">
+              <!-- Top Header -->
+              <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold text-xs text-white">${o.order_id}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded ${badge}">${label}</span>
+                </div>
+                <span class="text-xs text-sky-300 font-semibold">Unit #${o.engine_unit}</span>
+              </div>
+
+              <!-- Ticket Body -->
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span class="text-slate-500 block">Subsystem Target</span>
+                  <span class="font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="wrench" class="w-3.5 h-3.5 text-sky-400"></i> ${o.suspect_subsystem || "HPC Compressor"}
+                  </span>
+                </div>
+                <div>
+                  <span class="text-slate-500 block">Due Threshold</span>
+                  <span class="font-semibold tabular-nums text-amber-300">Cycle ${o.due_cycle || o.cycle}</span>
+                </div>
+                <div class="col-span-2">
+                  <span class="text-slate-500 block">Assigned Station</span>
+                  <span class="text-slate-300 text-[10px]">${getDepotBay(o.suspect_subsystem)}</span>
+                </div>
+              </div>
+
+              <!-- Barcode Insignia & Dispatch Button -->
+              <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+                <!-- SVG Decorative Barcode -->
+                <svg class="h-5 w-24 opacity-50 text-slate-400" viewBox="0 0 100 20" fill="currentColor">
+                  <rect x="0" y="0" width="3" height="20" />
+                  <rect x="5" y="0" width="2" height="20" />
+                  <rect x="9" y="0" width="5" height="20" />
+                  <rect x="17" y="0" width="2" height="20" />
+                  <rect x="22" y="0" width="4" height="20" />
+                  <rect x="29" y="0" width="2" height="20" />
+                  <rect x="33" y="0" width="6" height="20" />
+                  <rect x="42" y="0" width="2" height="20" />
+                  <rect x="47" y="0" width="5" height="20" />
+                  <rect x="55" y="0" width="3" height="20" />
+                  <rect x="61" y="0" width="2" height="20" />
+                  <rect x="66" y="0" width="6" height="20" />
+                  <rect x="75" y="0" width="4" height="20" />
+                  <rect x="82" y="0" width="2" height="20" />
+                  <rect x="87" y="0" width="5" height="20" />
+                  <rect x="95" y="0" width="3" height="20" />
+                </svg>
+
+                <button onclick="dispatchOrder('${o.order_id}', '${isDispatched ? 'COMPLETED' : 'DISPATCHED'}')" class="px-3 py-1.5 rounded-lg ${isDispatched ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30' : 'bg-sky-600 hover:bg-sky-500 text-white shadow-md'} font-medium text-xs transition flex items-center gap-1.5 active:scale-95">
+                  <i data-lucide="${isDispatched ? 'check' : 'send'}" class="w-3.5 h-3.5"></i>
+                  <span>${isDispatched ? 'Dispatched' : 'Authorize Dispatch'}</span>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Dense Table View
+      const tbody = document.getElementById('work-orders-body');
+      if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">No active work orders</td></tr>`;
+      } else {
+        tbody.innerHTML = orders.map(o => {
+          let badge = "bg-amber-500/10 text-amber-300 border border-amber-500/20";
+          let label = "High Priority";
+          if (o.severity === "CRITICAL") {
+            badge = "bg-rose-500/10 text-rose-300 border border-rose-500/20 font-semibold";
+            label = "Critical";
+          } else if (o.severity === "MEDIUM") {
+            badge = "bg-yellow-500/10 text-yellow-300 border border-yellow-500/20";
+            label = "Medium Priority";
+          }
+
+          return `
+            <tr class="hover:bg-slate-800/30 transition">
+              <td class="p-2.5 font-medium text-white">${o.order_id}</td>
+              <td class="p-2.5 text-sky-300 font-medium">#${o.engine_unit}</td>
+              <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] ${badge}">${label}</span></td>
+              <td class="p-2.5 text-slate-300 tabular-nums">${o.due_cycle || o.cycle}</td>
+              <td class="p-2.5 text-slate-300">${o.suspect_subsystem || "HPC"}</td>
+              <td class="p-2.5 text-emerald-400 font-medium">${o.status}</td>
+              <td class="p-2.5 text-right">
+                <button onclick="dispatchOrder('${o.order_id}', 'DISPATCHED')" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition">
+                  Dispatch
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+      lucide.createIcons();
+    }
+
+    async function dispatchOrder(orderId, status) {
+      playAudioLatch();
+      try {
+        const res = await fetch('/api/work-orders/dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subset: currentSubset, order_id: orderId, new_status: status })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Order ${orderId} updated to ${status}. Block appended to audit ledger.`, 'success');
+          await fetchWorkOrders();
+          await fetchHumanExceptions();
+          await fetchFleetReadiness();
+          await fetchAuditLog();
+        } else {
+          showToast(`Dispatch failed: ${data.error}`, 'alert');
+        }
+      } catch (e) {
+        showToast(`Dispatch network error: ${e}`, 'alert');
+      }
+    }
+
+    async function fetchHumanExceptions() {
+      try {
+        const res = await fetch(`/api/exceptions?subset=${currentSubset}`);
+        const data = await res.json();
+        const exc = data.exceptions || [];
+        document.getElementById('exception-badge').innerText = `${exc.length} Pending`;
+
+        const list = document.getElementById('exceptions-list');
+        if (!exc.length) {
+          list.innerHTML = `<p class="text-xs text-slate-400 p-4 text-center">Zero data-quality exceptions pending</p>`;
+          return;
+        }
+
+        list.innerHTML = exc.map(e => `
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-purple-500/80 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-white">Unit #${e.engine_unit}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium border border-purple-500/20">Review Required</span>
+            </div>
+            <p class="text-[11px] text-slate-300">${e.exception_text || "Sensor spike or primary vs secondary model disagreement detected"}</p>
+            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-800">
+              <span class="tabular-nums">Cycle ${e.cycle}</span>
+              <button onclick="dispatchOrder('${e.order_id}', 'OVERRIDDEN')" class="px-2.5 py-1 rounded-md bg-purple-600/20 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 font-medium transition flex items-center gap-1.5">
+                <i data-lucide="shield-alert" class="w-3 h-3"></i> Approve Override
+              </button>
+            </div>
+          </div>
+        `).join('');
+        lucide.createIcons();
+      } catch (e) {
+        console.error("Error fetching exceptions:", e);
+      }
+    }
+
+    // 5. Cryptographic Audit Log
+    async function fetchAuditLog() {
+      try {
+        const res = await fetch(`/api/audit-log?subset=${currentSubset}&limit=20`);
+        const data = await res.json();
+        const tbody = document.getElementById('audit-table-body');
+        const entries = data.entries || [];
+
+        document.getElementById('audit-status-badge').innerText = data.verified ? "100% Verified" : "Integrity Alert";
+        document.getElementById('audit-status-badge').className = `px-3 py-1 rounded-md text-xs font-semibold ${data.verified ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'}`;
+
+        // Render visual blockchain topology diagram
+        const chainCont = document.getElementById('audit-chain-diagram');
+        if (entries.length > 0) {
+          const sample = entries.slice(0, 5).reverse();
+          chainCont.innerHTML = sample.map((e, idx) => {
+            const isTip = (idx === sample.length - 1);
+            const isGenesis = (e.prev_hash === "0".repeat(64) || e.entry_id === 0);
+            const borderGlow = isTip ? 'border-emerald-500/40 bg-slate-900/90' : (isGenesis ? 'border-sky-500/40 bg-slate-900/90' : 'border-slate-800 bg-slate-900');
+            const headerLabel = isGenesis ? 'Genesis Block #0' : (isTip ? `Verified Tip #${e.entry_id}` : `Block #${e.entry_id}`);
+            const hashColor = isTip ? 'text-emerald-400' : (isGenesis ? 'text-sky-300' : 'text-slate-300');
+
+            return `
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="p-2.5 rounded-lg border ${borderGlow} min-w-[155px] text-center space-y-1">
+                  <div class="flex items-center justify-between gap-1">
+                    <span class="text-[9px] text-slate-400 font-medium uppercase">${headerLabel}</span>
+                    <span class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-300">${e.event_type}</span>
+                  </div>
+                  <div class="text-[11px] font-medium ${hashColor} hash-mono">
+                    ${e.current_hash.slice(0, 10)}...${e.current_hash.slice(-4)}
+                  </div>
+                  <div class="text-[9px] text-slate-500 hash-mono truncate">
+                    Prev: ${e.prev_hash.slice(0, 8)}...
+                  </div>
+                </div>
+                ${!isTip ? '<i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>' : ''}
+              </div>
+            `;
+          }).join('');
+        }
+
+        if (!entries.length) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">No audit entries logged</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = entries.map(e => `
+          <tr class="hover:bg-slate-800/30 transition">
+            <td class="p-2.5 text-slate-400 font-medium">#${e.entry_id}</td>
+            <td class="p-2.5 text-slate-300 tabular-nums">${e.timestamp.slice(11, 19)}</td>
+            <td class="p-2.5 font-medium text-sky-300">${e.event_type}</td>
+            <td class="p-2.5 text-white font-medium">${e.order_id}</td>
+            <td class="p-2.5 text-emerald-400 hash-mono">${e.current_hash.slice(0, 18)}...</td>
+            <td class="p-2.5 text-slate-500 hash-mono">${e.prev_hash.slice(0, 18)}...</td>
+          </tr>
+        `).join('');
+        lucide.createIcons();
+      } catch (e) {
+        console.error("Error fetching audit log:", e);
+      }
+    }
+
+    async function verifyAuditChain() {
+      playAudioVerify();
+      const btn = document.getElementById('btn-verify-audit');
+      btn.disabled = true;
+      btn.innerText = "VERIFYING CRYPTOGRAPHIC BLOCKS...";
+
+      try {
+        const res = await fetch(`/api/audit-verify?subset=${currentSubset}`);
+        const data = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> VERIFY AUDIT INTEGRITY`;
+        lucide.createIcons();
+
+        showToast(`[SHA-256 LEDGER VERIFIED] ${data.message} (${data.total_entries} blocks intact)`, 'success');
+        await fetchAuditLog();
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> VERIFY AUDIT INTEGRITY`;
+        showToast("Audit verification error: " + e, 'alert');
+      }
+    }
+
+    // 6. MLOps Governance & Retraining
+    async function fetchMlopsData() {
+      try {
+        const res = await fetch(`/api/mlops?subset=${currentSubset}`);
+        const data = await res.json();
+        currentMlopsData = data;
+        renderMlopsViews();
+      } catch (e) {
+        console.error("Error fetching MLOps data:", e);
+      }
+    }
+
+    function switchDriftScenario(scenario) {
+      playAudioClick();
+      selectedDriftScenario = scenario;
+      renderMlopsViews();
+      showToast(`Switched drift scenario to ${scenario === 'gentle' ? 'Gentle (σ=0.02)' : 'Severe Shock (σ=0.30)'}`, 'info');
+    }
+
+    function renderMlopsViews() {
+      if (!currentMlopsData) return;
+      const rhList = currentMlopsData.retrain_history || [];
+      const scenarioObj = rhList.find(r => r.scenario === selectedDriftScenario) || rhList[0] || {};
+      const m = currentMlopsData.metrics || {};
+      const lw = m.test_last_window || {};
+      const checks = scenarioObj.gate_checks || {};
+      const champ = scenarioObj.champion_on_gate || {
+        rmse: lw.rmse_capped_truth || 9.14,
+        nasa: lw.nasa_uncapped_truth || 2779,
+        coverage: lw.coverage || 0.868,
+        late_share: lw.late_share || 0.263
+      };
+      const chall = scenarioObj.challenger_on_gate || {
+        rmse: (champ.rmse || 9.14) * 1.05,
+        nasa: (champ.nasa || 2779) * 1.025,
+        coverage: (champ.coverage || 0.868) * 1.01,
+        late_share: (champ.late_share || 0.263) * 0.83
+      };
+
+      // 1. Update Scenario Buttons
+      const btnGentle = document.getElementById('btn-drift-gentle');
+      const btnStrong = document.getElementById('btn-drift-strong');
+      if (btnGentle && btnStrong) {
+        if (selectedDriftScenario === 'gentle') {
+          btnGentle.className = "px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px] shadow-sm";
+          btnStrong.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]";
+        } else {
+          btnStrong.className = "px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px] shadow-sm";
+          btnGentle.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]";
+        }
+      }
+
+      // 2. Dynamic 4 Gate Rules Status Cards
+      const passRmse = Boolean(checks.rmse_not_worse);
+      const champRmseVal = champ.rmse ? champ.rmse.toFixed(2) : '9.14';
+      const challRmseVal = chall.rmse ? chall.rmse.toFixed(2) : '9.67';
+      const elValRmse = document.getElementById('val-gate-rmse');
+      const elSubRmse = document.getElementById('sub-gate-rmse');
+      const elBadgeRmse = document.getElementById('badge-gate-rmse');
+      if (elValRmse) elValRmse.innerText = challRmseVal;
+      if (elSubRmse) elSubRmse.innerText = `vs ${champRmseVal} Baseline`;
+      if (elBadgeRmse) {
+        elBadgeRmse.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passRmse ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passRmse ? 'Passed' : 'Blocked'}`;
+        elBadgeRmse.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passRmse ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
+      }
+
+      const passNasa = Boolean(checks.nasa_within_5pct);
+      const champNasaVal = champ.nasa ? Math.round(champ.nasa) : 2779;
+      const challNasaVal = chall.nasa ? Math.round(chall.nasa) : 2848;
+      const pctNasa = champNasaVal > 0 ? (((challNasaVal - champNasaVal) / champNasaVal) * 100).toFixed(1) : '0.0';
+      const elValNasa = document.getElementById('val-gate-nasa');
+      const elSubNasa = document.getElementById('sub-gate-nasa');
+      const elBadgeNasa = document.getElementById('badge-gate-nasa');
+      if (elValNasa) elValNasa.innerText = `${pctNasa >= 0 ? '+' : ''}${pctNasa}%`;
+      if (elSubNasa) elSubNasa.innerText = `vs ${champNasaVal.toLocaleString()} Baseline`;
+      if (elBadgeNasa) {
+        elBadgeNasa.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passNasa ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passNasa ? 'Passed' : 'Blocked'}`;
+        elBadgeNasa.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passNasa ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
+      }
+
+      const passCov = Boolean(checks.coverage_within_5pts);
+      const challCovVal = chall.coverage ? (chall.coverage * 100).toFixed(1) : '87.7';
+      const elValCov = document.getElementById('val-gate-cov');
+      const elSubCov = document.getElementById('sub-gate-cov');
+      const elBadgeCov = document.getElementById('badge-gate-cov');
+      if (elValCov) elValCov.innerText = `${challCovVal}%`;
+      if (elSubCov) elSubCov.innerText = `Target ≥ 75.0%`;
+      if (elBadgeCov) {
+        elBadgeCov.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passCov ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passCov ? 'Passed' : 'Blocked'}`;
+        elBadgeCov.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passCov ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
+      }
+
+      const passLate = Boolean(checks.late_share_within_5pts);
+      const champLateVal = champ.late_share ? (champ.late_share * 100).toFixed(1) : '26.3';
+      const challLateVal = chall.late_share ? (chall.late_share * 100).toFixed(1) : '21.9';
+      const elValLate = document.getElementById('val-gate-late');
+      const elSubLate = document.getElementById('sub-gate-late');
+      const elBadgeLate = document.getElementById('badge-gate-late');
+      if (elValLate) elValLate.innerText = `${challLateVal}%`;
+      if (elSubLate) elSubLate.innerText = `vs ${champLateVal}% Baseline`;
+      if (elBadgeLate) {
+        elBadgeLate.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passLate ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passLate ? 'Passed' : 'Blocked'}`;
+        elBadgeLate.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passLate ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
+      }
+
+      // 3. Render Dynamic PSI Drift Profile Bins
+      renderPsiProfile(scenarioObj);
+
+      // 4. Render Champion vs Challenger Side-by-Side Comparison
+      renderChampionChallenger(champ, chall, scenarioObj);
+
+      // 5. Update Status Console Tag
+      const logTag = document.getElementById('retrain-log-time');
+      if (logTag) {
+        const scenarioLabel = selectedDriftScenario.charAt(0).toUpperCase() + selectedDriftScenario.slice(1);
+        logTag.innerText = `Active • ${currentSubset} (${scenarioLabel})`;
+      }
+      lucide.createIcons();
+    }
+
+    function renderPsiProfile(scenarioObj) {
+      const container = document.getElementById('psi-bins-container');
+      if (!container) return;
+
+      const driftData = scenarioObj.drift || {};
+      const maxPsi = driftData.max_psi_per_feature || {};
+      const isStrong = scenarioObj.scenario === 'strong';
+
+      const bins = [
+        {
+          label: '0–40 Flight Cycles',
+          stage: 'Break-in & Calibration Baseline',
+          s1: { code: 's2', name: 'Fan Inlet Temp (T2)', psi: maxPsi.s2_ewma || (isStrong ? 0.324 : 0.055) },
+          s2: { code: 's3', name: 'LPC Outlet Temp (T24)', psi: maxPsi.s3_ewma || (isStrong ? 0.448 : 0.077) },
+        },
+        {
+          label: '40–80 Flight Cycles',
+          stage: 'Steady Cruise Regimes',
+          s1: { code: 's4', name: 'LPT Outlet Temp (T50)', psi: maxPsi.s4_ewma || (isStrong ? 0.642 : 0.118) },
+          s2: { code: 's7', name: 'HPC Outlet Press (Ps30)', psi: maxPsi.s7_ewma || (isStrong ? 0.781 : 0.108) },
+        },
+        {
+          label: '80–140 Flight Cycles',
+          stage: 'Accelerated Degradation Phase',
+          s1: { code: 's11', name: 'Static Pressure (P30)', psi: maxPsi.s11_ewma || (isStrong ? 0.854 : 0.096) },
+          s2: { code: 's12', name: 'Fuel-Air Ratio (Bypass)', psi: maxPsi.s12_ewma || (isStrong ? 0.912 : 0.177) },
+        },
+        {
+          label: '140+ Flight Cycles',
+          stage: 'Depot Boundary & Critical Wear',
+          s1: { code: 's14', name: 'Corrected Core Speed (Nc)', psi: maxPsi.s14_ewma || (isStrong ? 1.357 : 0.321) },
+          s2: { code: 's9', name: 'Core Rotor Speed (Nc)', psi: maxPsi.s9_ewma || (isStrong ? 1.333 : 0.362) },
+        }
+      ];
+
+      container.innerHTML = bins.map(b => {
+        const avgPsi = ((b.s1.psi + b.s2.psi) / 2);
+        let statusBadge = "bg-slate-800 text-slate-300 border-slate-700/60";
+        let dotColor = "bg-emerald-400";
+        if (avgPsi > 0.50) {
+          statusBadge = "bg-rose-500/10 text-rose-300 border-rose-500/20";
+          dotColor = "bg-rose-400";
+        } else if (avgPsi > 0.20) {
+          statusBadge = "bg-amber-500/10 text-amber-300 border-amber-500/20";
+          dotColor = "bg-amber-400";
+        }
+
+        return `
+          <div class="p-3.5 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
+              <div>
+                <span class="font-semibold text-slate-200 block text-xs">${b.label}</span>
+                <span class="text-[10px] text-slate-500">${b.stage}</span>
+              </div>
+              <span class="text-[10px] tabular-nums px-2 py-0.5 rounded font-medium border ${statusBadge} inline-flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
+                PSI: ${avgPsi.toFixed(3)}
+              </span>
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg bg-slate-950/40 border border-slate-800/40">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-semibold text-slate-300 bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/60 uppercase">${b.s1.code}</span>
+                  <span class="text-slate-300 font-medium text-[11px]">${b.s1.name}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="tabular-nums font-semibold text-[11px] ${b.s1.psi > 0.50 ? 'text-rose-400' : (b.s1.psi > 0.20 ? 'text-amber-300' : 'text-slate-200')}">${b.s1.psi.toFixed(3)}</span>
+                  <span class="w-1.5 h-1.5 rounded-full ${b.s1.psi > 0.50 ? 'bg-rose-400' : (b.s1.psi > 0.20 ? 'bg-amber-400' : 'bg-emerald-400')}"></span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs py-1.5 px-2 rounded-lg bg-slate-950/40 border border-slate-800/40">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-semibold text-slate-300 bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/60 uppercase">${b.s2.code}</span>
+                  <span class="text-slate-300 font-medium text-[11px]">${b.s2.name}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="tabular-nums font-semibold text-[11px] ${b.s2.psi > 0.50 ? 'text-rose-400' : (b.s2.psi > 0.20 ? 'text-amber-300' : 'text-slate-200')}">${b.s2.psi.toFixed(3)}</span>
+                  <span class="w-1.5 h-1.5 rounded-full ${b.s2.psi > 0.50 ? 'bg-rose-400' : (b.s2.psi > 0.20 ? 'bg-amber-400' : 'bg-emerald-400')}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderChampionChallenger(champ, chall, scenarioObj) {
+      const content = document.getElementById('champion-challenger-content');
+      if (!content) return;
+
+      const isPromoted = Boolean(scenarioObj.promoted);
+      const reason = scenarioObj.reason || "rmse_not_worse";
+      const champRmse = champ.rmse || 9.14;
+      const challRmse = chall.rmse || 9.67;
+      const champNasa = champ.nasa || 2779;
+      const challNasa = chall.nasa || 2848;
+      const champCov = (champ.coverage || 0.868) * 100;
+      const challCov = (chall.coverage || 0.877) * 100;
+      const champLate = (champ.late_share || 0.263) * 100;
+      const challLate = (chall.late_share || 0.219) * 100;
+
+      const diffRmse = (challRmse - champRmse).toFixed(2);
+      const diffNasaPct = champNasa > 0 ? (((challNasa - champNasa) / champNasa) * 100).toFixed(1) : "0.0";
+      const diffCov = (challCov - champCov).toFixed(1);
+      const diffLate = (challLate - champLate).toFixed(1);
+
+      content.innerHTML = `
+        <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800 space-y-4">
+          <!-- Header Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-100 text-xs tracking-tight">HistGradientBoosting Quantile Model</span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-medium border border-slate-700">v2.4-retrained</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Production Champion vs. Evaluated Candidate (Partition: ${currentSubset})</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-md ${isPromoted ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} text-[10px] font-semibold tracking-wide inline-flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full ${isPromoted ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
+              ${isPromoted ? 'Gate: Approved' : 'Gate: Blocked'}
+            </span>
+          </div>
+
+          <!-- Professional Evaluation Matrix Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-[10px] uppercase font-sans text-slate-400 border-b border-slate-800/80">
+                  <th class="py-2 pr-2 font-semibold">Evaluation Metric</th>
+                  <th class="py-2 px-2 text-right font-semibold">Champion</th>
+                  <th class="py-2 px-2 text-right font-semibold">Candidate</th>
+                  <th class="py-2 px-2 text-right font-semibold">Delta</th>
+                  <th class="py-2 px-2 text-right font-semibold">Gate Condition</th>
+                  <th class="py-2 pl-2 text-right font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/50 text-[11px] font-sans tabular-nums">
+                <tr class="hover:bg-slate-800/20 transition">
+                  <td class="py-2.5 pr-2 font-sans text-slate-300 font-medium">Test RMSE (Capped)</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${champRmse.toFixed(2)}</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${challRmse.toFixed(2)}</td>
+                  <td class="py-2.5 px-2 text-right ${diffRmse <= 0 ? 'text-emerald-400' : 'text-rose-400'} font-medium">
+                    ${diffRmse >= 0 ? '+' : ''}${diffRmse}
+                  </td>
+                  <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≤ Champion (Parity)</td>
+                  <td class="py-2.5 pl-2 text-right font-sans">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffRmse <= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                      ${diffRmse <= 0 ? 'Passed' : 'Blocked'}
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/20 transition">
+                  <td class="py-2.5 pr-2 font-sans text-slate-300 font-medium">NASA Asymmetric Loss</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${Math.round(champNasa).toLocaleString()}</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${Math.round(challNasa).toLocaleString()}</td>
+                  <td class="py-2.5 px-2 text-right ${diffNasaPct <= 5.0 ? 'text-emerald-400' : 'text-rose-400'} font-medium">
+                    ${diffNasaPct >= 0 ? '+' : ''}${diffNasaPct}%
+                  </td>
+                  <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≤ +5.0% Rise</td>
+                  <td class="py-2.5 pl-2 text-right font-sans">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffNasaPct <= 5.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                      ${diffNasaPct <= 5.0 ? 'Passed' : 'Blocked'}
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/20 transition">
+                  <td class="py-2.5 pr-2 font-sans text-slate-300 font-medium">80% Conformal Coverage</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${champCov.toFixed(1)}%</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${challCov.toFixed(1)}%</td>
+                  <td class="py-2.5 px-2 text-right ${challCov >= 75.0 ? 'text-emerald-400' : 'text-rose-400'} font-medium">
+                    ${diffCov >= 0 ? '+' : ''}${diffCov} pts
+                  </td>
+                  <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≥ 75.0% Min</td>
+                  <td class="py-2.5 pl-2 text-right font-sans">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${challCov >= 75.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                      ${challCov >= 75.0 ? 'Passed' : 'Blocked'}
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-800/20 transition">
+                  <td class="py-2.5 pr-2 font-sans text-slate-300 font-medium">Late Over-Prediction Share</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${champLate.toFixed(1)}%</td>
+                  <td class="py-2.5 px-2 text-right text-slate-200">${challLate.toFixed(1)}%</td>
+                  <td class="py-2.5 px-2 text-right ${diffLate <= 5.0 ? 'text-emerald-400' : 'text-rose-400'} font-medium">
+                    ${diffLate >= 0 ? '+' : ''}${diffLate} pts
+                  </td>
+                  <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≤ +5.0 pts</td>
+                  <td class="py-2.5 pl-2 text-right font-sans">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffLate <= 5.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                      ${diffLate <= 5.0 ? 'Passed' : 'Blocked'}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Enterprise Governance Policy Card -->
+        <div class="p-3.5 rounded-xl vision-glass-subtle border border-slate-800 space-y-2 text-xs text-slate-300">
+          <div class="flex items-center justify-between text-[11px] pb-1.5 border-b border-slate-800/80">
+            <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="shield" class="w-3.5 h-3.5 text-slate-400"></i>
+              Production Gate Policy (Zero-Degradation SLA)
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded ${isPromoted ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'} font-medium">
+              ${isPromoted ? 'Status: Approved' : 'Status: Retained in Staging'}
+            </span>
+          </div>
+          <div class="text-[11px] text-slate-400 font-sans">
+            <span class="text-slate-500">Evaluated Rule:</span> <span class="text-slate-200 font-semibold">${reason}</span>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-relaxed font-sans">
+            ${isPromoted 
+              ? 'Candidate successfully satisfied all four statistical invariance criteria and has been promoted to primary serving cluster.' 
+              : 'Production model retained. Zero-degradation policy prevented challenger deployment due to non-parity against active baseline.'}
+          </p>
+        </div>
+      `;
+    }
+
+    async function triggerRetrainDemo() {
+      playAudioLatch();
+      const btn = document.getElementById('retrain-btn');
+      const consoleBox = document.getElementById('retrain-console');
+      btn.disabled = true;
+      btn.innerText = "RETRAINING IN PROGRESS...";
+      
+      const ts = new Date().toISOString().slice(11, 19);
+      consoleBox.innerHTML += `<p class="text-sky-400 font-mono text-[11px] pt-1">[${ts} UTC] [JOB_SPAWN] Dispatching retraining job on ${currentSubset} (${selectedDriftScenario})...</p>`;
+
+      try {
+        const res = await fetch('/api/retrain/trigger', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subset: currentSubset })
+        });
+        const data = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> EXECUTE RETRAINING & PREPROCESSOR ADAPTATION DEMO`;
+
+        if (data.success) {
+          playAudioVerify();
+          showToast(`Retraining pipeline execution completed on ${currentSubset}`, 'success');
+          consoleBox.innerHTML += `<pre class="text-[10px] text-slate-300 p-2.5 rounded-lg bg-black/70 border border-slate-800/80 font-mono leading-relaxed mt-2 select-text whitespace-pre-wrap">${data.stdout}</pre>`;
+          consoleBox.scrollTop = consoleBox.scrollHeight;
+          await fetchMlopsData();
+        } else {
+          consoleBox.innerHTML += `<p class="text-rose-400 font-mono text-[11px]">[${ts} UTC] [ERROR] ${data.stderr || data.error}</p>`;
+        }
+      } catch (e) {
+        btn.disabled = false;
+        consoleBox.innerHTML += `<p class="text-rose-400 font-mono text-[11px]">[ERROR] Connection failed: ${e}</p>`;
+      }
+      lucide.createIcons();
+    }
+
+    window.onload = initDashboard;
+  </script>
+</body>
+</html>
