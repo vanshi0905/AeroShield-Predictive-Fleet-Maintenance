@@ -5,7 +5,7 @@ FastAPI REST API Backend connecting the Vision UI cockpit to the SHIELD pipeline
 import os
 import sys
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -35,6 +35,14 @@ from .voice_agent import SarvamVoiceEngine, AVAILABLE_SPEAKERS
 
 bridge = DataBridge()
 voice_engine = SarvamVoiceEngine()
+
+ADMIN_API_KEY = os.getenv("AEROSHIELD_API_KEY", "")
+
+def verify_write_access(x_api_key: Optional[str] = Header(None)):
+    """Access control guard (Fault F24). Local dev is open; when AEROSHIELD_API_KEY is set,
+    requests must provide a matching X-API-Key header."""
+    if ADMIN_API_KEY and x_api_key != ADMIN_API_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized: Valid X-API-Key required for write operations")
 
 class OrderActionRequest(BaseModel):
     subset: str = "FD001"
@@ -117,7 +125,7 @@ def get_mlops_data(subset: str = Query("FD001")):
     """Returns MLOps drift monitor, model registry, and retraining history."""
     return bridge.get_mlops_data(subset)
 
-@app.post("/api/work-orders/dispatch")
+@app.post("/api/work-orders/dispatch", dependencies=[Depends(verify_write_access)])
 def dispatch_work_order(req: OrderActionRequest):
     """Dispatches or resolves a work order and appends to audit log."""
     res = bridge.dispatch_work_order(req.subset, req.order_id, req.new_status, req.operator)
@@ -125,7 +133,7 @@ def dispatch_work_order(req: OrderActionRequest):
         raise HTTPException(status_code=400, detail=res.get("error", "Dispatch failed"))
     return res
 
-@app.post("/api/retrain/trigger")
+@app.post("/api/retrain/trigger", dependencies=[Depends(verify_write_access)])
 def trigger_retrain(req: RetrainRequest):
     """Executes closed-loop retraining demo with preprocessor adaptation."""
     import datetime, time, json

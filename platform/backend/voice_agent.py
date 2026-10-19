@@ -56,6 +56,8 @@ class SarvamVoiceEngine:
         self.api_key = api_key or os.getenv("SARVAM_API_KEY", DEFAULT_SARVAM_KEY)
 
     def is_configured(self) -> bool:
+        if not os.getenv("VOICE_ENABLED", "true").lower() in ("true", "1", "yes"):
+            return False
         return bool(self.api_key and len(self.api_key) > 10)
 
     def _make_request(self, url: str, payload: dict, timeout: float = 12.0) -> dict:
