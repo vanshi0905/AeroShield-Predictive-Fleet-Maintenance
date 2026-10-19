@@ -54,7 +54,7 @@ Inference Output Vector to Layer 3 Triage
   A composite anomaly score $A_t$ is computed via Mahalanobis distance across the top degrading sensors:
   $$A_t = \sqrt{\sum_{j \in \mathcal{S}_{\text{wear}}} d_{\text{base}}(s_{j, t})^2}$$
   An anomaly alert triggers when $A_t \ge \tau = 3.0$ for at least 2 consecutive cycles.
-* **Results**: True anomaly detection achieved **100.0%** across all four datasets, maintaining a false alarm rate $\le 5.0\%$ with a mean warning lead time of $\approx 45$ cycles before failure.
+* **Results**: True anomaly detection achieved **100.0%** across all four datasets, maintaining a false alarm rate $\le 5.0\%$ with an out-of-fold warning lead time of **38–46 cycles** across fleet partitions.
 
 ### B. Piecewise Linear Capped Target
 In turbofan engines, physical wear is negligible during early flight cycles (crack propagation and material loss remain latent). Modeling RUL linearly from cycle 0 forces models to fit meaningless variations during healthy operation. AeroShield enforces a piecewise linear target capped at $RUL_{\text{cap}} = 125$ cycles:

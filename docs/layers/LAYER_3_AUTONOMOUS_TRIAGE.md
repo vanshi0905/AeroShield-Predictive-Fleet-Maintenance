@@ -1,10 +1,9 @@
 # Layer 3: Autonomous Triage & Regulatory Compliance Ledger
 
 **Primary Code Files**:
-* [`shield/src/agent_rules.py`](../shield/src/agent_rules.py) — Deterministic 4-tier operational triage matrix
-* [`shield/src/orders.py`](../shield/src/orders.py) — SQLite work order lifecycle state machine
-* [`shield/src/exceptions.py`](../shield/src/exceptions.py) — Sensor spike and model disagreement human exception queue
-* [`shield/src/audit_chain.py`](../shield/src/audit_chain.py) — FAA Part 145 / EASA M.A.306 SHA-256 tamper-evident cryptographic ledger
+* [`shield/src/agent.py`](../shield/src/agent.py) — Deterministic 4-tier operational triage matrix
+* [`shield/src/orders.py`](../shield/src/orders.py) — SQLite work order lifecycle state machine & tamper-evident SHA-256 cryptographic audit ledger
+* [`shield/src/checks.py`](../shield/src/checks.py) — Sensor spike and model disagreement human exception queue
 
 ---
 
@@ -62,8 +61,8 @@ Work orders follow a strict, ACID-compliant SQLite state transition flow:
 * `COMPLETED`: Maintenance performed and signed off by depot technicians.
 * `OVERRIDDEN`: Human review exception inspected and approved.
 
-### D. FAA Part 145 & EASA M.A.306 Cryptographic Audit Ledger
-Federal Aviation Administration (FAA Part 145) and European Union Aviation Safety Agency (EASA M.A.306) regulations mandate an immutable, tamper-proof chain of custody for all maintenance releases, component replacements, and operational dispatches.
+### D. Tamper-Evident SHA-256 Cryptographic Audit Ledger (FAA Part 145 & EASA M.A.306 Audit Support)
+To support rigorous aviation auditability, AeroShield maintains an immutable chain of custody designed to support FAA Part 145 and EASA M.A.306 auditability requirements through tamper-evident cryptographic hash chaining for all maintenance releases, component replacements, and operational dispatches.
 
 AeroShield enforces this via a cryptographically linked SHA-256 blockchain ledger:
 1. **Genesis Block**: Sealed with initial root nonce:

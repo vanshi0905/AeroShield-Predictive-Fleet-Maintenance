@@ -24,10 +24,10 @@
 AeroShield is an industrial predictive maintenance and digital twin platform built to fulfill **Tata Elxsi Case Study 1: Self-Healing Machines**. The system monitors connected fleets of high-bypass turbofans, high-pressure compressors (HPC), and aeroderivative gas turbines.
 
 ### Core Objectives Solved:
-* **Zero Unplanned Engine Groundings**: Eliminates Aircraft on Ground (AOG) events by detecting mechanical degradation $\approx 45$ cycles before functional failure.
+* **High Fleet Availability**: **Targets zero unscheduled groundings (AOG)** by detecting mechanical degradation **38–46 cycles** before functional failure across fleet partitions.
 * **Asymmetric Risk Mitigation**: Optimizes predictions against the official NASA exponential scoring metric, severely penalizing delayed maintenance over-predictions ($d > 0$) that risk catastrophic in-flight shutdowns (IFSD).
-* **Guaranteed Confidence Bounds**: Quantifies remaining useful life (RUL) uncertainty through calibrated non-parametric **Conformal Prediction ($P_{10}, P_{50}, P_{90}$)** with guaranteed empirical coverage ($84\%–88\%$).
-* **Closed-Loop Execution & Compliance**: Replaces ungrounded LLM hallucinations with a deterministic 4-tier decision matrix, human exception routing, and an immutable **SHA-256 cryptographic audit ledger** conforming to FAA Part 145 and EASA M.A.306 standards.
+* **Calibrated Confidence Bounds**: Quantifies remaining useful life (RUL) uncertainty through non-parametric **Conformal Prediction ($P_{10}, P_{50}, P_{90}$)** with calibrated empirical coverage ($84\%–88\%$, exceeding the 80% nominal target).
+* **Closed-Loop Execution & Compliance**: Replaces ungrounded LLM hallucinations with a deterministic 4-tier decision matrix, human exception routing, and an immutable **SHA-256 cryptographic audit ledger** designed to support FAA Part 145 and EASA M.A.306 auditability requirements through tamper-evident cryptographic hash chaining.
 * **Continuous Drift Protection**: Scans age-matched Population Stability Index (PSI) drift across flight phases, protecting serving pipelines through a strict 4-condition statistical promotion gate.
 
 ---
@@ -82,7 +82,7 @@ Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-
 │ • Deterministic 4-Tier Operational Decision Matrix (Critical to Normal)│
 │ • Human Review Queue for Sensor Faults & Model Disagreements           │
 │ • SQLite Work Order State Machine (DRAFT -> DISPATCHED -> COMPLETED)   │
-│ • Tamper-Evident SHA-256 Cryptographic Chain (FAA/EASA Part 145)       │
+│ • Tamper-Evident SHA-256 Cryptographic Hash Chain (Part 145 Auditability) │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
                                     ▼
@@ -106,7 +106,7 @@ Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-
 
 ## 4. Layer 1: Deterministic Ingress & Aerodynamic Feature Engineering
 
-**Source Code**: [`shield/src/smoother.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/smoother.py), [`shield/src/data.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/data.py), [`shield/src/features.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/features.py)
+**Source Code**: [`shield/src/smoother.py`](./shield/src/smoother.py), [`shield/src/data.py`](./shield/src/data.py), [`shield/src/features.py`](./shield/src/features.py)
 
 ### 1. Causal Running Median Smoothing
 Turbofan gas-path sensor streams exhibit significant high-frequency noise caused by aerodynamic turbulence and instrument vibration. Standard two-sided filters introduce lookahead bias (data leakage). AeroShield applies a strictly causal running median filter over window $W=5$:
@@ -131,7 +131,7 @@ In FD002 and FD004, turbofans traverse 6 distinct flight conditions across altit
 
 ## 5. Layer 2: ML Inference, Conformal Uncertainty & Anomaly Detection
 
-**Source Code**: [`shield/src/anomaly.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/anomaly.py), [`shield/src/calibrate.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/calibrate.py)
+**Source Code**: [`shield/src/anomaly.py`](./shield/src/anomaly.py), [`shield/src/calibrate.py`](./shield/src/calibrate.py)
 
 ### 1. Baseline-Subtracted Sensor Anomaly Detection
 * **The Root Problem**: In raw rolling mean features, flight regime transitions look identical to degradation. As a consequence, anomaly detection on FD002/FD004 historically achieved $<6\%$ true detection.
@@ -168,7 +168,7 @@ where $d_i = \hat{y}_i - y_i$. Late over-prediction is exponentially penalized w
 
 ## 6. Layer 3: Autonomous Triage & Cryptographic Audit Ledger
 
-**Source Code**: [`shield/src/agent_rules.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/agent_rules.py), [`shield/src/orders.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/orders.py), [`shield/src/exceptions.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/exceptions.py), [`shield/src/audit_chain.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/audit_chain.py)
+**Source Code**: [`shield/src/agent.py`](./shield/src/agent.py), [`shield/src/orders.py`](./shield/src/orders.py), [`shield/src/checks.py`](./shield/src/checks.py)
 
 ### 1. Deterministic 4-Tier Severity Matrix
 Rather than relying on non-deterministic LLMs for physical dispatch, triage decisions execute via a deterministic rule matrix:
@@ -183,7 +183,7 @@ The autonomous engine isolates edge cases and routes them to human reliability e
 * **Model Disagreement**: Divergence between primary quantile and secondary non-linear model $> 25$ cycles.
 Work orders remain in status `NEEDS_HUMAN` until a certified technician records an authorized override.
 
-### 3. FAA Part 145 & EASA M.A.306 Cryptographic Audit Ledger
+### 3. Tamper-Evident SHA-256 Cryptographic Audit Ledger (FAA Part 145 & EASA M.A.306 Audit Support)
 Every state transition (`DRAFT` $\to$ `DISPATCHED` $\to$ `COMPLETED`) appends a cryptographically sealed block to an immutable SHA-256 chain:
 $$\text{Hash}_i = \text{SHA256}(\text{EntryID} \parallel \text{PrevHash} \parallel \text{Timestamp} \parallel \text{OrderID} \parallel \text{Action} \parallel \text{Operator})$$
 Chain integrity is verifiable in $\mathcal{O}(N)$ sub-second time via `/api/audit-verify`. Any bit-level modification to historical maintenance records breaks the parent digest continuum and triggers immediate integrity alerts.
@@ -192,7 +192,7 @@ Chain integrity is verifiable in $\mathcal{O}(N)$ sub-second time via `/api/audi
 
 ## 7. Layer 4: Continuous MLOps Governance & Drift Protection
 
-**Source Code**: [`shield/src/mlops.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/mlops.py), [`shield/src/retrain_demo.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/shield/src/retrain_demo.py)
+**Source Code**: [`shield/src/mlops.py`](./shield/src/mlops.py), [`retrain_demo.py`](./retrain_demo.py)
 
 ### 1. Age-Matched Population Stability Index (PSI)
 Standard drift detection confounds natural wear degradation with operational covariate shift. AeroShield partitions the flight cycle timeline into 4 distinct age stages:
@@ -219,7 +219,7 @@ If any condition fails, the challenger is retained in staging (`gated=true`) and
 
 ## 8. Layer 5: Flight Cockpit, Sarvam Voice Agent & Edge Serving
 
-**Source Code**: [`platform/backend/main.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/platform/backend/main.py), [`platform/backend/voice_agent.py`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/platform/backend/voice_agent.py), [`platform/frontend/dashboard.html`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/platform/frontend/dashboard.html), [`public/index.html`](file:///c:/Users/Asus/Desktop/Misc%20_Projects/DUMB%20SENIOR%20PROJECT/AeroShield-Predictive-Fleet-Maintenance/public/index.html)
+**Source Code**: [`platform/backend/main.py`](./platform/backend/main.py), [`platform/backend/voice_agent.py`](./platform/backend/voice_agent.py), [`platform/frontend/dashboard.html`](./platform/frontend/dashboard.html), [`public/index.html`](./public/index.html)
 
 ### 1. Interactive Flight Telemetry Cockpit
 * **Tactile Glassmorphism**: High-contrast, anti-slop defense avionics styling with Plus Jakarta Sans and monospace tabular numerals.

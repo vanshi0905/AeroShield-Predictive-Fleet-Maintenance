@@ -63,7 +63,7 @@ Raw sensor values change dynamically when pilots alter throttle resolver angles 
    *Directly reflects compressor blade tip clearance wear and aerodynamic stalling margins.*
 
 4. **Turbine Temperature Expansion Ratio**:
-   $$\text{Ratio}_{s_4/s_3} = \frac{s_4 \text{ (Low-Pressure Turbine Outlet Temp } T_{50} \text{, }^\circ\text{R)}}{s_3 \text{ (High-Pressure Compressor Outlet Temp } T_{24} \text{, }^\circ\text{R)}}$$
+   $$\text{Ratio}_{s_4/s_3} = \frac{s_4 \text{ (Low-Pressure Turbine Outlet Temp } T_{50} \text{, }^\circ\text{R)}}{s_3 \text{ (High-Pressure Compressor Outlet Temp } T_{30} \text{, }^\circ\text{R)}}$$
    *Monitors thermal expansion efficiency and turbine blade thermal barrier coating (TBC) degradation.*
 
 ### C. K-Means Operational Regime Clustering

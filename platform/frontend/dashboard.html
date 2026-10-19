@@ -394,7 +394,7 @@
             <div class="p-1 rounded-md bg-amber-500/10 text-amber-400"><i data-lucide="bell" class="w-3.5 h-3.5"></i></div>
             <span>Early Warning Alerts</span>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20" id="kpi-lead-badge">45 Cyc Lead</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20" id="kpi-lead-badge">38-46 Cyc Lead</span>
         </div>
         <div class="flex items-center justify-between">
           <h2 class="text-3xl font-bold text-amber-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-anom-alerts">--</h2>
@@ -821,7 +821,7 @@
             <!-- s2 Meter -->
             <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
               <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s2 <span class="text-[10px] text-slate-500">T2 LPC</span></span>
+                <span class="text-slate-300 font-medium">s2 <span class="text-[10px] text-slate-500">T24 LPC Outlet</span></span>
                 <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s2">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -838,7 +838,7 @@
             <!-- s3 Meter -->
             <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
               <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s3 <span class="text-[10px] text-slate-500">T24 LPC</span></span>
+                <span class="text-slate-300 font-medium">s3 <span class="text-[10px] text-slate-500">T30 HPC Outlet</span></span>
                 <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s3">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -3267,8 +3267,8 @@
         {
           label: '0–40 Flight Cycles',
           stage: 'Break-in & Calibration Baseline',
-          s1: { code: 's2', name: 'Fan Inlet Temp (T2)', psi: maxPsi.s2_ewma || (isStrong ? 0.324 : 0.055) },
-          s2: { code: 's3', name: 'LPC Outlet Temp (T24)', psi: maxPsi.s3_ewma || (isStrong ? 0.448 : 0.077) },
+          s1: { code: 's2', name: 'LPC Outlet Temp (T24)', psi: maxPsi.s2_ewma || (isStrong ? 0.324 : 0.055) },
+          s2: { code: 's3', name: 'HPC Outlet Temp (T30)', psi: maxPsi.s3_ewma || (isStrong ? 0.448 : 0.077) },
         },
         {
           label: '40–80 Flight Cycles',

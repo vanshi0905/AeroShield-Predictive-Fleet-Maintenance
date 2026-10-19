@@ -3,7 +3,7 @@
 [![Live Demo: Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://aeroshield-phi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
-[![Tests: 60/60 Passed](https://img.shields.io/badge/Tests-60%2F60%20Passed-emerald.svg)](pytest.ini)
+[![Tests: 64/64 Passed](https://img.shields.io/badge/Tests-64%2F64%20Passed-emerald.svg)](pytest.ini)
 [![Voice Agent: Sarvam AI](https://img.shields.io/badge/Voice%20Agent-Sarvam%20AI-orange.svg)](https://sarvam.ai)
 [![Conformal Coverage: 80%](https://img.shields.io/badge/Conformal%20Coverage-80%25%20Calibrated-sky.svg)](docs/MATHEMATICAL_FORMULATION.md)
 
@@ -19,11 +19,11 @@
 ## Key Capabilities
 
 * **Gas-Path Physics Features**: Attenuates raw sensor noise via causal running medians and computes thermodynamic interaction ratios ($s_8/s_9$ fan/core speed, $s_{13}/s_{14}$ corrected speed, $s_{11}/s_7$ pressure drop, $s_4/s_3$ temperature ratio).
-* **Baseline-Subtracted Anomaly Detection**: Tracks sensor deviations against operating-regime baselines to detect degradation $\approx 45$ cycles before failure with $\le 5\%$ False Alarm Rate across all 6 flight regimes.
+* **Baseline-Subtracted Anomaly Detection**: Tracks sensor deviations against operating-regime baselines to detect degradation **38–46 cycles** before failure with $\le 5\%$ False Alarm Rate across all 6 flight regimes.
 * **Conformal RUL Uncertainty**: Predicts remaining useful life intervals ($P_{10}, P_{50}, P_{90}$) with calibrated empirical coverage guarantees and secondary non-linear consensus.
-* **Deterministic Triage Agent**: Evaluates an automated 4-tier decision matrix, routes sensor anomalies to human review queues, and commits work-order state transitions to a **tamper-evident SHA-256 cryptographic audit ledger**.
+* **Deterministic Triage Agent**: Evaluates an automated 4-tier decision matrix, routes sensor anomalies to human review queues, and commits work-order state transitions to a **tamper-evident SHA-256 cryptographic audit ledger** designed to support FAA Part 145 and EASA M.A.306 auditability requirements.
 * **MLOps Drift Governance**: Scans age-matched Population Stability Index (PSI) drift and enforces a 4-condition statistical promotion gate to prevent performance regressions.
-* **Sarvam AI Voice Copilot & Neural Annunciator**: Features conversational telemetry reasoning powered by Sarvam 105B (`sarvam-105b-conversations`) with studio-grade neural speech synthesis (`bulbul:v3`) across multiple persona voices (*Shubh*, *Priya*, *Aditya*, *Neha*) and live speech-to-text mic input.
+* **Sarvam AI Voice Copilot & Neural Annunciator (Optional Cloud Extension)**: Features conversational telemetry reasoning powered by Sarvam 105B (`sarvam-105b-conversations`) with studio-grade neural speech synthesis (`bulbul:v3`) across multiple persona voices (*Shubh*, *Priya*, *Aditya*, *Neha*) and live speech-to-text mic input (with full offline fallback).
 * **Tactile Defense Cockpit**: Anti-slop glassmorphic interface with 60fps flight cycle replay scrubber and interactive flight controller copilot.
 
 ---
@@ -78,11 +78,11 @@ venv\Scripts\activate   # Linux/macOS: source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Run Automated Verification (60 Tests)
+### 2. Run Automated Verification (64 Tests)
 ```bash
 pytest
 ```
-*60 tests passed across all core algorithms, platform, and Sarvam AI voice endpoints.*
+*64 tests passed across all core algorithms, platform, and voice endpoints.*
 
 ### 3. Launch the Cockpit
 ```bash
