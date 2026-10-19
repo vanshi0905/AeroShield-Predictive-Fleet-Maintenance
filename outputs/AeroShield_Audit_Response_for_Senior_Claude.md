@@ -3,13 +3,13 @@
 **System**: AeroShield Autonomous Predictive Fleet Maintenance Platform  
 **Case Study**: Tata Elxsi Case Study 1 — Self-Healing Machines (Turbofan Fleet Maintenance)  
 **Verification Date**: 2026-10-19  
-**Status**: 29/29 Gaps Resolved | 64/64 Pytest Passed | Single-Command Execution Verified  
+**Status**: 29/29 Gaps Resolved | 74/74 Pytest Passed (incl. SOTA & Tournament) | Single-Command Execution Verified  
 
 ---
 
 ## 1. Executive Summary & Verification Protocol
 
-This document provides a dense, zero-fluff, verifiable technical response to the Senior Claude review. All 29 audit gap items (F01–F29) across four engineering categories (8 Required, 7 Scored, 9 Hardening, 5 Optional) have been fully resolved in source code and validated by 64 automated pytest test cases and end-to-end pipeline execution on NASA C-MAPSS datasets (FD001–FD004).
+This document provides a dense, zero-fluff, verifiable technical response to the Senior Claude review. All 29 audit gap items (F01–F29) across four engineering categories (8 Required, 7 Scored, 9 Hardening, 5 Optional) have been fully resolved in source code and validated by 74 automated pytest test cases and end-to-end pipeline execution on NASA C-MAPSS datasets (FD001–FD004).
 
 ### Key System Invariants
 1. **Safety-Critical Sandboxing**: Zero LLM components in operational dispatch, physical decision loops, or database write pathways.
@@ -114,7 +114,7 @@ The Senior Claude audit designated 11 non-negotiable alignment items. Below is t
 Extracted directly from ground-truth executions recorded in `outputs/benchmark_summary.csv`:
 
 | Fleet Partition | Operating Regimes | Fault Modes | Engines | Test Capped RMSE | RMSE 95% Bootstrap CI | Uncapped RMSE | NASA Loss (Uncapped) | Late Pred Share % | 80% Conformal Coverage | Near-Failure Coverage ($RUL \le 50$) | Near-Failure Recall | Near-Failure Precision | Anomaly Lead (OOF Median) | Anomaly Det. Rate % | Anomaly Engine FA % |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **FD001** | 1 (Sea Level) | 1 (HPC) | 100 | **11.30** | **[9.3, 13.3]** | 12.98 | 213.0 | 29.0% | **84.0%** | 100.0% | 1.00 | 1.00 | 38 cyc | 100.0% | 4.0% |
 | **FD002** | 6 Regimes | 1 (HPC) | 259 | **13.97** | **[12.6, 15.3]** | 27.01 | 8,519.0 | 19.3% | **88.4%** | 98.9% | 1.00 | 0.88 | 43 cyc | 100.0% | 5.0% |
 | **FD003** | 1 (Sea Level) | 2 (HPC + Fan) | 100 | **11.59** | **[9.5, 13.6]** | 13.34 | 260.0 | 35.0% | **79.0%** | 93.1% | 0.95 | 0.95 | 39 cyc | 69.0% | 2.0% |
@@ -138,7 +138,7 @@ python run_all.py --subset FD001
 pytest -q
 ```
 
-### Pytest Test Suite Results: 64/64 Passed (100%)
+### Pytest Test Suite Results: 74/74 Passed (100%)
 * `shield/tests/test_agent_rules.py`: **6 passed** (triage tier assignment, capacity budgeting)
 * `shield/tests/test_audit_chain.py`: **3 passed** (tamper detection, row deletion, provenance)
 * `shield/tests/test_calibration.py`: **5 passed** (conformal widening, late shift, quantile order)
@@ -148,8 +148,9 @@ pytest -q
 * `shield/tests/test_orders_lifecycle.py`: **5 passed** (open, acknowledge, medium budget, stale, complete)
 * `shield/tests/test_schema.py`: **5 passed** (valid, duplicate, cycle gaps, missing values)
 * `shield/tests/test_smoother.py`: **4 passed** (outlier recovery, ratchet behaviour, reset)
+* `shield/tests/test_sota.py`: **10 passed** (continuous regime normalizer, asymmetric loss GBM, stacking ensemble, multi-scale causal features, tournament 4-gate validation, closed-loop self-improvement tournament)
 * `platform/test_platform.py`: **15 passed** (FastAPI endpoints, voice sandbox, adversarial injection guard)
-* **Total**: **64 passed in ~66 seconds**
+* **Total**: **74 passed (100% green)**
 
 ---
 

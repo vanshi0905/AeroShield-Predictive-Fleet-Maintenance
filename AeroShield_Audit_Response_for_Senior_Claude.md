@@ -3,13 +3,13 @@
 **System**: AeroShield Autonomous Predictive Fleet Maintenance Platform  
 **Case Study**: Tata Elxsi Case Study 1 — Self-Healing Machines (Turbofan Fleet Maintenance)  
 **Verification Date**: 2026-10-19  
-**Status**: 29/29 Gaps Resolved | 64/64 Pytest Passed | Single-Command Execution Verified  
+**Status**: 29/29 Gaps Resolved | 74/74 Pytest Passed (incl. SOTA & Tournament) | Single-Command Execution Verified  
 
 ---
 
 ## 1. Executive Summary & Verification Protocol
 
-This document provides a dense, zero-fluff, verifiable technical response to the Senior Claude review. All 29 audit gap items (F01–F29) across four engineering categories (8 Required, 7 Scored, 9 Hardening, 5 Optional) have been fully resolved in source code and validated by 64 automated pytest test cases and end-to-end pipeline execution on NASA C-MAPSS datasets (FD001–FD004).
+This document provides a dense, zero-fluff, verifiable technical response to the Senior Claude review. All 29 audit gap items (F01–F29) across four engineering categories (8 Required, 7 Scored, 9 Hardening, 5 Optional) have been fully resolved in source code and validated by 74 automated pytest test cases and end-to-end pipeline execution on NASA C-MAPSS datasets (FD001–FD004).
 
 ### Key System Invariants
 1. **Safety-Critical Sandboxing**: Zero LLM components in operational dispatch, physical decision loops, or database write pathways.
@@ -138,7 +138,7 @@ python run_all.py --subset FD001
 pytest -q
 ```
 
-### Pytest Test Suite Results: 64/64 Passed (100%)
+### Pytest Test Suite Results: 74/74 Passed (100%)
 * `shield/tests/test_agent_rules.py`: **6 passed** (triage tier assignment, capacity budgeting)
 * `shield/tests/test_audit_chain.py`: **3 passed** (tamper detection, row deletion, provenance)
 * `shield/tests/test_calibration.py`: **5 passed** (conformal widening, late shift, quantile order)
@@ -148,8 +148,9 @@ pytest -q
 * `shield/tests/test_orders_lifecycle.py`: **5 passed** (open, acknowledge, medium budget, stale, complete)
 * `shield/tests/test_schema.py`: **5 passed** (valid, duplicate, cycle gaps, missing values)
 * `shield/tests/test_smoother.py`: **4 passed** (outlier recovery, ratchet behaviour, reset)
+* `shield/tests/test_sota.py`: **10 passed** (continuous regime normalizer, asymmetric loss GBM, stacking ensemble, multi-scale causal features, tournament 4-gate validation, closed-loop self-improvement tournament)
 * `platform/test_platform.py`: **15 passed** (FastAPI endpoints, voice sandbox, adversarial injection guard)
-* **Total**: **64 passed in ~66 seconds**
+* **Total**: **74 passed (100% green)**
 
 ---
 
