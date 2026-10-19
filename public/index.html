@@ -14,75 +14,70 @@
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
     
     :root {
-      --bg-dark: #040714;
-      --card-bg: linear-gradient(135deg, rgba(8, 14, 38, 0.95) 0%, rgba(12, 19, 48, 0.82) 100%);
-      --card-subtle: rgba(15, 23, 42, 0.72);
-      --accent-cyan: #00F5D4;
-      --accent-blue: #0075FF;
-      --accent-emerald: #10B981;
-      --accent-amber: #F59E0B;
-      --accent-rose: #F43F5E;
-      --accent-purple: #A855F7;
+      --bg-dark: #080c14;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --card-subtle: rgba(11, 18, 33, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --accent-sky: #0284c7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 10% 10%, rgba(0, 117, 255, 0.15) 0px, transparent 40%),
-        radial-gradient(circle at 90% 15%, rgba(168, 85, 247, 0.12) 0px, transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(0, 245, 212, 0.08) 0px, transparent 50%),
-        radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.6) 0px, transparent 100%);
+        radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.35) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, transparent 100%);
       color: #f1f5f9;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Monospace Purge: Standardize metrics and tabular data on Plus Jakarta Sans with tabular figures */
+    /* Standardize metrics and tabular data with tabular figures */
     .mono { font-family: 'Plus Jakarta Sans', sans-serif; font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
     .hash-mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
 
-    /* Tactical Vision Glass Design Tokens */
+    /* Disciplined Avionics Glass Surface Tokens */
     .vision-glass {
       background: var(--card-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 1rem;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .vision-glass-subtle {
       background: var(--card-subtle);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 0.75rem;
+      border-radius: 0.625rem;
     }
 
     .tactile-hover:hover {
-      transform: translateY(-2px);
-      border-color: rgba(56, 189, 248, 0.25);
-      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.16);
     }
 
-    /* Calm, Low-Contrast Tonal Status Elevation (Zero AI Slop) */
-    .glow-cyan { box-shadow: 0 4px 16px -2px rgba(6, 182, 212, 0.10); }
-    .glow-blue { box-shadow: 0 4px 16px -2px rgba(0, 117, 255, 0.12); }
-    .glow-emerald { box-shadow: 0 4px 16px -2px rgba(16, 185, 129, 0.10); }
-    .glow-amber { box-shadow: 0 4px 16px -2px rgba(245, 158, 11, 0.10); }
-    .glow-rose { box-shadow: 0 4px 16px -2px rgba(244, 63, 94, 0.12); }
-    .glow-purple { box-shadow: 0 4px 16px -2px rgba(168, 85, 247, 0.10); }
+    /* Neutralized glow classes (Eradicates AI neon slop) */
+    .glow-cyan, .glow-blue, .glow-emerald, .glow-amber, .glow-rose, .glow-purple {
+      box-shadow: none;
+    }
 
+    /* Refined Avionics Active Tab */
     .tab-active {
-      background: linear-gradient(135deg, #0075FF 0%, #0044B3 100%);
-      box-shadow: 0px 4px 16px rgba(0, 117, 255, 0.35);
+      background: #1e293b !important;
       color: #ffffff !important;
-      font-weight: 700;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      border: 1px solid #334155 !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     }
 
-    /* Custom Slider - Avionics Style */
+    /* Precision Slider - Aerospace Instrument Grade */
     input[type=range].avionics-slider {
       -webkit-appearance: none;
       width: 100%;
@@ -93,66 +88,40 @@
     }
     input[type=range].avionics-slider::-webkit-slider-runnable-track {
       width: 100%;
-      height: 8px;
+      height: 6px;
       cursor: pointer;
-      background: linear-gradient(90deg, #0284c7 0%, #06b6d4 50%, #38bdf8 100%);
+      background: #1e293b;
       border-radius: 9999px;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+      border: 1px solid #334155;
     }
     input[type=range].avionics-slider::-webkit-slider-thumb {
-      height: 22px;
-      width: 22px;
+      height: 18px;
+      width: 18px;
       border-radius: 50%;
-      background: #ffffff;
-      border: 3px solid #00F5D4;
+      background: #38bdf8;
+      border: 2px solid #0f172a;
       cursor: pointer;
       -webkit-appearance: none;
-      margin-top: -7px;
-      box-shadow: 0 0 14px #00F5D4, 0 2px 6px rgba(0,0,0,0.8);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      margin-top: -6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      transition: transform 0.15s ease, background-color 0.15s ease;
     }
     input[type=range].avionics-slider::-webkit-slider-thumb:hover {
       transform: scale(1.15);
-      box-shadow: 0 0 20px #00F5D4, 0 3px 8px rgba(0,0,0,0.9);
+      background: #7dd3fc;
     }
 
-    /* Terminal Scanlines Effect */
+    /* Clean Terminal Screen */
     .terminal-screen {
-      background: radial-gradient(circle at 50% 50%, #070d1e 0%, #02040b 100%);
+      background: #060a12;
       position: relative;
-    }
-    .terminal-screen::before {
-      content: " ";
-      display: block;
-      position: absolute;
-      top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      z-index: 2;
-      background-size: 100% 3px, 6px 100%;
-      pointer-events: none;
     }
 
     /* Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(4, 7, 20, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(0, 117, 255, 0.45); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 186, 242, 0.8); }
-
-    /* Work Order Ticket Perforation Effect */
-    .ticket-edge {
-      position: relative;
-    }
-    .ticket-edge::after {
-      content: "";
-      position: absolute;
-      right: -8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      background-color: var(--bg-dark);
-      border-radius: 50%;
-    }
+    ::-webkit-scrollbar-track { background: rgba(8, 12, 20, 0.8); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
     /* Toast Notification Container */
     #toast-container {
@@ -183,73 +152,41 @@
   <div id="toast-container"></div>
 
   <!-- Header Bar -->
-  <header class="vision-glass sticky top-0 z-50 px-6 py-3 border-b border-cyan-900/40 flex flex-wrap items-center justify-between gap-4">
+  <header class="vision-glass sticky top-0 z-50 px-6 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
     <!-- Brand / Title -->
     <div class="flex items-center gap-3.5">
-      <!-- Artistic Aerospace Turbofan Vortex Logo -->
-      <div onclick="playAvionicsChime('confirm'); speakCockpit('AeroShield turbofan digital twin nominal.'); toggleLogoSpeed()" class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/90 via-slate-900/95 to-blue-950/90 border border-cyan-400/40 p-1 flex items-center justify-center glow-cyan group cursor-pointer shadow-lg overflow-hidden" title="Click to trigger aerospace vortex burst and audio report">
-        <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-transparent to-blue-500/20 pointer-events-none"></div>
-        <svg id="vortex-svg" class="w-9 h-9 relative z-10 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="artBlade1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#00F5D4" />
-              <stop offset="60%" stop-color="#00BAF2" />
-              <stop offset="100%" stop-color="#0052CC" />
-            </linearGradient>
-            <linearGradient id="artBlade2" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#38BDF8" />
-              <stop offset="70%" stop-color="#6366F1" />
-              <stop offset="100%" stop-color="#8B5CF6" />
-            </linearGradient>
-            <radialGradient id="artCore" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#FFFFFF" />
-              <stop offset="35%" stop-color="#00F5D4" />
-              <stop offset="70%" stop-color="#0284C7" />
-              <stop offset="100%" stop-color="#0B132B" />
-            </radialGradient>
-            <filter id="artGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          <!-- Outer Telemetry & Precision Rings -->
-          <circle cx="50" cy="50" r="46" stroke="#00BAF2" stroke-width="1.2" stroke-opacity="0.3" stroke-dasharray="2 3" />
-          <circle cx="50" cy="50" r="42" stroke="#38BDF8" stroke-width="0.8" stroke-opacity="0.5" />
-          <circle cx="50" cy="50" r="38" stroke="#6366F1" stroke-width="0.6" stroke-opacity="0.3" stroke-dasharray="6 4" />
+      <!-- Precision Aerospace Turbofan Rotor Emblem -->
+      <div onclick="playAvionicsChime('confirm'); speakCockpit('AeroShield turbofan digital twin nominal.'); toggleLogoSpeed()" class="relative w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/80 p-1 flex items-center justify-center group cursor-pointer shadow-sm hover:border-sky-500/50 transition" title="Click to test avionics audio report">
+        <svg id="vortex-svg" class="w-8 h-8 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Concentric Precision Shroud Rings -->
+          <circle cx="50" cy="50" r="46" stroke="#334155" stroke-width="1.5" />
+          <circle cx="50" cy="50" r="40" stroke="#0284c7" stroke-width="1" stroke-dasharray="3 3" opacity="0.6" />
+          <circle cx="50" cy="50" r="32" stroke="#334155" stroke-width="0.8" />
           
-          <!-- Aerodynamic Spiral Turbofan Blades -->
-          <g filter="url(#artGlow)">
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(45 50 50)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" transform="rotate(90 50 50)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(135 50 50)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" transform="rotate(180 50 50)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(225 50 50)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade1)" transform="rotate(270 50 50)" />
-            <path d="M50 14 C56 24, 58 36, 50 44 C45 40, 44 26, 48 14 Z" fill="url(#artBlade2)" transform="rotate(315 50 50)" />
+          <!-- Aerodynamic High-Bypass Titanium Blades -->
+          <g>
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#38bdf8" opacity="0.9" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#0284c7" opacity="0.8" transform="rotate(45 50 50)" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#38bdf8" opacity="0.9" transform="rotate(90 50 50)" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#0284c7" opacity="0.8" transform="rotate(135 50 50)" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#38bdf8" opacity="0.9" transform="rotate(180 50 50)" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#0284c7" opacity="0.8" transform="rotate(225 50 50)" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#38bdf8" opacity="0.9" transform="rotate(270 50 50)" />
+            <path d="M50 14 C54 24, 55 34, 50 42 C46 38, 45 26, 48 14 Z" fill="#0284c7" opacity="0.8" transform="rotate(315 50 50)" />
           </g>
 
           <!-- Core Spinner Node -->
-          <circle cx="50" cy="50" r="14" fill="#060B26" stroke="#00BAF2" stroke-width="1.8" />
-          <circle cx="50" cy="50" r="9" fill="url(#artCore)" />
-          <circle cx="50" cy="50" r="3.5" fill="#FFFFFF" />
-
-          <!-- Center Axis Ticks -->
-          <line x1="50" y1="38" x2="50" y2="42" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
-          <line x1="50" y1="58" x2="50" y2="62" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
-          <line x1="38" y1="50" x2="42" y2="50" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
-          <line x1="58" y1="50" x2="62" y2="50" stroke="#00F5D4" stroke-width="1.4" stroke-linecap="round" />
+          <circle cx="50" cy="50" r="11" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" />
+          <circle cx="50" cy="50" r="4" fill="#38bdf8" />
         </svg>
       </div>
 
       <div>
         <h1 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          Autonomous Predictive Fleet Maintenance
-          <span class="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          AeroShield Avionics Fleet Command
+          <span class="hidden sm:inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
         </h1>
+        <p class="text-xs text-slate-400 font-sans hidden sm:block">Autonomous Predictive Fleet Maintenance &bull; NASA C-MAPSS Digital Twin</p>
       </div>
     </div>
 
@@ -259,14 +196,14 @@
       <!-- Sarvam AI Voice Controls -->
       <div class="flex items-center gap-1.5">
         <!-- Voice Toggle -->
-        <button onclick="toggleVoiceAudio()" id="voice-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-white hover:border-cyan-500/50 transition flex items-center gap-2 text-xs font-medium shadow-sm group" title="Toggle Tactical Voice & Avionics Audio (Click to test)">
-          <i data-lucide="volume-2" id="voice-icon" class="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+        <button onclick="toggleVoiceAudio()" id="voice-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition flex items-center gap-2 text-xs font-medium shadow-sm group" title="Toggle Tactical Voice & Avionics Audio (Click to test)">
+          <i data-lucide="volume-2" id="voice-icon" class="w-3.5 h-3.5 text-sky-400"></i>
           <span class="text-[11px] font-sans" id="voice-label">Voice: Active</span>
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="voice-indicator"></span>
         </button>
 
         <!-- Persona Selector -->
-        <select id="voice-persona-select" onchange="changeVoicePersona(this.value)" class="bg-slate-900/90 border border-slate-700/80 text-cyan-300 text-[11px] font-medium rounded-lg px-2 py-1.5 focus:outline-none focus:border-cyan-500 shadow-sm cursor-pointer hidden md:inline-block" title="Select Sarvam AI Voice Persona">
+        <select id="voice-persona-select" onchange="changeVoicePersona(this.value)" class="bg-slate-900 border border-slate-800 text-slate-300 text-[11px] font-medium rounded-lg px-2 py-1.5 focus:outline-none focus:border-slate-600 shadow-sm cursor-pointer hidden md:inline-block" title="Select Voice Persona">
           <option value="shubh">Shubh (Commander)</option>
           <option value="priya">Priya (Copilot)</option>
           <option value="aditya">Aditya (Engineer)</option>
@@ -274,26 +211,23 @@
         </select>
 
         <!-- Interactive Voice Copilot Trigger -->
-        <button onclick="openVoiceCopilotModal()" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600/30 to-blue-600/30 border border-cyan-500/50 text-cyan-200 hover:text-white hover:border-cyan-400 transition flex items-center gap-1.5 text-xs font-semibold shadow-lg shadow-cyan-950/40 group active:scale-95" title="Open Interactive Sarvam Voice Copilot">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-          </span>
-          <i data-lucide="radio" class="w-3.5 h-3.5 text-cyan-400"></i>
+        <button onclick="openVoiceCopilotModal()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white transition flex items-center gap-2 text-xs font-medium shadow-sm active:scale-95" title="Open Interactive Sarvam Voice Copilot">
+          <i data-lucide="radio" class="w-3.5 h-3.5 text-sky-400"></i>
           <span>Voice Copilot</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
         </button>
 
         <!-- Test Annunciation Button -->
-        <button onclick="testVoiceAnnouncement()" class="px-2 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-cyan-300 hover:border-slate-700 transition text-[10px] font-medium hidden sm:inline-flex items-center gap-1" title="Test Cockpit Voice Broadcast">
-          <i data-lucide="mic" class="w-3 h-3 text-cyan-400"></i>
+        <button onclick="testVoiceAnnouncement()" class="px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition text-[10px] font-medium hidden sm:inline-flex items-center gap-1" title="Test Cockpit Voice Broadcast">
+          <i data-lucide="mic" class="w-3 h-3 text-sky-400"></i>
           Test
         </button>
       </div>
 
       <!-- Subset Selector Pills -->
-      <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900/90 border border-slate-800">
+      <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900 border border-slate-800">
         <span class="text-[10px] text-slate-400 font-semibold px-2">Subset:</span>
-        <button onclick="switchSubset('FD001')" id="pill-FD001" class="text-xs px-2.5 py-1 rounded-md font-semibold transition bg-blue-600 text-white shadow-sm">FD001</button>
+        <button onclick="switchSubset('FD001')" id="pill-FD001" class="text-xs px-2.5 py-1 rounded-md font-semibold transition bg-slate-800 text-white border border-slate-700 shadow-sm">FD001</button>
         <button onclick="switchSubset('FD002')" id="pill-FD002" class="text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white">FD002</button>
         <button onclick="switchSubset('FD003')" id="pill-FD003" class="text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white">FD003</button>
         <button onclick="switchSubset('FD004')" id="pill-FD004" class="text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white">FD004</button>
@@ -677,10 +611,10 @@
     <div id="view-drilldown" class="hidden space-y-6">
       
       <!-- Drill-Down Control Header & Avionics Scrub Bar -->
-      <div class="vision-glass p-5 space-y-5 glow-cyan">
+      <div class="vision-glass p-5 space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
           <div class="flex items-center gap-3">
-            <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400"><i data-lucide="gauge" class="w-6 h-6"></i></div>
+            <div class="p-2 rounded-xl bg-sky-500/10 text-sky-400"><i data-lucide="gauge" class="w-6 h-6"></i></div>
             <div>
               <h3 class="font-bold text-white tracking-wide text-base">Engine Degradation Trajectory & Time-Travel Replay</h3>
               <p class="text-xs text-slate-400">Scrub through operational cycles to replay aerodynamic shifts, anomaly onset, and conformal RUL collapse</p>
@@ -689,14 +623,14 @@
 
           <!-- Unit Selector & Status Badge & Quick Unit Prev/Next -->
           <div class="flex items-center gap-2.5 flex-wrap">
-            <button onclick="stepUnit(-1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-300 hover:text-white transition" title="Previous Engine">
+            <button onclick="stepUnit(-1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition" title="Previous Engine">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
             </button>
             <label class="text-xs text-slate-300 font-semibold">Select Engine:</label>
-            <select id="drilldown-unit-select" onchange="loadEngineDrilldown()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-cyan-300 font-bold mono">
+            <select id="drilldown-unit-select" onchange="loadEngineDrilldown()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-sky-300 font-semibold mono">
               <!-- Populated by JS -->
             </select>
-            <button onclick="stepUnit(1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-300 hover:text-white transition" title="Next Engine">
+            <button onclick="stepUnit(1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition" title="Next Engine">
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
             <span id="drilldown-status-badge" class="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Healthy</span>
@@ -1029,8 +963,8 @@
             <!-- View Mode Switch: Ticket Cards vs Dense Table -->
             <div class="flex items-center gap-2">
               <div class="flex items-center p-0.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-                <button onclick="setOrderViewMode('cards')" id="view-mode-cards" class="px-2.5 py-1 rounded-md font-bold bg-cyan-600 text-white transition">Tickets</button>
-                <button onclick="setOrderViewMode('table')" id="view-mode-table" class="px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-white transition">Table</button>
+                <button onclick="setOrderViewMode('cards')" id="view-mode-cards" class="px-2.5 py-1 rounded-md font-semibold bg-slate-800 text-white border border-slate-700 shadow-sm transition">Tickets</button>
+                <button onclick="setOrderViewMode('table')" id="view-mode-table" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">Table</button>
               </div>
               <span class="text-xs text-slate-400 font-medium">Persistent SQLite Ledger</span>
             </div>
@@ -1402,26 +1336,23 @@
   <!-- SARVAM AI INTERACTIVE VOICE COPILOT MODAL  -->
   <!-- ========================================== -->
   <div id="voice-copilot-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
-    <div class="relative w-full max-w-2xl rounded-2xl vision-glass border border-cyan-500/30 shadow-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
-      <!-- Background Glow Radar Effect -->
-      <div class="absolute -top-24 -right-24 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
 
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-4 border-b border-slate-800 relative z-10">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center glow-cyan">
-            <i data-lucide="radio" class="w-5 h-5 text-cyan-400 animate-pulse"></i>
+          <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+            <i data-lucide="radio" class="w-5 h-5 text-sky-400"></i>
           </div>
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base font-bold text-white tracking-tight">AeroShield Voice Copilot</h3>
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Sarvam 105B • Bulbul v3</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-sky-500/10 text-sky-300 border border-sky-500/20">Sarvam 105B • Bulbul v3</span>
             </div>
             <p class="text-xs text-slate-400 font-sans">Tactical real-time fleet intelligence grounded in NASA C-MAPSS telemetry</p>
           </div>
         </div>
-        <button onclick="closeVoiceCopilotModal()" class="w-8 h-8 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center border border-slate-700/60">
+        <button onclick="closeVoiceCopilotModal()" class="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center border border-slate-700/60">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1429,18 +1360,18 @@
       <!-- Quick Telemetry Prompts -->
       <div class="py-3 flex items-center gap-2 overflow-x-auto border-b border-slate-800/60 text-xs">
         <span class="text-[11px] text-slate-500 shrink-0 flex items-center gap-1">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i> Prompts:
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-400"></i> Prompts:
         </span>
-        <button onclick="sendQuickPrompt('Report fleet readiness and critical risk status')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+        <button onclick="sendQuickPrompt('Report fleet readiness and critical risk status')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
           <span>Fleet Readiness</span>
         </button>
-        <button onclick="sendQuickPrompt('What is the health and RUL of Engine 1?')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+        <button onclick="sendQuickPrompt('What is the health and RUL of Engine 1?')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
           <span>Engine #1 RUL</span>
         </button>
-        <button onclick="sendQuickPrompt('Explain the baseline anomaly detection lead time')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+        <button onclick="sendQuickPrompt('Explain the baseline anomaly detection lead time')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
           <span>Anomaly Lead Time</span>
         </button>
-        <button onclick="sendQuickPrompt('List open work orders and suspect subsystems')" class="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition shrink-0 text-[11px] flex items-center gap-1">
+        <button onclick="sendQuickPrompt('List open work orders and suspect subsystems')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
           <span>Work Orders Briefing</span>
         </button>
       </div>
@@ -1449,12 +1380,12 @@
       <div id="copilot-chat-stream" class="flex-1 overflow-y-auto py-4 space-y-3 pr-1 text-xs max-h-[45vh]">
         <!-- Initial Welcome Message -->
         <div class="flex items-start gap-3">
-          <div class="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 mt-0.5">
-            <i data-lucide="shield" class="w-4 h-4 text-cyan-400"></i>
+          <div class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+            <i data-lucide="shield" class="w-4 h-4 text-sky-400"></i>
           </div>
-          <div class="flex-1 rounded-xl bg-slate-900/80 border border-slate-800/80 p-3 space-y-1.5 shadow-sm">
+          <div class="flex-1 rounded-xl bg-slate-950/60 border border-slate-800/80 p-3 space-y-1.5 shadow-sm">
             <div class="flex items-center justify-between text-[11px] border-b border-slate-800/60 pb-1">
-              <span class="font-semibold text-cyan-300">AeroShield Copilot</span>
+              <span class="font-semibold text-sky-300">AeroShield Copilot</span>
               <span class="text-slate-500 text-[10px]">Online</span>
             </div>
             <p class="text-slate-200 leading-relaxed font-sans">
@@ -1465,24 +1396,24 @@
       </div>
 
       <!-- Waveform Audio Active Indicator -->
-      <div id="copilot-waveform" class="hidden items-center justify-center gap-1 py-1.5 text-xs text-cyan-300">
-        <span class="w-1 h-3 bg-cyan-400 rounded-full animate-pulse"></span>
-        <span class="w-1 h-5 bg-cyan-400 rounded-full animate-pulse delay-75"></span>
-        <span class="w-1 h-2 bg-cyan-400 rounded-full animate-pulse delay-150"></span>
-        <span class="w-1 h-6 bg-cyan-400 rounded-full animate-pulse delay-100"></span>
-        <span class="w-1 h-3 bg-cyan-400 rounded-full animate-pulse delay-200"></span>
-        <span class="ml-2 font-mono text-[10px] tracking-wide uppercase" id="copilot-voice-status-text">Transmitting audio...</span>
+      <div id="copilot-waveform" class="hidden items-center justify-center gap-1 py-1.5 text-xs text-sky-300">
+        <span class="w-1 h-3 bg-sky-400 rounded-full animate-pulse"></span>
+        <span class="w-1 h-5 bg-sky-400 rounded-full animate-pulse delay-75"></span>
+        <span class="w-1 h-2 bg-sky-400 rounded-full animate-pulse delay-150"></span>
+        <span class="w-1 h-6 bg-sky-400 rounded-full animate-pulse delay-100"></span>
+        <span class="w-1 h-3 bg-sky-400 rounded-full animate-pulse delay-200"></span>
+        <span class="ml-2 font-mono text-[10px] tracking-wide uppercase text-slate-400" id="copilot-voice-status-text">Transmitting audio...</span>
       </div>
 
       <!-- Input Bar (Speech-To-Text Mic + Typed Text Input) -->
       <div class="pt-3 border-t border-slate-800 flex items-center gap-2">
-        <button id="copilot-mic-btn" onclick="toggleCopilotMic()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700/80 flex items-center justify-center transition shrink-0 group shadow-md" title="Click to Speak (Speech-to-Text)">
-          <i data-lucide="mic" id="copilot-mic-icon" class="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+        <button id="copilot-mic-btn" onclick="toggleCopilotMic()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 flex items-center justify-center transition shrink-0 group shadow-sm" title="Click to Speak (Speech-to-Text)">
+          <i data-lucide="mic" id="copilot-mic-icon" class="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform"></i>
         </button>
 
-        <input type="text" id="copilot-query-input" onkeydown="handleCopilotKeyDown(event)" placeholder="Ask about engine status, RUL, or anomaly triage..." class="flex-1 bg-slate-900/90 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner" />
+        <input type="text" id="copilot-query-input" onkeydown="handleCopilotKeyDown(event)" placeholder="Ask about engine status, RUL, or anomaly triage..." class="flex-1 bg-slate-950/80 border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner" />
 
-        <button onclick="submitCopilotQuery()" id="copilot-send-btn" class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs transition flex items-center gap-1.5 shadow-md active:scale-95 shrink-0">
+        <button onclick="submitCopilotQuery()" id="copilot-send-btn" class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs transition flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
           <span>Ask</span>
           <i data-lucide="send" class="w-3.5 h-3.5"></i>
         </button>
@@ -2053,7 +1984,7 @@
         const pill = document.getElementById(`pill-${s}`);
         if (pill) {
           if (s === subset) {
-            pill.className = "text-xs px-2.5 py-1 rounded-md font-semibold transition bg-blue-600 text-white shadow-sm";
+            pill.className = "text-xs px-2.5 py-1 rounded-md font-semibold transition bg-slate-800 text-white border border-slate-700 shadow-sm";
           } else {
             pill.className = "text-xs px-2.5 py-1 rounded-md font-semibold transition text-slate-400 hover:text-white";
           }
@@ -2087,8 +2018,8 @@
 
         const gateKpi = document.getElementById('kpi-mlops-gate');
         if (gateKpi) {
-          gateKpi.innerText = (data.metrics.coverage_pct >= 75) ? "PASS" : "WARN";
-          gateKpi.className = (data.metrics.coverage_pct >= 75) ? "text-2xl font-extrabold text-cyan-300 mono" : "text-2xl font-extrabold text-amber-400 mono";
+          gateKpi.innerText = (data.metrics.coverage_pct >= 75) ? "Pass" : "Warn";
+          gateKpi.className = (data.metrics.coverage_pct >= 75) ? "text-3xl font-bold text-emerald-300 tracking-tight tabular-nums" : "text-3xl font-bold text-amber-400 tracking-tight tabular-nums";
         }
 
         document.getElementById('count-critical').innerText = data.status_counts.CRITICAL || 0;
@@ -2774,13 +2705,13 @@
       const tableCont = document.getElementById('orders-table-container');
 
       if (mode === 'cards') {
-        cardsBtn.className = "px-2.5 py-1 rounded-md font-bold bg-cyan-600 text-white transition";
-        tableBtn.className = "px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-white transition";
+        cardsBtn.className = "px-2.5 py-1 rounded-md font-semibold bg-slate-800 text-white border border-slate-700 shadow-sm transition";
+        tableBtn.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
         cardsCont.classList.remove('hidden');
         tableCont.classList.add('hidden');
       } else {
-        tableBtn.className = "px-2.5 py-1 rounded-md font-bold bg-cyan-600 text-white transition";
-        cardsBtn.className = "px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-white transition";
+        tableBtn.className = "px-2.5 py-1 rounded-md font-semibold bg-slate-800 text-white border border-slate-700 shadow-sm transition";
+        cardsBtn.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
         tableCont.classList.remove('hidden');
         cardsCont.classList.add('hidden');
       }
