@@ -1,0 +1,36 @@
+[
+  {
+    "subset": "FD001",
+    "timestamp": "2026-10-19T11:35:43.474015+00:00",
+    "total_candidates": 2,
+    "passed_gate": 0,
+    "failed_gate": 2,
+    "elapsed_seconds": 402.8,
+    "champion_before": {
+      "rmse": 11.295343853475671,
+      "mae": 8.114494843306437,
+      "nasa": 213.49836465489616,
+      "late_share": 0.29,
+      "coverage": 0.84,
+      "near_recall": 1.0,
+      "near_precision": 1.0,
+      "oof_late_shift": 5.0,
+      "oof_smoother_alpha": 0.3,
+      "oof_conformal_q_standard": 0.17340917997814959,
+      "oof_conformal_q_short": 0.0,
+      "oof_oof_rmse": 11.191471098795535,
+      "oof_oof_nasa": 1819.14264570329,
+      "oof_oof_late_share": 0.316,
+      "oof_oof_coverage": 0.814,
+      "oof_oof_coverage_rul_le_50": 0.8807017543859649,
+      "oof_oof_coverage_short_history": 0.9166666666666666,
+      "oof_raw_oof_coverage_before_conformal": 0.792,
+      "oof_oof_rmse_before_shift_smoothing": 11.439636925387031,
+      "oof_disagree_threshold": 25.0,
+      "oof_fold_rmse_mean": 10.386528063907075,
+      "oof_fold_rmse_sd": 0.5940930360904718
+    },
+    "best_challenger": null,
+    "promoted": false
+  }
+]

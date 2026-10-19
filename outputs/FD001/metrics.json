@@ -2,7 +2,7 @@
   "subset": "FD001",
   "version": "v1",
   "data_source": "real",
-  "seconds": 197,
+  "seconds": 243,
   "n_features": 103,
   "n_sensors": 14,
   "regimes": 1,
