@@ -156,7 +156,7 @@
     <!-- Brand / Title -->
     <div class="flex items-center gap-3.5">
       <!-- Precision Aerospace Turbofan Rotor Emblem -->
-      <div onclick="playAvionicsChime('confirm'); speakCockpit('AeroShield turbofan digital twin nominal.'); toggleLogoSpeed()" class="relative w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/80 p-1 flex items-center justify-center group cursor-pointer shadow-sm hover:border-sky-500/50 transition" title="Click to test avionics audio report">
+      <div onclick="playSFX('click'); toggleLogoSpeed()" class="relative w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/80 p-1 flex items-center justify-center group cursor-pointer shadow-sm hover:border-sky-500/50 transition" title="AeroShield Turbofan Digital Twin">
         <svg id="vortex-svg" class="w-8 h-8 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Concentric Precision Shroud Rings -->
           <circle cx="50" cy="50" r="46" stroke="#334155" stroke-width="1.5" />
@@ -190,39 +190,15 @@
       </div>
     </div>
 
-    <!-- Right Controls: Voice Toggle + Persona + Copilot + Subset Selector + Telemetry Badges -->
+    <!-- Right Controls: Sound FX Toggle + Subset Selector + Telemetry Badges -->
     <div class="flex items-center gap-3 flex-wrap">
 
-      <!-- Sarvam AI Voice Controls -->
-      <div class="flex items-center gap-1.5">
-        <!-- Voice Toggle -->
-        <button onclick="toggleVoiceAudio()" id="voice-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition flex items-center gap-2 text-xs font-medium shadow-sm group" title="Toggle Tactical Voice & Avionics Audio (Click to test)">
-          <i data-lucide="volume-2" id="voice-icon" class="w-3.5 h-3.5 text-sky-400"></i>
-          <span class="text-[11px] font-sans" id="voice-label">Voice: Active</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="voice-indicator"></span>
-        </button>
-
-        <!-- Persona Selector -->
-        <select id="voice-persona-select" onchange="changeVoicePersona(this.value)" class="bg-slate-900 border border-slate-800 text-slate-300 text-[11px] font-medium rounded-lg px-2 py-1.5 focus:outline-none focus:border-slate-600 shadow-sm cursor-pointer hidden md:inline-block" title="Select Voice Persona">
-          <option value="shubh">Shubh (Commander)</option>
-          <option value="priya">Priya (Copilot)</option>
-          <option value="aditya">Aditya (Engineer)</option>
-          <option value="neha">Neha (Controller)</option>
-        </select>
-
-        <!-- Interactive Voice Copilot Trigger -->
-        <button onclick="openVoiceCopilotModal()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white transition flex items-center gap-2 text-xs font-medium shadow-sm active:scale-95" title="Open Interactive Sarvam Voice Copilot">
-          <i data-lucide="radio" class="w-3.5 h-3.5 text-sky-400"></i>
-          <span>Voice Copilot</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-        </button>
-
-        <!-- Test Annunciation Button -->
-        <button onclick="testVoiceAnnouncement()" class="px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition text-[10px] font-medium hidden sm:inline-flex items-center gap-1" title="Test Cockpit Voice Broadcast">
-          <i data-lucide="mic" class="w-3 h-3 text-sky-400"></i>
-          Test
-        </button>
-      </div>
+      <!-- Sound FX Toggle Button -->
+      <button onclick="toggleSoundFX()" id="sound-fx-btn" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition flex items-center gap-2 text-xs font-medium shadow-sm group active:scale-95" title="Toggle Aeronautical Sound Effects">
+        <i data-lucide="volume-2" id="sound-fx-icon" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span class="text-[11px] font-sans" id="sound-fx-label">Sound FX: ON</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="sound-fx-indicator"></span>
+      </button>
 
       <!-- Subset Selector Pills -->
       <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900 border border-slate-800">
@@ -679,7 +655,7 @@
 
           <!-- Slider Range -->
           <div class="py-1">
-            <input type="range" id="replay-slider" min="1" max="100" value="100" oninput="updateReplayFrame(this.value)" class="avionics-slider">
+            <input type="range" id="replay-slider" min="1" max="100" value="100" oninput="updateReplayFrame(this.value); playSFX('scrub');" class="avionics-slider">
           </div>
 
           <!-- Cycle Milestone Markers -->
@@ -1332,94 +1308,7 @@
       </div>
     </div>
 
-  <!-- ========================================== -->
-  <!-- SARVAM AI INTERACTIVE VOICE COPILOT MODAL  -->
-  <!-- ========================================== -->
-  <div id="voice-copilot-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-200">
-    <div class="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
 
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between pb-4 border-b border-slate-800 relative z-10">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
-            <i data-lucide="radio" class="w-5 h-5 text-sky-400"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="text-base font-bold text-white tracking-tight">AeroShield Voice Copilot</h3>
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-sky-500/10 text-sky-300 border border-sky-500/20">Sarvam 105B • Bulbul v3</span>
-            </div>
-            <p class="text-xs text-slate-400 font-sans">Tactical real-time fleet intelligence grounded in NASA C-MAPSS telemetry</p>
-          </div>
-        </div>
-        <button onclick="closeVoiceCopilotModal()" class="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center border border-slate-700/60">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <!-- Quick Telemetry Prompts -->
-      <div class="py-3 flex items-center gap-2 overflow-x-auto border-b border-slate-800/60 text-xs">
-        <span class="text-[11px] text-slate-500 shrink-0 flex items-center gap-1">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-400"></i> Prompts:
-        </span>
-        <button onclick="sendQuickPrompt('Report fleet readiness and critical risk status')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
-          <span>Fleet Readiness</span>
-        </button>
-        <button onclick="sendQuickPrompt('What is the health and RUL of Engine 1?')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
-          <span>Engine #1 RUL</span>
-        </button>
-        <button onclick="sendQuickPrompt('Explain the baseline anomaly detection lead time')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
-          <span>Anomaly Lead Time</span>
-        </button>
-        <button onclick="sendQuickPrompt('List open work orders and suspect subsystems')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white transition shrink-0 text-[11px] flex items-center gap-1">
-          <span>Work Orders Briefing</span>
-        </button>
-      </div>
-
-      <!-- Chat Log Stream -->
-      <div id="copilot-chat-stream" class="flex-1 overflow-y-auto py-4 space-y-3 pr-1 text-xs max-h-[45vh]">
-        <!-- Initial Welcome Message -->
-        <div class="flex items-start gap-3">
-          <div class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 mt-0.5">
-            <i data-lucide="shield" class="w-4 h-4 text-sky-400"></i>
-          </div>
-          <div class="flex-1 rounded-xl bg-slate-950/60 border border-slate-800/80 p-3 space-y-1.5 shadow-sm">
-            <div class="flex items-center justify-between text-[11px] border-b border-slate-800/60 pb-1">
-              <span class="font-semibold text-sky-300">AeroShield Copilot</span>
-              <span class="text-slate-500 text-[10px]">Online</span>
-            </div>
-            <p class="text-slate-200 leading-relaxed font-sans">
-              Cockpit voice systems online. Ask me about fleet readiness, single-engine RUL predictions, anomaly lead times, or work-order triage actions.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Waveform Audio Active Indicator -->
-      <div id="copilot-waveform" class="hidden items-center justify-center gap-1 py-1.5 text-xs text-sky-300">
-        <span class="w-1 h-3 bg-sky-400 rounded-full animate-pulse"></span>
-        <span class="w-1 h-5 bg-sky-400 rounded-full animate-pulse delay-75"></span>
-        <span class="w-1 h-2 bg-sky-400 rounded-full animate-pulse delay-150"></span>
-        <span class="w-1 h-6 bg-sky-400 rounded-full animate-pulse delay-100"></span>
-        <span class="w-1 h-3 bg-sky-400 rounded-full animate-pulse delay-200"></span>
-        <span class="ml-2 font-mono text-[10px] tracking-wide uppercase text-slate-400" id="copilot-voice-status-text">Transmitting audio...</span>
-      </div>
-
-      <!-- Input Bar (Speech-To-Text Mic + Typed Text Input) -->
-      <div class="pt-3 border-t border-slate-800 flex items-center gap-2">
-        <button id="copilot-mic-btn" onclick="toggleCopilotMic()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 flex items-center justify-center transition shrink-0 group shadow-sm" title="Click to Speak (Speech-to-Text)">
-          <i data-lucide="mic" id="copilot-mic-icon" class="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform"></i>
-        </button>
-
-        <input type="text" id="copilot-query-input" onkeydown="handleCopilotKeyDown(event)" placeholder="Ask about engine status, RUL, or anomaly triage..." class="flex-1 bg-slate-950/80 border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner" />
-
-        <button onclick="submitCopilotQuery()" id="copilot-send-btn" class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs transition flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-          <span>Ask</span>
-          <i data-lucide="send" class="w-3.5 h-3.5"></i>
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- Footer -->
   <footer class="px-6 py-4 text-center text-xs border-t border-slate-800/80 text-slate-500 mt-auto">
@@ -1449,462 +1338,274 @@
     let matrixPageSize = 30;
 
     // ==========================================
-    // TACTICAL COCKPIT VOICE & SARVAM AI ENGINE
-    // Sarvam Neural TTS (Bulbul v3) + 105B Copilot + Web Audio
+    // TACTILE AEROSPACE SOUND SYNTHESIZER (Web Audio API)
+    // Pure synthetic audio - Zero latency, zero external assets
     // ==========================================
-    let voiceAudioEnabled = true;
+    let soundFXEnabled = localStorage.getItem('aeroshield_sfx_enabled') !== 'false';
     let audioCtx = null;
-    let availableVoices = [];
-    let currentSpeaker = "shubh";
-    let activeAudioPlayer = null;
-    let recognition = null;
-    let isRecognizing = false;
 
-    function initVoiceAudio() {
+    function initAudioContext() {
       if (!audioCtx) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-          audioCtx = new AudioCtx();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
         }
       }
       if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-        availableVoices = window.speechSynthesis.getVoices();
-      }
     }
 
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        availableVoices = window.speechSynthesis.getVoices();
-      };
-    }
-
-    // Auto-unlock on first user interaction anywhere on the page
+    // Auto-unlock audio on user interaction
     document.addEventListener('click', () => {
-      initVoiceAudio();
+      initAudioContext();
     }, { once: true });
 
-    function changeVoicePersona(speakerId) {
-      currentSpeaker = speakerId;
-      initVoiceAudio();
-      const speakerNames = {
-        shubh: "Shubh (Lead Commander)",
-        priya: "Priya (Avionics Copilot)",
-        aditya: "Aditya (Fleet Engineer)",
-        neha: "Neha (Flight Controller)"
-      };
-      const name = speakerNames[speakerId] || speakerId;
-      showToast(`Voice persona switched to ${name}`, 'info');
-      playAvionicsChime('confirm');
-      speakCockpit(`Voice persona ${speakerId} active.`);
-    }
+    function toggleSoundFX() {
+      initAudioContext();
+      soundFXEnabled = !soundFXEnabled;
+      localStorage.setItem('aeroshield_sfx_enabled', soundFXEnabled ? 'true' : 'false');
+      updateSoundFXUI();
 
-    function toggleVoiceAudio() {
-      voiceAudioEnabled = !voiceAudioEnabled;
-      const btn = document.getElementById('voice-toggle-btn');
-      const icon = document.getElementById('voice-icon');
-      const label = document.getElementById('voice-label');
-      const ind = document.getElementById('voice-indicator');
-
-      initVoiceAudio();
-
-      if (voiceAudioEnabled) {
-        if (icon) icon.setAttribute('data-lucide', 'volume-2');
-        if (label) label.innerText = 'Voice: Active';
-        if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
-        if (btn) btn.classList.remove('opacity-60');
-        showToast('Cockpit Voice & Audio Enabled (Sarvam Bulbul)', 'info');
-        playAvionicsChime('confirm');
-        speakCockpit('Avionics voice online. Telemetry systems nominal.', 'high');
+      if (soundFXEnabled) {
+        showToast('Tactical Sound Effects Enabled', 'info');
+        playSFX('success');
       } else {
-        if (activeAudioPlayer) {
-          activeAudioPlayer.pause();
-          activeAudioPlayer = null;
-        }
-        if (window.speechSynthesis) {
-          window.speechSynthesis.cancel();
-        }
+        showToast('Sound Effects Muted', 'info');
+      }
+    }
+
+    function updateSoundFXUI() {
+      const icon = document.getElementById('sound-fx-icon');
+      const label = document.getElementById('sound-fx-label');
+      const ind = document.getElementById('sound-fx-indicator');
+      const btn = document.getElementById('sound-fx-btn');
+
+      if (!btn) return;
+
+      if (soundFXEnabled) {
+        if (icon) icon.setAttribute('data-lucide', 'volume-2');
+        if (label) label.innerText = 'Sound FX: ON';
+        if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]';
+        btn.classList.remove('opacity-60');
+      } else {
         if (icon) icon.setAttribute('data-lucide', 'volume-x');
-        if (label) label.innerText = 'Voice: Muted';
+        if (label) label.innerText = 'Sound FX: Muted';
         if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-slate-500';
-        if (btn) btn.classList.add('opacity-60');
-        showToast('Voice and Audio Muted', 'info');
+        btn.classList.add('opacity-60');
       }
-      lucide.createIcons();
-    }
-
-    function testVoiceAnnouncement() {
-      initVoiceAudio();
-      voiceAudioEnabled = true;
-      const btn = document.getElementById('voice-toggle-btn');
-      const icon = document.getElementById('voice-icon');
-      const label = document.getElementById('voice-label');
-      const ind = document.getElementById('voice-indicator');
-      if (icon) icon.setAttribute('data-lucide', 'volume-2');
-      if (label) label.innerText = 'Voice: Active';
-      if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
-      if (btn) btn.classList.remove('opacity-60');
-      lucide.createIcons();
-
-      playAvionicsChime('confirm');
-      speakCockpit('AeroShield defense voice telemetry test. All four fleet partitions operational.', 'high');
-      showToast('Broadcasting Sarvam Bulbul neural audio...', 'info');
-    }
-
-    function playBase64Audio(base64Audio, onEndedCallback) {
-      try {
-        if (activeAudioPlayer) {
-          activeAudioPlayer.pause();
-          activeAudioPlayer = null;
-        }
-        const audioUrl = "data:audio/wav;base64," + base64Audio;
-        activeAudioPlayer = new Audio(audioUrl);
-        activeAudioPlayer.volume = 1.0;
-
-        const wave = document.getElementById('copilot-waveform');
-        const statusText = document.getElementById('copilot-voice-status-text');
-        if (wave) wave.classList.remove('hidden');
-        if (statusText) statusText.innerText = "Transmitting voice transmission...";
-
-        activeAudioPlayer.onended = () => {
-          if (wave) wave.classList.add('hidden');
-          activeAudioPlayer = null;
-          if (onEndedCallback) onEndedCallback();
-        };
-        activeAudioPlayer.onerror = (e) => {
-          if (wave) wave.classList.add('hidden');
-          console.warn('Audio element error:', e);
-        };
-        activeAudioPlayer.play().catch(e => {
-          if (wave) wave.classList.add('hidden');
-          console.warn('Playback error / auto-play blocked:', e);
-        });
-      } catch (e) {
-        console.warn('Error creating audio from base64:', e);
+      if (window.lucide) {
+        lucide.createIcons();
       }
     }
 
-    function playAvionicsChime(type = 'ping') {
-      if (!voiceAudioEnabled) return;
-      initVoiceAudio();
+    function playSFX(type = 'click') {
+      if (!soundFXEnabled) return;
+      initAudioContext();
       if (!audioCtx) return;
 
       try {
         const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
 
-        if (type === 'alert') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(880, now);
-          osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+        if (type === 'click') {
+          // Tactile mechanical micro-click (25ms)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1200, now);
+          osc.frequency.exponentialRampToValueAtTime(350, now + 0.025);
+          gain.gain.setValueAtTime(0.045, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start(now);
-          osc.stop(now + 0.16);
-        } else if (type === 'confirm') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(587.33, now); // D5
-          osc.frequency.setValueAtTime(880, now + 0.08); // A5
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+          osc.stop(now + 0.026);
+
+        } else if (type === 'tab') {
+          // Aeronautics deck shift transition tone (dual-harmonic smooth glide)
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc1.type = 'sine';
+          osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(880, now);
+          osc1.frequency.exponentialRampToValueAtTime(660, now + 0.055);
+          osc2.frequency.setValueAtTime(1320, now);
+          osc2.frequency.exponentialRampToValueAtTime(990, now + 0.055);
+          gain.gain.setValueAtTime(0.035, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.062);
+          osc2.stop(now + 0.062);
+
+        } else if (type === 'scrub') {
+          // Mechanical ratchet tick (for timeline slider scrubbing)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(1600, now);
+          gain.gain.setValueAtTime(0.02, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start(now);
-          osc.stop(now + 0.2);
-        } else {
-          // Subtle ping / chime
+          osc.stop(now + 0.015);
+
+        } else if (type === 'tick') {
+          // Discrete step tick
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.setValueAtTime(1000, now);
+          gain.gain.setValueAtTime(0.03, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.022);
+
+        } else if (type === 'play') {
+          // Ascending two-tone avionics cue (D5 -> A5)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.setValueAtTime(880, now + 0.05);
           gain.gain.setValueAtTime(0.04, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+          gain.gain.setValueAtTime(0.04, now + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start(now);
-          osc.stop(now + 0.09);
+          osc.stop(now + 0.135);
+
+        } else if (type === 'pause') {
+          // Descending two-tone avionics cue (A5 -> D5)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.setValueAtTime(587.33, now + 0.05);
+          gain.gain.setValueAtTime(0.035, now);
+          gain.gain.setValueAtTime(0.035, now + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.135);
+
+        } else if (type === 'subset') {
+          // Acoustic radar sweep ping (swept sine 440 -> 880 -> 1050 Hz)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+          osc.frequency.exponentialRampToValueAtTime(1050, now + 0.09);
+          gain.gain.setValueAtTime(0.045, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.115);
+
+        } else if (type === 'dispatch') {
+          // Heavy solenoid/hydraulic relay lock (low mechanical thud + metallic contact)
+          const oscLow = audioCtx.createOscillator();
+          const gainLow = audioCtx.createGain();
+          oscLow.type = 'sine';
+          oscLow.frequency.setValueAtTime(140, now);
+          oscLow.frequency.exponentialRampToValueAtTime(45, now + 0.09);
+          gainLow.gain.setValueAtTime(0.08, now);
+          gainLow.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+          oscLow.connect(gainLow);
+          gainLow.connect(audioCtx.destination);
+          oscLow.start(now);
+          oscLow.stop(now + 0.095);
+
+          const oscClick = audioCtx.createOscillator();
+          const gainClick = audioCtx.createGain();
+          oscClick.type = 'triangle';
+          oscClick.frequency.setValueAtTime(1250, now + 0.015);
+          oscClick.frequency.exponentialRampToValueAtTime(600, now + 0.045);
+          gainClick.gain.setValueAtTime(0.04, now + 0.015);
+          gainClick.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+          oscClick.connect(gainClick);
+          gainClick.connect(audioCtx.destination);
+          oscClick.start(now + 0.015);
+          oscClick.stop(now + 0.055);
+
+        } else if (type === 'retrain') {
+          // Low turbine spool-up hum
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.exponentialRampToValueAtTime(420, now + 0.32);
+          gain.gain.setValueAtTime(0.02, now);
+          gain.gain.linearRampToValueAtTime(0.05, now + 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.36);
+
+        } else if (type === 'promote' || type === 'success') {
+          // Major triad harmonic chord (C5 523Hz, E5 659Hz, G5 784Hz bell decay)
+          const notes = [523.25, 659.25, 783.99];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const startTime = now + (idx * 0.025);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.035, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.28);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.29);
+          });
+
+        } else if (type === 'alert') {
+          // Master caution dual-tone pulse (740Hz + 880Hz)
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc1.type = 'sawtooth';
+          osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(740, now);
+          osc2.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.135);
+          osc2.stop(now + 0.135);
         }
       } catch (e) {
-        console.warn('Avionics chime error:', e);
+        console.warn('Audio SFX error:', e);
       }
     }
 
-    async function speakCockpit(text, priority = 'normal') {
-      if (!voiceAudioEnabled || !text || !text.trim()) return;
-      initVoiceAudio();
-
-      // 1. Try Sarvam Neural TTS Endpoint
-      try {
-        const res = await fetch('/api/voice/synthesize', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: text.trim(),
-            speaker: currentSpeaker,
-            model: 'bulbul:v3'
-          })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && data.audio_base64) {
-            playBase64Audio(data.audio_base64);
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn('Sarvam TTS API failed, falling back to Web Speech API:', err);
-      }
-
-      // 2. Web Speech API Fallback
-      try {
-        if ('speechSynthesis' in window) {
-          if (priority === 'high' || window.speechSynthesis.speaking) {
-            window.speechSynthesis.cancel();
-          }
-
-          const utter = new SpeechSynthesisUtterance(text);
-          utter.rate = 1.05;
-          utter.pitch = 0.95;
-          utter.volume = 1.0;
-
-          if (!availableVoices || availableVoices.length === 0) {
-            availableVoices = window.speechSynthesis.getVoices();
-          }
-
-          const enVoice = availableVoices.find(v => 
-            v.lang && v.lang.startsWith('en') && (
-              v.name.includes('Natural') || 
-              v.name.includes('Google') || 
-              v.name.includes('Samantha') || 
-              v.name.includes('David') || 
-              v.name.includes('Zira') ||
-              v.name.includes('Daniel')
-            )
-          ) || availableVoices.find(v => v.lang && v.lang.startsWith('en'));
-
-          if (enVoice) {
-            utter.voice = enVoice;
-          }
-
-          window.speechSynthesis.speak(utter);
-        }
-      } catch (e) {
-        console.warn('Speech synthesis fallback error:', e);
-      }
+    // Backward-compatibility shims
+    function playAvionicsChime(type = 'ping') {
+      if (type === 'alert') playSFX('alert');
+      else if (type === 'confirm') playSFX('success');
+      else playSFX('click');
     }
 
-    // ==========================================
-    // INTERACTIVE VOICE COPILOT MODAL LOGIC
-    // ==========================================
-    function openVoiceCopilotModal() {
-      initVoiceAudio();
-      const modal = document.getElementById('voice-copilot-modal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        requestAnimationFrame(() => modal.classList.remove('opacity-0'));
-      }
-      playAvionicsChime('ping');
-      const input = document.getElementById('copilot-query-input');
-      if (input) setTimeout(() => input.focus(), 150);
-      lucide.createIcons();
+    function speakCockpit(text, priority = 'normal') {
+      // Voice agent disabled per specification
     }
 
-    function closeVoiceCopilotModal() {
-      const modal = document.getElementById('voice-copilot-modal');
-      if (modal) {
-        modal.classList.add('opacity-0');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-      }
-      stopCopilotMic();
-    }
-
-    function sendQuickPrompt(promptText) {
-      const input = document.getElementById('copilot-query-input');
-      if (input) input.value = promptText;
-      submitCopilotQuery(promptText);
-    }
-
-    function handleCopilotKeyDown(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        submitCopilotQuery();
-      }
-    }
-
-    function appendCopilotMessage(sender, text, audioBase64 = null) {
-      const stream = document.getElementById('copilot-chat-stream');
-      if (!stream) return;
-
-      const isUser = sender === 'user';
-      const timeStr = new Date().toISOString().slice(11, 16) + " UTC";
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`;
-
-      let iconHtml = isUser 
-        ? `<div class="w-7 h-7 rounded-lg bg-blue-600/30 border border-blue-500/40 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="user" class="w-4 h-4 text-blue-300"></i></div>`
-        : `<div class="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="radio" class="w-4 h-4 text-cyan-400"></i></div>`;
-
-      let bubbleBg = isUser 
-        ? `bg-blue-600/20 border-blue-500/30 text-blue-100` 
-        : `bg-slate-900/90 border-slate-800 text-slate-100`;
-
-      let playBtnHtml = '';
-      if (!isUser && audioBase64) {
-        // Store audio base64 on window cache for replay
-        const audioKey = "audio_" + Date.now();
-        window[audioKey] = audioBase64;
-        playBtnHtml = `
-          <button onclick="playBase64Audio(window['${audioKey}'])" class="mt-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-cyan-950/60 hover:bg-cyan-900/80 border border-cyan-500/30 text-cyan-300 text-[10px] font-medium transition active:scale-95" title="Replay voice response">
-            <i data-lucide="volume-2" class="w-3 h-3 text-cyan-400"></i>
-            <span>Replay Voice</span>
-          </button>
-        `;
-      }
-
-      msgDiv.innerHTML = `
-        ${iconHtml}
-        <div class="max-w-[80%] rounded-xl ${bubbleBg} border p-3 space-y-1 shadow-md">
-          <div class="flex items-center justify-between gap-3 text-[10px] text-slate-400 pb-0.5 border-b border-slate-800/40">
-            <span class="font-semibold ${isUser ? 'text-blue-300' : 'text-cyan-300'}">${isUser ? 'Flight Controller' : 'AeroShield Copilot (' + currentSpeaker + ')'}</span>
-            <span>${timeStr}</span>
-          </div>
-          <p class="text-xs leading-relaxed font-sans select-text whitespace-pre-wrap">${text}</p>
-          ${playBtnHtml}
-        </div>
-      `;
-
-      stream.appendChild(msgDiv);
-      stream.scrollTop = stream.scrollHeight;
-      lucide.createIcons();
-    }
-
-    async function submitCopilotQuery(overrideText = null) {
-      const input = document.getElementById('copilot-query-input');
-      const query = (overrideText || (input ? input.value : '')).trim();
-      if (!query) return;
-
-      if (input) input.value = '';
-      appendCopilotMessage('user', query);
-
-      const sendBtn = document.getElementById('copilot-send-btn');
-      if (sendBtn) {
-        sendBtn.disabled = true;
-        sendBtn.classList.add('opacity-50');
-      }
-
-      const wave = document.getElementById('copilot-waveform');
-      const statusText = document.getElementById('copilot-voice-status-text');
-      if (wave) wave.classList.remove('hidden');
-      if (statusText) statusText.innerText = "Querying Sarvam 105B Reasoning Agent...";
-
-      try {
-        const res = await fetch('/api/voice/copilot', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: query,
-            subset: currentSubset,
-            speaker: currentSpeaker
-          })
-        });
-
-        const data = await res.json();
-        if (sendBtn) {
-          sendBtn.disabled = false;
-          sendBtn.classList.remove('opacity-50');
-        }
-
-        if (data.success && data.reply) {
-          appendCopilotMessage('copilot', data.reply, data.audio_base64);
-          if (data.audio_base64) {
-            playBase64Audio(data.audio_base64);
-          } else {
-            if (wave) wave.classList.add('hidden');
-          }
-        } else {
-          const fallback = data.reply || "Telemetry system was unable to parse that request. Please try again.";
-          appendCopilotMessage('copilot', fallback);
-          if (wave) wave.classList.add('hidden');
-        }
-      } catch (e) {
-        if (sendBtn) {
-          sendBtn.disabled = false;
-          sendBtn.classList.remove('opacity-50');
-        }
-        if (wave) wave.classList.add('hidden');
-        appendCopilotMessage('copilot', `Connection failure: Unable to contact voice server (${e.message}).`);
-      }
-      lucide.createIcons();
-    }
-
-    // Speech-to-Text via Web Speech Recognition
-    function initSpeechRecognition() {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) return;
-
-      recognition = new SpeechRec();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => {
-        isRecognizing = true;
-        const btn = document.getElementById('copilot-mic-btn');
-        if (btn) btn.classList.add('bg-rose-600/30', 'border-rose-500', 'text-rose-300');
-        const wave = document.getElementById('copilot-waveform');
-        const statusText = document.getElementById('copilot-voice-status-text');
-        if (wave) wave.classList.remove('hidden');
-        if (statusText) statusText.innerText = "Listening to cockpit microphone...";
-      };
-
-      recognition.onresult = (e) => {
-        const transcript = e.results[0][0].transcript;
-        const input = document.getElementById('copilot-query-input');
-        if (input) input.value = transcript;
-        submitCopilotQuery(transcript);
-      };
-
-      recognition.onerror = (e) => {
-        console.warn('Speech recognition error:', e.error);
-        stopCopilotMic();
-      };
-
-      recognition.onend = () => {
-        stopCopilotMic();
-      };
-    }
-
-    function toggleCopilotMic() {
-      initVoiceAudio();
-      if (!recognition) initSpeechRecognition();
-      if (!recognition) {
-        showToast('Speech recognition not supported in this browser. Please type your query.', 'alert');
-        return;
-      }
-      if (isRecognizing) {
-        recognition.stop();
-      } else {
-        try {
-          recognition.start();
-        } catch (e) {
-          console.warn('Recognition start error:', e);
-        }
-      }
-    }
-
-    function stopCopilotMic() {
-      isRecognizing = false;
-      const btn = document.getElementById('copilot-mic-btn');
-      if (btn) btn.classList.remove('bg-rose-600/30', 'border-rose-500', 'text-rose-300');
-      const wave = document.getElementById('copilot-waveform');
-      if (wave) wave.classList.add('hidden');
-    }
 
     // Toast Notification Dispatcher
     function showToast(message, type = 'info') {
@@ -1945,6 +1646,7 @@
 
     // Main App Initialization
     async function initDashboard() {
+      updateSoundFXUI();
       await fetchFleetReadiness();
       await fetchFleetMatrix();
       await fetchWorkOrders();
@@ -1955,6 +1657,7 @@
     }
 
     function showTab(tabId) {
+      playSFX('tab');
       activeTab = tabId;
       document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('tab-active');
@@ -1994,8 +1697,7 @@
       if (badge) badge.innerText = `${subset} Active`;
       currentDrilldownData = null;
       showToast(`Switched telemetry pipeline to ${subset}`, 'info');
-      playAvionicsChime('ping');
-      speakCockpit(`Telemetry switched to ${subset}.`);
+      playSFX('subset');
       await initDashboard();
     }
 
@@ -2150,6 +1852,7 @@
     }
 
     function sortFleetMatrix(col) {
+      playSFX('click');
       if (currentSortColumn === col) {
         currentSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
       } else {
@@ -2169,12 +1872,14 @@
     }
 
     function changePageSize(sz) {
+      playSFX('click');
       matrixPageSize = parseInt(sz) || 30;
       matrixCurrentPage = 1;
       filterFleetMatrix();
     }
 
     function setMatrixPage(p) {
+      playSFX('click');
       matrixCurrentPage = p;
       filterFleetMatrix();
     }
@@ -2322,16 +2027,13 @@
         document.getElementById('drilldown-status-badge').className = `px-3 py-1 rounded-lg text-xs font-extrabold mono ${badgeColor}`;
 
         if (data.status === "CRITICAL") {
-          playAvionicsChime('alert');
-          speakCockpit(`Warning. Unit ${unit} flagged critical. Remaining useful life estimated at ${Math.round(data.latest_p50)} flight cycles.`, 'high');
+          playSFX('alert');
         } else if (data.status === "HIGH") {
-          playAvionicsChime('alert');
-          speakCockpit(`Caution. Unit ${unit} elevated sensor deviation detected.`, 'normal');
+          playSFX('alert');
         } else if (data.status === "NEEDS_HUMAN") {
-          playAvionicsChime('confirm');
-          speakCockpit(`Unit ${unit} escalated to human exception review queue.`, 'normal');
+          playSFX('tick');
         } else {
-          playAvionicsChime('ping');
+          playSFX('click');
         }
 
         const slider = document.getElementById('replay-slider');
@@ -2386,9 +2088,11 @@
         clearInterval(playbackInterval);
         playbackInterval = null;
         btn.setAttribute('data-lucide', 'play');
+        playSFX('pause');
         showToast('Timeline replay paused', 'info');
       } else {
         btn.setAttribute('data-lucide', 'pause');
+        playSFX('play');
         const speed = parseInt(document.getElementById('playback-speed').value) || 150;
         showToast('Timeline replay running', 'info');
         playbackInterval = setInterval(() => {
@@ -2405,6 +2109,7 @@
     }
 
     function stepReplayCycle(delta) {
+      playSFX('tick');
       const slider = document.getElementById('replay-slider');
       let val = parseInt(slider.value) + delta;
       val = Math.max(1, Math.min(parseInt(slider.max), val));
@@ -2413,12 +2118,14 @@
     }
 
     function resetReplayStart() {
+      playSFX('click');
       const slider = document.getElementById('replay-slider');
       slider.value = 1;
       updateReplayFrame(1, false);
     }
 
     function jumpReplayEnd() {
+      playSFX('click');
       if (!currentDrilldownData) return;
       const slider = document.getElementById('replay-slider');
       slider.value = currentDrilldownData.total_cycles;
@@ -2698,6 +2405,7 @@
 
     // 4. Autonomous Triage & Work Orders
     function setOrderViewMode(mode) {
+      playSFX('click');
       orderViewMode = mode;
       const cardsBtn = document.getElementById('view-mode-cards');
       const tableBtn = document.getElementById('view-mode-table');
@@ -2873,8 +2581,7 @@
         });
         const data = await res.json();
         if (data.success) {
-          playAvionicsChime('confirm');
-          speakCockpit(`Work order ${orderId} dispatched to ${status}. Block committed.`, 'high');
+          playSFX('dispatch');
           showToast(`Order ${orderId} updated to ${status}. Block appended to audit ledger.`, 'success');
           await fetchWorkOrders();
           await fetchHumanExceptions();
@@ -2926,7 +2633,7 @@
       if (navigator.clipboard) {
         navigator.clipboard.writeText(hash);
         showToast(`Copied SHA-256 seal to clipboard: ${hash.slice(0, 14)}...`, 'info');
-        playAvionicsChime('ping');
+        playSFX('click');
       }
     }
 
@@ -3056,8 +2763,7 @@
         btn.innerHTML = `<i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> VERIFY CRYPTOGRAPHIC CHAIN`;
         lucide.createIcons();
 
-        playAvionicsChime('confirm');
-        speakCockpit(`Cryptographic audit verified. All ${data.total_entries || ''} ledger blocks intact and tamper free.`, 'high');
+        playSFX('promote');
         showToast(`[FAA PART 145 VERIFIED] ${data.message} (${data.total_entries} blocks intact)`, 'success');
         await fetchAuditLog();
       } catch (e) {
@@ -3080,6 +2786,7 @@
     }
 
     function switchDriftScenario(scenario) {
+      playSFX('click');
       selectedDriftScenario = scenario;
       renderMlopsViews();
       showToast(`Switched drift scenario to ${scenario === 'gentle' ? 'Gentle (σ=0.02)' : 'Severe Shock (σ=0.30)'}`, 'info');
@@ -3417,7 +3124,7 @@
       
       const ts = new Date().toISOString().slice(11, 19);
       consoleBox.innerHTML += `<p class="text-sky-400 font-mono text-[11px] pt-1">[${ts} UTC] [JOB_SPAWN] Dispatching retraining job on ${currentSubset} (${selectedDriftScenario})...</p>`;
-      speakCockpit(`Retraining pipeline dispatched for fleet partition ${currentSubset}.`, 'normal');
+      playSFX('retrain');
 
       try {
         const res = await fetch('/api/retrain/trigger', {
@@ -3430,8 +3137,7 @@
         btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> EXECUTE RETRAINING & PREPROCESSOR ADAPTATION DEMO`;
 
         if (data.success) {
-          playAvionicsChime('confirm');
-          speakCockpit(`Retraining job completed for ${currentSubset}. Candidate evaluated against champion gate.`, 'high');
+          playSFX('promote');
           showToast(`Retraining pipeline execution completed on ${currentSubset}`, 'success');
           consoleBox.innerHTML += `<pre class="text-[10px] text-slate-300 p-2.5 rounded-lg bg-black/70 border border-slate-800/80 font-mono leading-relaxed mt-2 select-text whitespace-pre-wrap">${data.stdout}</pre>`;
           consoleBox.scrollTop = consoleBox.scrollHeight;
