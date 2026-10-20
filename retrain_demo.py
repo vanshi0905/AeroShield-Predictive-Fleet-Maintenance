@@ -30,9 +30,14 @@ def one_sided(rul, gold, T_cens):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--subset", default="FD001"); ap.add_argument("--out", default="outputs"); a = ap.parse_args()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--subset", default="FD001")
+    ap.add_argument("--out", default="outputs")
+    ap.add_argument("--scenario", default="strong", choices=["gentle", "strong", "both"], help="Drift scenario to simulate (default: strong)")
+    ap.add_argument("--allow-synthetic", action="store_true", default=False, help="Allow running demo on synthetic data if NASA files are missing")
+    a = ap.parse_args()
     cfg, sc = load_cfg(a.subset); cap = cfg["CAP"]; rng = np.random.default_rng(0)
-    train, _, _ = load_cmapss(a.subset, "data", cap)
+    train, _, _ = load_cmapss(a.subset, "data", cap, allow_synthetic=a.allow_synthetic)
     units = rng.permutation(train["unit"].unique()); v1u, frz, dlv = units[:60], units[60:70], units[70:100]
     base = train[train.unit.isin(v1u)].reset_index(drop=True)
     prep = Preprocessor(cfg, sc).fit(base); g_base = prep.transform(base)
@@ -45,7 +50,9 @@ def main():
     reg.register_champion(a.subset, "v1", v1m, note="60-engine baseline")
     sd = train[SENS].std(); history = []
     cens_units = set(rng.choice(dlv, 6, replace=False))                      # 20% serviced before failure
-    for name, k in (("gentle", 0.02), ("strong", 0.30)):
+    all_scenarios = [("gentle", 0.02), ("strong", 0.30)]
+    scenarios = [s for s in all_scenarios if a.scenario == "both" or s[0] == a.scenario]
+    for name, k in scenarios:
         print(f"\n[demo] scenario '{name}' (sensor shift {k} sigma)")
         d = train[train.unit.isin(dlv)].copy().reset_index(drop=True)
         d[SENS] = d[SENS] + k * sd.values

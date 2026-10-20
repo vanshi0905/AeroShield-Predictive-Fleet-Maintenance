@@ -51,10 +51,8 @@ Inference Output Vector to Layer 3 Triage
   $$\mu_{j, \text{base}} = \frac{1}{20} \sum_{t=1}^{20} s_{j, t}, \qquad \sigma_{j, \text{base}} = \sqrt{\frac{1}{20} \sum_{t=1}^{20} (s_{j, t} - \mu_{j, \text{base}})^2}$$
   The baseline-subtracted sensor deviation $d_{\text{base}}$ at flight cycle $t$ is:
   $$d_{\text{base}}(s_{j, t}) = \frac{s_{j, t} - \mu_{j, \text{base}}}{\sigma_{j, \text{base}}}$$
-  A composite anomaly score $A_t$ is computed via Mahalanobis distance across the top degrading sensors:
-  $$A_t = \sqrt{\sum_{j \in \mathcal{S}_{\text{wear}}} d_{\text{base}}(s_{j, t})^2}$$
-  An anomaly alert triggers when $A_t \ge \tau = 3.0$ for at least 2 consecutive cycles.
-* **Results**: True anomaly detection achieved **100.0%** across all four datasets, maintaining a false alarm rate $\le 5.0\%$ with an out-of-fold warning lead time of **38–46 cycles** across fleet partitions.
+  An `IsolationForest` ensemble ($N=200$ trees) is trained on the baseline-subtracted deviation vector $\mathbf{d}_{\text{base}}$. Anomaly scores $s_t = -\text{decision\_function}(\mathbf{d}_{\text{base}})$ are smoothed with an EWMA ($\alpha = 0.3$) and confirmed when the score exceeds an out-of-fold calibrated threshold for $\ge 2$ consecutive cycles.
+* **Results**: True anomaly detection achieved **100.0%** on FD001 (lead 38 cyc, FA 4.0%) and FD002 (lead 43 cyc, FA 5.0%), and **69.0%** on FD003 (lead 39 cyc, FA 2.0%). Under FD004 (dual fault, 6 regimes), detection is 5.6% on raw thresholds; 51 of 248 units are routed safely to the **Human Exception Queue** as fail-safe protection.
 
 ### B. Piecewise Linear Capped Target
 In turbofan engines, physical wear is negligible during early flight cycles (crack propagation and material loss remain latent). Modeling RUL linearly from cycle 0 forces models to fit meaningless variations during healthy operation. AeroShield enforces a piecewise linear target capped at $RUL_{\text{cap}} = 125$ cycles:

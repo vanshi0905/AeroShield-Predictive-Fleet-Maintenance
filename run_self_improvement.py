@@ -21,7 +21,8 @@ from shield.src.self_improver import SelfImprovementEngine, DEFAULT_SEARCH_SPACE
 
 def run_self_improvement_for_subset(subset, data_dir="data", config_dir="shield/config",
                                     out_dir="outputs", iterations=10, rounds=3,
-                                    search_type="compact", auto_promote=False, seed=42):
+                                    search_type="compact", auto_promote=False, seed=42,
+                                    allow_synthetic=False):
     print("\n" + "=" * 78)
     print(f"  AEROSHIELD AUTONOMOUS SELF-IMPROVEMENT FLYWHEEL: {subset}")
     print(f"  Target: Elevating performance toward SOTA benchmarks")
@@ -33,7 +34,7 @@ def run_self_improvement_for_subset(subset, data_dir="data", config_dir="shield/
     
     # 1. Load operational data
     print(f"[1/4] Loading {subset} fleet data from '{data_dir}'...")
-    train, test, source = load_cmapss(subset, data_dir, cap)
+    train, test, source = load_cmapss(subset, data_dir, cap, allow_synthetic=allow_synthetic)
     print(f"      Loaded {train['unit'].nunique()} training engines ({len(train)} cycles), data source: {source}")
 
     # 2. Extract features
@@ -62,6 +63,7 @@ def run_self_improvement_for_subset(subset, data_dir="data", config_dir="shield/
         batch_size=max(2, iterations // rounds),
         max_rounds=rounds,
         verbose=True,
+        auto_promote=auto_promote,
     )
 
     # 5. Summary & Promotion
@@ -120,9 +122,15 @@ def main():
     )
     parser.add_argument(
         "--auto-promote",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Automatically promote candidates passing all 4 gates (default: True)",
+        help="Automatically promote candidates passing all 4 gates (default: --auto-promote, disable with --no-auto-promote)",
+    )
+    parser.add_argument(
+        "--allow-synthetic",
+        action="store_true",
+        default=False,
+        help="Allow running on synthetic fleet if raw NASA files are missing",
     )
     parser.add_argument(
         "--data-dir",
@@ -151,6 +159,7 @@ def main():
             rounds=args.rounds,
             search_type=args.search_space,
             auto_promote=args.auto_promote,
+            allow_synthetic=args.allow_synthetic,
         )
 
     print("\n" + "=" * 78)

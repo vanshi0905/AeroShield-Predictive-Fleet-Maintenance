@@ -29,13 +29,15 @@ def main():
         help="Run all four C-MAPSS fleet partitions (FD001-FD004) sequentially",
     )
     parser.add_argument(
-        "--data_dir",
+        "--data_dir", "--data-dir",
+        dest="data_dir",
         type=str,
         default="data",
         help="Directory containing NASA C-MAPSS raw text files",
     )
     parser.add_argument(
-        "--out_dir",
+        "--out_dir", "--out-dir",
+        dest="out_dir",
         type=str,
         default="outputs",
         help="Output directory for predictions, models, databases, and logs",
@@ -46,15 +48,23 @@ def main():
         help="Reset/overwrite existing output artifacts for the partition",
     )
     parser.add_argument(
-        "--tune_cap",
+        "--tune_cap", "--tune-cap",
+        dest="tune_cap",
         action="store_true",
+        default=False,
         help="Run cross-validation grid search for RUL clipping cap (default: False)",
     )
     parser.add_argument(
         "--inject",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Inject simulated sensor faults to exercise human-exception queue (default: True)",
+        help="Inject simulated sensor faults to exercise human-exception queue (default: --inject, disable with --no-inject)",
+    )
+    parser.add_argument(
+        "--allow-synthetic",
+        action="store_true",
+        default=False,
+        help="Allow running on synthetic fleet if raw NASA files are missing",
     )
     parser.add_argument(
         "--seed",
@@ -87,6 +97,7 @@ def main():
             tune_cap=args.tune_cap,
             inject=args.inject,
             seed=args.seed,
+            allow_synthetic=args.allow_synthetic,
         )
         metrics = pipeline.run()
         elapsed = time.time() - t0

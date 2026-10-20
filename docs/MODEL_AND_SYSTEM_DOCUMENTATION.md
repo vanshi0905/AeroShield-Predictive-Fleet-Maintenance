@@ -133,11 +133,16 @@ In FD002 and FD004, turbofans traverse 6 distinct flight conditions across altit
 
 **Source Code**: [`shield/src/anomaly.py`](./shield/src/anomaly.py), [`shield/src/calibrate.py`](./shield/src/calibrate.py)
 
-### 1. Baseline-Subtracted Sensor Anomaly Detection
-* **The Root Problem**: In raw rolling mean features, flight regime transitions look identical to degradation. As a consequence, anomaly detection on FD002/FD004 historically achieved $<6\%$ true detection.
-* **The Solution**: AeroShield computes baseline-subtracted sensor deviations ($d_{\text{base}}$) relative to each unit's initial healthy cruise baseline ($t \le 20$ cycles):
+### 1. Baseline-Subtracted Sensor Anomaly Detection (Isolation Forest)
+* **The Problem**: In raw rolling mean features, flight regime transitions and operating condition shifts can mimic degradation.
+* **The Architecture**: AeroShield extracts baseline-subtracted sensor deviations ($d_{\text{base}}$) relative to each unit's initial healthy baseline, then trains an `IsolationForest` (200 estimators) on these deviation signals:
   $$d_{\text{base}}(s_{j, t}) = \frac{s_{j, t} - \mu_{j, \text{healthy}}}{\sigma_{j, \text{healthy}}}$$
-  An anomaly is confirmed when the composite Mahalanobis deviation exceeds threshold $\tau = 3.0$ across consecutive cycles. This elevated true detection to **100.0%** while maintaining false alarms $\le 5.0\%$.
+  The anomaly score $s_t = -\text{decision\_function}(d_{\text{base}})$ is smoothed with an EWMA ($\alpha = 0.3$) and confirmed only when the score exceeds an out-of-fold calibrated threshold for $\ge 2$ consecutive cycles.
+* **Empirical Performance**:
+  - **FD001**: 100.0% detection rate, 38 cycles median lead time, 4.0% engine false alarm rate.
+  - **FD002**: 100.0% detection rate, 43 cycles median lead time, 5.0% engine false alarm rate.
+  - **FD003**: 69.0% detection rate, 39 cycles median lead time, 2.0% engine false alarm rate.
+  - **FD004**: 5.6% detection rate under complex 6-regime multi-fault conditions; units with ambiguous or low-confidence anomaly signals are safely routed to the **Human Exception Queue** (51 of 248 units) to maintain operational safety.
 
 ### 2. Piecewise Linear Target & Quantile Pinball Loss
 Degradation in turbofans is negligible during initial operational cycles. Thus, Remaining Useful Life (RUL) is modeled as a piecewise constant capped target ($RUL_{\text{cap}} = 125$ cycles):

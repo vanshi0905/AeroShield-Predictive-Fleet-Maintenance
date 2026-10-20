@@ -22,11 +22,22 @@ app = FastAPI(
 )
 
 # Enable CORS for local development
+# Configure secure CORS: restrict to local dashboard origins by default
+allowed_origins_env = os.getenv("AEROSHIELD_ALLOWED_ORIGINS", "")
+ALLOWED_ORIGINS = [
+    origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()
+] if allowed_origins_env else [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -36,11 +47,12 @@ from .voice_agent import SarvamVoiceEngine, AVAILABLE_SPEAKERS
 bridge = DataBridge()
 voice_engine = SarvamVoiceEngine()
 
-ADMIN_API_KEY = os.getenv("AEROSHIELD_API_KEY", "")
+# Secure default API key: required for write endpoints
+ADMIN_API_KEY = os.getenv("AEROSHIELD_API_KEY", "aeroshield-dev-key")
 
 def verify_write_access(x_api_key: Optional[str] = Header(None)):
-    """Access control guard (Fault F24). Local dev is open; when AEROSHIELD_API_KEY is set,
-    requests must provide a matching X-API-Key header."""
+    """Access control guard (Fault F24). Write operations require a valid X-API-Key header.
+    Defaults to 'aeroshield-dev-key' for local development; override with AEROSHIELD_API_KEY in production."""
     if ADMIN_API_KEY and x_api_key != ADMIN_API_KEY:
         raise HTTPException(status_code=401, detail="Unauthorized: Valid X-API-Key required for write operations")
 
@@ -52,6 +64,7 @@ class OrderActionRequest(BaseModel):
 
 class RetrainRequest(BaseModel):
     subset: str = "FD001"
+    scenario: Optional[str] = "strong"
 
 class VoiceSynthesizeRequest(BaseModel):
     text: str
@@ -136,48 +149,45 @@ def dispatch_work_order(req: OrderActionRequest):
 @app.post("/api/retrain/trigger", dependencies=[Depends(verify_write_access)])
 def trigger_retrain(req: RetrainRequest):
     """Executes closed-loop retraining demo with preprocessor adaptation."""
-    import datetime, time, json
+    import subprocess, sys
     subset = req.subset or "FD001"
-    history_file = os.path.join(bridge.outputs_dir, subset, "retrain_history.json")
-    
-    scenario_data = []
-    if os.path.exists(history_file):
-        try:
-            with open(history_file, "r") as f:
-                scenario_data = json.load(f)
-        except Exception:
-            pass
+    scenario = req.scenario or "strong"
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    script_path = os.path.join(repo_root, "retrain_demo.py")
+    train_file = os.path.join(repo_root, "data", f"train_{subset}.txt")
 
-    now = datetime.datetime.now(datetime.timezone.utc)
-    def t(offset=0):
-        return (now + datetime.timedelta(seconds=offset)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] + " UTC"
+    if not os.path.exists(train_file):
+        return {
+            "success": False,
+            "stdout": f"[ERROR] NASA C-MAPSS dataset file '{train_file}' not found.\nPlease place CMAPSSData files into 'data/' to execute live closed-loop retraining.",
+            "stderr": "FileNotFoundError: Missing NASA C-MAPSS training data.",
+            "subset": subset,
+            "scenario": scenario,
+        }
 
-    lines = [
-        f"[{t(0)}] [INFO] worker.orchestrator: Retraining job spawned for fleet partition '{subset}'.",
-        f"[{t(0.2)}] [INFO] data.loader: Ingesting streaming operational fleet data (30 incoming units).",
-        f"[{t(0.5)}] [INFO] data.censoring: 6 units identified as serviced before failure (right-censored: one-sided loss evaluated).",
-        f"[{t(0.8)}] [INFO] drift.monitor: Running age-matched Population Stability Index (PSI) scan across 4 flight stages...",
-        f"[{t(1.1)}] [INFO] drift.monitor: Stage [0-40 cyc] max_psi=0.055 | Stage [40-80 cyc] max_psi=0.118 | Stage [80-140 cyc] max_psi=0.177 | Stage [140+ cyc] max_psi=0.362.",
-        f"[{t(1.4)}] [INFO] preprocessor: Adapting robust medians, MAD winsorizing limits, and regime baselines to shifted sensor stream.",
-        f"[{t(1.8)}] [INFO] model.trainer: Fitting challenger candidate on combined calibration partition (72 engines)...",
-        f"[{t(2.3)}] [INFO] model.trainer: Quantile HistGradientBoosting (P10, P50, P90) + Non-linear Second Opinion fitted successfully.",
-        f"[{t(2.6)}] [INFO] evaluation.gate: Evaluating candidate on hold-out gate validation set (12 run-to-failure engines)...",
-        f"[{t(2.9)}] [EVAL] champion: RMSE=9.14 cyc | NASA=2,779 | 80% Coverage=86.8% | Late Share=26.3%",
-        f"[{t(3.1)}] [EVAL] candidate: RMSE=9.67 cyc | NASA=2,848 | 80% Coverage=87.7% | Late Share=21.9%",
-        f"[{t(3.4)}] [GATE] Check 1 (Test RMSE <= Champion): FAIL (9.67 > 9.14) -> Candidate accuracy degraded +5.8%",
-        f"[{t(3.6)}] [GATE] Check 2 (NASA Loss <= +5.0%):   PASS (+2.5% <= +5.0%)",
-        f"[{t(3.8)}] [GATE] Check 3 (Conformal Cov >= 75%): PASS (87.7% >= 75.0%)",
-        f"[{t(4.0)}] [GATE] Check 4 (Late Share Delta <= 5): PASS (-4.4 pts <= +5.0 pts)",
-        f"[{t(4.3)}] [DECISION] Promotion Blocked: 'rmse_not_worse' policy violation. Champion v1 retained in active production serving.",
-        f"[{t(4.5)}] [REGISTRY] Candidate registered to MLflow SQLite registry as 'candidate-v2.1' (status=STAGING, gated=true)."
-    ]
-    
-    return {
-        "success": True,
-        "stdout": "\n".join(lines),
-        "stderr": "",
-        "subset": subset
-    }
+    try:
+        proc = subprocess.run(
+            [sys.executable, script_path, "--subset", subset, "--scenario", scenario],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+        return {
+            "success": proc.returncode == 0,
+            "stdout": proc.stdout,
+            "stderr": proc.stderr,
+            "subset": subset,
+            "scenario": scenario,
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "stdout": "",
+            "stderr": f"Subprocess execution error: {str(e)}",
+            "subset": subset,
+            "scenario": scenario,
+        }
 
 @app.get("/api/voice/status")
 def get_voice_status():

@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger("aeroshield.voice")
 
-DEFAULT_SARVAM_KEY = "sk_64w2v87i_xHYBhmXL7y9k0HLyz1qBHiB9"
+DEFAULT_SARVAM_KEY = os.getenv("SARVAM_API_KEY", "")
 SARVAM_TTS_URL = "https://api.sarvam.ai/text-to-speech"
 SARVAM_CHAT_URL = "https://api.sarvam.ai/v1/chat/completions"
 
@@ -56,7 +56,9 @@ class SarvamVoiceEngine:
         self.api_key = api_key or os.getenv("SARVAM_API_KEY", DEFAULT_SARVAM_KEY)
 
     def is_configured(self) -> bool:
-        if not os.getenv("VOICE_ENABLED", "true").lower() in ("true", "1", "yes"):
+        """Voice copilot is an optional, read-only add-on outside the deterministic agent.
+        Defaults to offline (false) unless explicitly enabled via VOICE_ENABLED=true and a valid SARVAM_API_KEY."""
+        if not os.getenv("VOICE_ENABLED", "false").lower() in ("true", "1", "yes"):
             return False
         return bool(self.api_key and len(self.api_key) > 10)
 
@@ -144,12 +146,16 @@ class SarvamVoiceEngine:
             rate = readiness.get("health_rate_pct", 0)
             counts = readiness.get("status_counts", {})
             metrics = readiness.get("metrics", {})
+            cov = metrics.get("coverage_pct")
+            lead = metrics.get("anomaly_lead_cycles")
+            cov_str = f"{cov}%" if cov is not None else "unavailable"
+            lead_str = f"{lead} cycles" if lead is not None else "unavailable"
             lines.append(
                 f"Fleet Status: {total} total engines, {rate}% operational readiness. "
                 f"Status counts: Normal={counts.get('NORMAL', 0)}, Watch={counts.get('WATCH', 0)}, "
                 f"Medium Risk={counts.get('MEDIUM', 0)}, Critical Wear={counts.get('CRITICAL', 0)}. "
-                f"Calibrated 80% Conformal Coverage={metrics.get('coverage_pct', 84)}%, "
-                f"Anomaly Warning Lead={metrics.get('anomaly_lead_cycles', 45)} cycles."
+                f"Calibrated 80% Conformal Coverage={cov_str}, "
+                f"Anomaly Warning Lead={lead_str}."
             )
         except Exception as e:
             lines.append(f"Fleet Readiness: Active telemetry nominal.")
@@ -267,8 +273,9 @@ class SarvamVoiceEngine:
         except Exception as e:
             logger.error("Voice copilot query error: %s", e)
             fallback_text = (
-                f"Telemetry partition {subset} is active with 100% anomaly detection. "
-                f"Systems nominal under conformal confidence bounds."
+                f"Telemetry partition {subset} is active. "
+                f"Real-time sensor telemetry and conformal prediction bounds loaded. "
+                f"Detailed metrics available in fleet telemetry dashboard."
             )
             audio_base64 = self.synthesize_speech(fallback_text, speaker=speaker)
             return {

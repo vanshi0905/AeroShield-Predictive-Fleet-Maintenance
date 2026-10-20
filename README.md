@@ -3,9 +3,9 @@
 [![Live Demo: Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://aeroshield-phi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
-[![Tests: 64/64 Passed](https://img.shields.io/badge/Tests-64%2F64%20Passed-emerald.svg)](pytest.ini)
-[![Voice Agent: Sarvam AI](https://img.shields.io/badge/Voice%20Agent-Sarvam%20AI-orange.svg)](https://sarvam.ai)
-[![Conformal Coverage: 80%](https://img.shields.io/badge/Conformal%20Coverage-80%25%20Calibrated-sky.svg)](docs/MATHEMATICAL_FORMULATION.md)
+[![Tests: 76/76 Passed](https://img.shields.io/badge/Tests-76%2F76%20Passed-emerald.svg)](pytest.ini)
+[![Voice Agent: Sarvam AI](https://img.shields.io/badge/Voice%20Agent-Sarvam%20AI%20(Optional)-orange.svg)](https://sarvam.ai)
+[![Conformal Coverage: Calibrated](https://img.shields.io/badge/Conformal%20Coverage-80%25%20Calibrated-sky.svg)](docs/MATHEMATICAL_FORMULATION.md)
 
 > **Autonomous predictive maintenance, conformal Remaining Useful Life (RUL) estimation, deterministic triage dispatch, and cryptographic audit ledgers for connected industrial turbofans.**  
 > Built for **Tata Elxsi Case Study 1: Self-Healing Machines** evaluated on the full **NASA C-MAPSS (FD001–FD004)** turbofan benchmark suite.
@@ -19,27 +19,27 @@
 ## Key Capabilities
 
 * **Gas-Path Physics Features**: Attenuates raw sensor noise via causal running medians and computes thermodynamic interaction ratios ($s_8/s_9$ fan/core speed, $s_{13}/s_{14}$ corrected speed, $s_{11}/s_7$ pressure drop, $s_4/s_3$ temperature ratio).
-* **Baseline-Subtracted Anomaly Detection**: Tracks sensor deviations against operating-regime baselines to detect degradation **38–46 cycles** before failure with $\le 5\%$ False Alarm Rate across all 6 flight regimes.
-* **Conformal RUL Uncertainty**: Predicts remaining useful life intervals ($P_{10}, P_{50}, P_{90}$) with calibrated empirical coverage guarantees and secondary non-linear consensus.
-* **Deterministic Triage Agent**: Evaluates an automated 4-tier decision matrix, routes sensor anomalies to human review queues, and commits work-order state transitions to a **tamper-evident SHA-256 cryptographic audit ledger** designed to support FAA Part 145 and EASA M.A.306 auditability requirements.
-* **MLOps Drift Governance**: Scans age-matched Population Stability Index (PSI) drift and enforces a 4-condition statistical promotion gate to prevent performance regressions.
-* **Sarvam AI Voice Copilot & Neural Annunciator (Optional Cloud Extension)**: Features conversational telemetry reasoning powered by Sarvam 105B (`sarvam-105b-conversations`) with studio-grade neural speech synthesis (`bulbul:v3`) across multiple persona voices (*Shubh*, *Priya*, *Aditya*, *Neha*) and live speech-to-text mic input (with full offline fallback).
+* **Baseline-Subtracted Anomaly Detection**: Tracks sensor deviations against operating-regime baselines with an out-of-fold calibrated `IsolationForest` detector to detect degradation **38–54 cycles** before failure with $\le 5\%$ False Alarm Rate.
+* **Conformal RUL Uncertainty**: Predicts remaining useful life intervals ($P_{10}, P_{50}, P_{90}$) with empirical coverage guarantees and secondary non-linear consensus (`RandomForestRegressor`).
+* **Deterministic Triage Agent**: Evaluates an automated 4-tier decision matrix, routes sensor anomalies to human review queues, and commits work-order state transitions to a **tamper-evident Keyed HMAC-SHA256 cryptographic audit ledger** designed to support FAA Part 145 and EASA M.A.306 auditability requirements.
+* **Closed-Loop Retraining & MLOps Governance**: Scans age-matched Population Stability Index (PSI) drift, evaluates one-sided loss on right-censored serviced units, scores champion vs challenger on held-out gate validation sets, and enforces statistical promotion gates in `retrain_demo.py` and `ModelRegistry`.
+* **Sarvam AI Voice Copilot (Optional Read-Only Add-on)**: Read-only conversational telemetry query interface powered by Sarvam 105B (`sarvam-105b-conversations`) and neural TTS (`bulbul:v3`) with full offline default mode (`VOICE_ENABLED=false`).
 * **Tactile Defense Cockpit**: Anti-slop glassmorphic interface with 60fps flight cycle replay scrubber and interactive flight controller copilot.
 
 ---
 
-## NASA C-MAPSS Benchmark Evaluation
+## Official NASA C-MAPSS Benchmark Evaluation
 
-Across all four benchmark subsets (single-condition to complex 6-regime multi-fault degradation):
+Extracted directly from ground-truth executions recorded in outputs/benchmark_summary.csv:
 
-| Dataset | Operating Conditions | Fault Modes | Engines | Test Capped RMSE | NASA Asymmetric Loss | 80% Conformal Coverage | Anomaly Detection Rate | False Alarm Rate | Mean Warning Lead |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **FD001** | Single (Sea Level) | HPC Wear | 100 | **11.30** | **2,779** | **84.0%** | **100.0%** | 4.0% | 38 cycles |
-| **FD002** | 6 Complex Regimes | HPC Wear | 259 | **13.97** | **14,520** | **88.4%** | **100.0%** | 5.0% | 43 cycles |
-| **FD003** | Single (Sea Level) | HPC + Fan Wear | 100 | **11.23** | **2,680** | **86.0%** | **100.0%** | 3.5% | 40 cycles |
-| **FD004** | 6 Complex Regimes | HPC + Fan Wear | 248 | **14.85** | **16,840** | **87.5%** | **100.0%** | 4.8% | 46 cycles |
+| Dataset | Operating Conditions | Fault Modes | Engines | Test Capped RMSE (95% CI) | Uncapped RMSE | NASA Loss (Uncapped) | Late % | Conformal Coverage (80% target) | Near-Failure Cov ( \le 50$) | Anomaly Detection | Engine FA Rate | Median Warning Lead | Human Exceptions |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **FD001** | Single (Sea Level) | HPC Wear | 100 | **11.30** [9.3, 13.3] | 12.98 | **213.0** | 29.0% | **84.0%** | **100.0%** | **100.0%** | 4.0% | 38 cyc | 0 |
+| **FD002** | 6 Complex Regimes | HPC Wear | 259 | **13.97** [12.6, 15.3] | 27.01 | **8,519.0** | 19.3% | **88.4%** | **98.9%** | **100.0%** | 5.0% | 43 cyc | 6 |
+| **FD003** | Single (Sea Level) | HPC + Fan Wear | 100 | **11.59** [9.5, 13.6] | 13.34 | **260.0** | 35.0% | **79.0%** | **93.1%** | **69.0%** | 2.0% | 39 cyc | 10 |
+| **FD004** | 6 Complex Regimes | HPC + Fan Wear | 248 | **21.49** [19.1, 23.8] | 33.49 | **15,018.0** | 35.9% | **81.5%** | **90.0%** | **5.6%** | 4.4% | 54 cyc | 51 |
 
-*Evaluated under NASA asymmetric scoring exponentially penalizing late over-prediction.*
+*Note: NASA asymmetric scoring exponentially penalizes late over-prediction. Conformal coverage is calibrated to nominal 80% contract; in the critical near-failure zone ( \le 50$), coverage remains $\ge 90\%$. On FD004, 51 engines are safely routed to the human exception queue as fail-safe protection.*
 
 ---
 

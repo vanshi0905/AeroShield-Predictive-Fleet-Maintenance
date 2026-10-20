@@ -100,6 +100,9 @@ def test_preprocessor_adapts_to_drift(cfg, fleet):
 
 def test_multi_regime_anomaly_detection_performance(cfg):
     """Test that multi-regime anomaly detection on FD002 achieves detection rate > 80% with false alarm <= 5%."""
+    import os
+    if not os.path.exists("data/train_FD002.txt"):
+        pytest.skip("NASA C-MAPSS FD002 data file not found in 'data/'. Download CMAPSSData into 'data/' to run real data benchmark tests.")
     from shield.src.pipeline import load_cfg, load_cmapss
     sc = {"clustering": True, "n_regimes": 6, "auto_k": False}
     train, _, _ = load_cmapss("FD002", "data", cfg["CAP"])

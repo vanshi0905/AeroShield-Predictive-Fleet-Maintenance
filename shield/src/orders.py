@@ -1,5 +1,5 @@
-"""Layer 5 - work orders: lifecycle, budget, de-duplication, hash-chained audit, provenance."""
-import json, sqlite3, hashlib, os
+"""Layer 5 - work orders: lifecycle, budget, de-duplication, keyed HMAC-SHA256 audit, provenance."""
+import json, sqlite3, hashlib, hmac, os
 from datetime import datetime, timezone
 
 GENESIS = "GENESIS_" + "0" * 32
@@ -12,11 +12,14 @@ def now(): return datetime.now(timezone.utc).isoformat()
 
 class OrderManager:
     def __init__(self, db_path="outputs/work_orders.db", subsystem_map=None, medium_budget=10, window_cycles=20,
-                 model_version="v1", rule_version="rules-2.1", config_hash="", stale_factor=2.0, reopen_window=20, reopen_limit=3):
+                 model_version="v1", rule_version="rules-2.1", config_hash="", stale_factor=2.0, reopen_window=20, reopen_limit=3,
+                 hmac_key=None):
         self.db_path, self.sub = db_path, subsystem_map or {}
         self.budget, self.win = medium_budget, window_cycles
         self.mv, self.rv, self.ch = model_version, rule_version, config_hash
         self.stale_factor, self.reopen_window, self.reopen_limit = stale_factor, reopen_window, reopen_limit
+        key_str = hmac_key or os.environ.get("AEROSHIELD_HMAC_KEY", "aeroshield-v3-secret-key")
+        self.hmac_key = key_str.encode() if isinstance(key_str, str) else key_str
         os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
         self.conn = sqlite3.connect(db_path)
         c = self.conn.cursor()
@@ -31,6 +34,10 @@ class OrderManager:
     def close(self): self.conn.commit(); self.conn.close()
 
     # ---------- audit ----------
+    def _compute_hmac(self, prev, ts, order_id, event, details_str):
+        payload = f"{prev}|{ts}|{order_id}|{event}|{details_str}".encode()
+        return hmac.new(self.hmac_key, payload, hashlib.sha256).hexdigest()
+
     def _last_hash(self):
         r = self.conn.execute("SELECT current_hash FROM audit_log ORDER BY entry_id DESC LIMIT 1").fetchone()
         return r[0] if r else GENESIS
@@ -38,7 +45,7 @@ class OrderManager:
     def _audit(self, order_id, event, details):
         prev, ts = self._last_hash(), now()
         d = json.dumps({**details, "model_version": self.mv, "rule_version": self.rv, "config_hash": self.ch}, sort_keys=True)
-        h = hashlib.sha256(f"{prev}|{ts}|{order_id}|{event}|{d}".encode()).hexdigest()
+        h = self._compute_hmac(prev, ts, order_id, event, d)
         self.conn.execute("INSERT INTO audit_log(prev_hash,current_hash,timestamp,order_id,event_type,details) VALUES(?,?,?,?,?,?)",
                           (prev, h, ts, order_id, event, d))
 
@@ -47,7 +54,7 @@ class OrderManager:
         exp = GENESIS
         for eid, prev, cur, ts, oid, ev, det in rows:
             if prev != exp: return False, f"Broken chain at entry {eid}"
-            if hashlib.sha256(f"{prev}|{ts}|{oid}|{ev}|{det}".encode()).hexdigest() != cur:
+            if self._compute_hmac(prev, ts, oid, ev, det) != cur:
                 return False, f"Tampered entry {eid}: recomputed hash mismatch"
             exp = cur
         return True, f"Verified {len(rows)} audit entries. Integrity 100% intact."

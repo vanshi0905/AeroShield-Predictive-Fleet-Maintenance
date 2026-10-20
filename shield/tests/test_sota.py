@@ -204,8 +204,8 @@ def test_multi_scale_augmentor_adds_thermal_stress(cfg, fleet):
 # ═══════════════════════════════════════════════════════════════════════════
 
 def test_tournament_gate_criteria():
-    """Verify 4-gate validation pass/fail logic."""
-    gate = TournamentGate(nasa_tol=0.05, coverage_floor=0.75, late_ceiling=0.30)
+    """Verify 4-gate validation pass/fail logic using unified registry gate rules."""
+    gate = TournamentGate(nasa_tol=0.05, coverage_floor=0.75, late_margin=0.05)
     champ = {"rmse": 12.0, "nasa": 300.0, "coverage": 0.82, "late_share": 0.25}
     
     # Case 1: All better -> PASS
@@ -226,19 +226,27 @@ def test_tournament_gate_criteria():
     assert passed is False
     assert checks["coverage_above_floor"] is False
 
+    # Case 4: Late share delta > +5 pts -> FAIL
+    chall_high_late = {"rmse": 11.2, "nasa": 280.0, "coverage": 0.82, "late_share": 0.35}
+    passed, checks = gate.evaluate(champ, chall_high_late)
+    assert passed is False
+    assert checks["late_share_within_margin"] is False
+
 
 def test_self_improvement_tournament_execution(cfg, fleet, tmp_path):
     """Verify SelfImprovementEngine runs a mini-tournament cleanly."""
-    p = Preprocessor(cfg, {"clustering": False}).fit(fleet)
-    gold = p.transform(fleet)
+    fleet_slice = fleet[fleet.unit <= 4].copy().reset_index(drop=True)
+    p = Preprocessor(cfg, {"clustering": False}).fit(fleet_slice)
+    gold = p.transform(fleet_slice)
+    feature_cols = p.feature_cols[:4]  # test with 4 features for fast unit testing
     
-    # Small search space for fast test execution
+    # Fast micro search space for rapid unit testing
     mini_space = {
-        "hgb_max_iter": [40, 60],
+        "hgb_max_iter": [5],
         "hgb_lr": [0.08],
-        "hgb_min_leaf": [30],
+        "hgb_min_leaf": [5],
         "hgb_l2": [1.0],
-        "late_shift": [2, 4],
+        "late_shift": [2],
         "smoother_alpha": [0.3],
         "smoother_umax": [1.0],
         "near_weight_mult": [2.0],
@@ -247,14 +255,15 @@ def test_self_improvement_tournament_execution(cfg, fleet, tmp_path):
     engine = SelfImprovementEngine(
         subset="FD001",
         gold=gold,
-        feature_cols=p.feature_cols,
+        feature_cols=feature_cols,
         cap=125.0,
         seed=42,
         out_dir=str(tmp_path),
         search_space=mini_space,
+        folds=2,
     )
     
-    summary = engine.run_tournament(n_iterations=2, strategy="random", verbose=False)
+    summary = engine.run_tournament(n_iterations=2, strategy="random", verbose=False, auto_promote=True)
     assert "total_candidates" in summary
     assert summary["total_candidates"] == 2
     assert "champion_before" in summary

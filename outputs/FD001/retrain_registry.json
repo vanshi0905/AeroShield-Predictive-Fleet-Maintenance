@@ -13,13 +13,13 @@
         "oof_rmse": 10.551231280919488
       },
       "path": "",
-      "promoted_at": "2026-10-15T18:55:05.371563+00:00",
+      "promoted_at": "2026-10-20T06:57:10.848290+00:00",
       "note": "60-engine baseline"
     },
     "history": [
       {
         "version": "v2-gentle",
-        "evaluated_at": "2026-10-15T18:58:17.713437+00:00",
+        "evaluated_at": "2026-10-20T07:06:25.358980+00:00",
         "trigger": "new_engines>=20",
         "challenger": {
           "rmse": 9.673148299656633,
@@ -50,7 +50,7 @@
       },
       {
         "version": "v2-strong",
-        "evaluated_at": "2026-10-15T19:01:17.396142+00:00",
+        "evaluated_at": "2026-10-20T07:15:56.501334+00:00",
         "trigger": "age_matched_drift, residual_rmse, new_engines>=20",
         "challenger": {
           "rmse": 14.217616800560467,

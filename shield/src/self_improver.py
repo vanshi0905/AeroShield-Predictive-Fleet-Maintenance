@@ -71,29 +71,30 @@ COMPACT_SEARCH_SPACE = {
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TournamentGate:
-    """Strict 4-gate promotion validation.
+    """Strict 4-gate promotion validation using unified registry gate rules.
 
-    A challenger is promoted only if ALL four gates pass:
+    A challenger is promoted only if ALL four gates pass (aligned with ModelRegistry.gate):
     1. RMSE (capped truth) <= champion RMSE
-    2. NASA score (uncapped truth) <= champion NASA * (1 + tolerance)
-    3. Conformal coverage >= coverage_floor
-    4. Late share <= late_ceiling
+    2. NASA score (uncapped truth) <= champion NASA * (1 + tolerance) [default +5%]
+    3. Conformal coverage >= coverage_floor [default target - 5 points = 75%]
+    4. Late share <= champion late share + late_margin [default +5 points delta]
     """
 
-    def __init__(self, nasa_tol=0.05, coverage_floor=0.75, late_ceiling=0.30):
+    def __init__(self, nasa_tol=0.05, coverage_floor=0.75, late_margin=0.05):
         self.nasa_tol = nasa_tol
         self.coverage_floor = coverage_floor
-        self.late_ceiling = late_ceiling
+        self.late_margin = late_margin
 
     def evaluate(self, champion_metrics, challenger_metrics):
         """Returns (passed: bool, checks: dict)."""
         c_rmse = champion_metrics.get("oof_oof_rmse", champion_metrics.get("rmse", 15.0))
         c_nasa = champion_metrics.get("oof_oof_nasa", champion_metrics.get("nasa", 2000.0))
+        c_late = champion_metrics.get("late_share", 0.30)
         checks = {
             "rmse_not_worse": challenger_metrics["rmse"] <= c_rmse,
             "nasa_within_tol": challenger_metrics["nasa"] <= c_nasa * (1 + self.nasa_tol),
             "coverage_above_floor": challenger_metrics["coverage"] >= self.coverage_floor,
-            "late_share_below_ceiling": challenger_metrics["late_share"] <= self.late_ceiling,
+            "late_share_within_margin": challenger_metrics["late_share"] <= c_late + self.late_margin,
         }
         passed = all(checks.values())
         return passed, checks
@@ -212,7 +213,7 @@ class SelfImprovementEngine:
     """
 
     def __init__(self, subset, gold, feature_cols, cap=125.0, seed=42,
-                 out_dir="outputs", search_space=None):
+                 out_dir="outputs", search_space=None, folds=5):
         self.subset = subset
         self.gold = gold
         self.cols = feature_cols
@@ -220,23 +221,28 @@ class SelfImprovementEngine:
         self.seed = seed
         self.out_dir = os.path.join(out_dir, subset)
         self.search_space = search_space or COMPACT_SEARCH_SPACE
-        self.evaluator = CandidateEvaluator(cap=cap, seed=seed)
+        self.evaluator = CandidateEvaluator(cap=cap, folds=folds, seed=seed)
         self.gate = TournamentGate()
         self.history = []
         os.makedirs(self.out_dir, exist_ok=True)
 
     def _load_champion(self):
         """Load champion metrics from registry or compute from current OOF."""
-        reg_path = os.path.join(os.path.dirname(self.out_dir), "registry.json")
+        reg_path = os.path.join(self.out_dir, "retrain_registry.json")
+        if not os.path.exists(reg_path):
+            reg_path = os.path.join(os.path.dirname(self.out_dir), "registry.json")
         if os.path.exists(reg_path):
-            with open(reg_path) as f:
-                reg = json.load(f)
-            if self.subset in reg:
-                champ = reg[self.subset].get("champion", {})
-                if isinstance(champ, dict) and "metrics" in champ:
-                    return champ["metrics"]
-                if "metrics" in reg[self.subset]:
-                    return reg[self.subset]["metrics"]
+            try:
+                with open(reg_path) as f:
+                    reg = json.load(f)
+                if self.subset in reg:
+                    champ = reg[self.subset].get("champion", {})
+                    if isinstance(champ, dict) and "metrics" in champ:
+                        return champ["metrics"]
+                    if "metrics" in reg[self.subset]:
+                        return reg[self.subset]["metrics"]
+            except Exception:
+                pass
         return None
 
     def _random_configs(self, n_configs):
@@ -263,13 +269,14 @@ class SelfImprovementEngine:
 
         return [dict(zip(keys, combo)) for combo in all_combos]
 
-    def run_tournament(self, n_iterations=10, strategy="random", verbose=True):
+    def run_tournament(self, n_iterations=10, strategy="random", verbose=True, auto_promote=False):
         """Run the self-improvement tournament.
 
         Args:
             n_iterations: Number of challenger configurations to evaluate
             strategy: 'random' or 'grid'
             verbose: Print progress
+            auto_promote: Update registry and append to retrain_history.json if challenger wins
 
         Returns:
             dict with tournament results
@@ -281,11 +288,16 @@ class SelfImprovementEngine:
         if champion_metrics is None:
             if verbose:
                 print("[self-improve] No champion found, computing baseline...")
-            # Evaluate default config as champion
+            # Evaluate baseline config using minimum complexity in current search space
             default_config = {
-                "hgb_max_iter": 150, "hgb_lr": 0.08, "hgb_min_leaf": 40,
-                "hgb_l2": 1.0, "late_shift": 5, "smoother_alpha": 0.3,
-                "smoother_umax": 1.0, "near_weight_mult": 2.0,
+                "hgb_max_iter": self.search_space.get("hgb_max_iter", [150])[0],
+                "hgb_lr": self.search_space.get("hgb_lr", [0.08])[0],
+                "hgb_min_leaf": self.search_space.get("hgb_min_leaf", [40])[0],
+                "hgb_l2": self.search_space.get("hgb_l2", [1.0])[0],
+                "late_shift": self.search_space.get("late_shift", [5])[0],
+                "smoother_alpha": self.search_space.get("smoother_alpha", [0.3])[0],
+                "smoother_umax": self.search_space.get("smoother_umax", [1.0])[0],
+                "near_weight_mult": self.search_space.get("near_weight_mult", [2.0])[0],
             }
             champion_metrics = self.evaluator.evaluate_config(
                 self.gold, self.cols, default_config
@@ -363,6 +375,42 @@ class SelfImprovementEngine:
         # Record history
         self.history.append(summary)
 
+        # Automated promotion to ModelRegistry & retrain_history.json
+        if auto_promote and best_challenger:
+            reg_file = os.path.join(self.out_dir, "retrain_registry.json")
+            reg = mlops.ModelRegistry(reg_file)
+            bm = best_challenger["metrics"]
+            ver = f"challenger-t{int(time.time())}"
+            reg.register_champion(
+                self.subset,
+                ver,
+                bm,
+                note=f"Autonomous tournament winner: RMSE={bm['rmse']:.2f}, NASA={bm['nasa']:.0f}"
+            )
+            # Update retrain_history.json for dashboard consumption
+            hist_file = os.path.join(self.out_dir, "retrain_history.json")
+            h_data = []
+            if os.path.exists(hist_file):
+                try:
+                    with open(hist_file) as hf:
+                        h_data = json.load(hf)
+                except Exception:
+                    pass
+            h_data.append({
+                "timestamp": summary["timestamp"],
+                "subset": self.subset,
+                "event": "tournament_promotion",
+                "promoted": True,
+                "version": ver,
+                "winner_metrics": bm,
+                "champion_before": summary["champion_before"],
+                "gate_checks": best_challenger.get("gate_checks", {}),
+            })
+            with open(hist_file, "w") as hf:
+                json.dump(h_data, hf, indent=2, default=str)
+            if verbose:
+                print(f"  [registry] Challenger '{ver}' promoted and registered to {reg_file}")
+
         # Save tournament log
         log_path = os.path.join(self.out_dir, "self_improvement_log.json")
         with open(log_path, "w") as f:
@@ -370,7 +418,7 @@ class SelfImprovementEngine:
 
         return summary
 
-    def run_iterative(self, total_iterations=20, batch_size=5, max_rounds=10, verbose=True):
+    def run_iterative(self, total_iterations=20, batch_size=5, max_rounds=10, verbose=True, auto_promote=False):
         """Run multiple tournament rounds, narrowing the search space around the best config.
 
         Each round evaluates `batch_size` configs. If a champion is dethroned, the next
@@ -393,7 +441,7 @@ class SelfImprovementEngine:
             if verbose:
                 print(f"\n--- Round {round_num} ({n} candidates) ---")
 
-            result = self.run_tournament(n_iterations=n, strategy="random", verbose=verbose)
+            result = self.run_tournament(n_iterations=n, strategy="random", verbose=verbose, auto_promote=auto_promote)
             all_results.append(result)
             remaining -= n
 

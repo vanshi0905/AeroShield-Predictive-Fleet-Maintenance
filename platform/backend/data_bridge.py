@@ -7,9 +7,17 @@ import os
 import json
 import sqlite3
 import hashlib
+import hmac
 from typing import Dict, List, Any, Optional
 import numpy as np
 import pandas as pd
+
+HMAC_SECRET = os.environ.get("AEROSHIELD_HMAC_KEY", "aeroshield-v3-secret-key").encode()
+
+def compute_audit_hash(prev_h: str, ts: str, order_id: str, event: str, details_str: str) -> str:
+    """Computes tamper-evident keyed HMAC-SHA256 hash across audit chain."""
+    payload = f"{prev_h}|{ts}|{order_id}|{event}|{details_str}".encode()
+    return hmac.new(HMAC_SECRET, payload, hashlib.sha256).hexdigest()
 
 # Paths to SHIELD codebase and outputs
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -370,7 +378,7 @@ class DataBridge:
                         intact = False
                         msg = f"Broken chain at entry {eid}"
                         break
-                    expected_h = hashlib.sha256(f"{prev}|{ts}|{oid}|{ev}|{det}".encode()).hexdigest()
+                    expected_h = compute_audit_hash(prev, ts, oid, ev, det)
                     if expected_h != cur_h:
                         intact = False
                         msg = f"Tampered entry {eid}: recomputed hash mismatch"
@@ -445,7 +453,7 @@ class DataBridge:
                 event = f"ACTION_{new_status}"
                 det_dict = {"operator": operator, "action": new_status, "timestamp": ts}
                 det_str = json.dumps(det_dict, sort_keys=True)
-                new_h = hashlib.sha256(f"{prev_h}|{ts}|{order_id}|{event}|{det_str}".encode()).hexdigest()
+                new_h = compute_audit_hash(prev_h, ts, order_id, event, det_str)
 
                 cur.execute(
                     "INSERT INTO audit_log(prev_hash, current_hash, timestamp, order_id, event_type, details) VALUES (?,?,?,?,?,?)",

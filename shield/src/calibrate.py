@@ -1,6 +1,6 @@
 """Layer 2 - quantile RUL models, late-bias shift, bounded-step smoother, cross-conformal widening."""
 import numpy as np
-from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -29,20 +29,21 @@ class QuantileRULModel:
         return tuple(np.clip(self.m[q].predict(X), 0, self.cap) for q in (0.1, 0.5, 0.9))
 
 
-class RidgeRUL:
-    """Non-linear second opinion estimator (HistGradientBoosting) tracking non-linear degradation
-    and preventing false model disagreement exceptions."""
+class SecondaryEstimator:
+    """Independent second opinion consensus estimator (Random Forest - bagged decision trees)
+    providing a structurally independent model family from the primary gradient-boosted
+    quantile regressors while accurately tracking non-linear degradation to guard
+    against false model disagreement exceptions."""
 
     def __init__(self, cap=125.0, random_state=42):
         self.cap = cap
         self.seed = random_state
-        self.m = HistGradientBoostingRegressor(
-            loss="squared_error",
-            max_iter=100,
-            learning_rate=0.08,
-            min_samples_leaf=25,
-            l2_regularization=1.0,
+        self.m = RandomForestRegressor(
+            n_estimators=30,
+            max_depth=8,
+            min_samples_leaf=10,
             random_state=random_state,
+            n_jobs=-1,
         )
 
     def fit(self, X, y, sample_weight=None):
@@ -51,6 +52,10 @@ class RidgeRUL:
 
     def predict(self, X):
         return np.clip(self.m.predict(X), 0, self.cap)
+
+
+# Backward compatibility alias
+RidgeRUL = SecondaryEstimator
 
 
 def tune_late_shift(p50, y, grid, max_rmse_rise=0.10):

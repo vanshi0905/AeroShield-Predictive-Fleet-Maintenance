@@ -24,12 +24,17 @@ def _read(path):
     return df
 
 
-def load_cmapss(subset, data_dir="data", cap=125):
+def load_cmapss(subset, data_dir="data", cap=125, allow_synthetic=False):
     """Return (train, test, source). RUL (uncapped) and RUL_capped are added.
     Test RUL at earlier cycles t = RUL_final + (T - t)  (all-window truth, problem B5)."""
     tp = os.path.join(data_dir, f"train_{subset}.txt")
     if not os.path.exists(tp):
-        print(f"[WARN] {tp} not found -> SYNTHETIC fleet used. Results are NOT NASA benchmark numbers.")
+        if not allow_synthetic:
+            raise FileNotFoundError(
+                f"NASA C-MAPSS data file '{tp}' not found. Download C-MAPSS dataset into '{data_dir}/' "
+                f"or pass allow_synthetic=True (--allow-synthetic CLI flag) for offline testing."
+            )
+        print(f"[WARN] {tp} not found -> SYNTHETIC fleet used (--allow-synthetic specified). Results are NOT NASA benchmark numbers.")
         tr, te = make_synthetic(seed=0)
         source = "synthetic"
     else:

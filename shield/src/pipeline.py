@@ -162,12 +162,13 @@ def calibrate_thresholds(oof, cfg, grid=None):
 # ======================================================================= pipeline
 class ShieldPipeline:
     def __init__(self, subset="FD001", data_dir="data", config_dir="shield/config", out_dir="outputs",
-                 seed=42, tune_cap=False, no_regimes=False, inject=True):
+                 seed=42, tune_cap=False, no_regimes=False, inject=True, allow_synthetic=False):
         self.subset, self.data_dir, self.seed = subset, data_dir, seed
         self.cfg, self.sc = load_cfg(subset, config_dir)
         if no_regimes: self.sc["clustering"] = False
         self.out = os.path.join(out_dir, subset); os.makedirs(self.out, exist_ok=True)
         self.out_root = out_dir; self.tune_cap, self.inject = tune_cap, inject
+        self.allow_synthetic = allow_synthetic
         self.cap = float(self.cfg["CAP"]); self.tag = "_noregime" if no_regimes else ""
 
     # ---- optional cap cross-validation (A5) ----
@@ -189,7 +190,7 @@ class ShieldPipeline:
 
     def run(self):
         t0 = time.time(); cfg, sc, cap = self.cfg, self.sc, self.cap
-        train, test, source = load_cmapss(self.subset, self.data_dir, cap)
+        train, test, source = load_cmapss(self.subset, self.data_dir, cap, allow_synthetic=self.allow_synthetic)
         print(f"\n{'='*70}\n SHIELD {VERSION}  subset={self.subset}  DATA SOURCE: {source.upper()}\n{'='*70}")
         # ---- Layer 1: data engineering
         prep = Preprocessor(cfg, sc, self.seed).fit(train)

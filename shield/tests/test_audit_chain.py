@@ -20,3 +20,17 @@ def test_provenance_in_every_audit_row(tmp_path):
     om = mk(tmp_path)
     for (d,) in om.conn.execute("SELECT details FROM audit_log"):
         assert '"model_version": "v9"' in d and '"rule_version": "r1"' in d
+
+def test_keyed_hmac_tamper_forgery_resistance(tmp_path):
+    """An attacker with write access to SQLite cannot forge hashes without the secret HMAC key."""
+    om = OrderManager(str(tmp_path / "forgery.db"), model_version="v9", rule_version="r1", hmac_key="correct-key")
+    d = {"unit": 1, "cycle": 100, "severity": "HIGH", "status": "AUTO_CREATED", "exception_reason": None, "p10": 30, "p50": 45, "p90": 60, "due_in_cycles": 10, "action": "a"}
+    om.process_agent_decision(d)
+    om.conn.commit()
+    ok, msg = om.verify_audit_chain()
+    assert ok and "100% intact" in msg
+
+    # Attacker attempts to verify with a different HMAC key
+    attacker_om = OrderManager(str(tmp_path / "forgery.db"), model_version="v9", rule_version="r1", hmac_key="attacker-key")
+    ok_att, msg_att = attacker_om.verify_audit_chain()
+    assert not ok_att and "recomputed hash mismatch" in msg_att

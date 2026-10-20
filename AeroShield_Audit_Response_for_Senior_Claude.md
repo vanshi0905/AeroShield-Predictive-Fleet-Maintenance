@@ -3,19 +3,19 @@
 **System**: AeroShield Autonomous Predictive Fleet Maintenance Platform  
 **Case Study**: Tata Elxsi Case Study 1 — Self-Healing Machines (Turbofan Fleet Maintenance)  
 **Verification Date**: 2026-10-19  
-**Status**: 29/29 Gaps Resolved | 74/74 Pytest Passed (incl. SOTA & Tournament) | Single-Command Execution Verified  
+**Status**: 29/29 Gaps Resolved | 76/76 Pytest Passed (incl. SOTA & Tournament) | Single-Command Execution Verified  
 
 ---
 
 ## 1. Executive Summary & Verification Protocol
 
-This document provides a dense, zero-fluff, verifiable technical response to the Senior Claude review. All 29 audit gap items (F01–F29) across four engineering categories (8 Required, 7 Scored, 9 Hardening, 5 Optional) have been fully resolved in source code and validated by 74 automated pytest test cases and end-to-end pipeline execution on NASA C-MAPSS datasets (FD001–FD004).
+This document provides a dense, zero-fluff, verifiable technical response to the Senior Claude review. All 29 audit gap items (F01–F29) across four engineering categories (8 Required, 7 Scored, 9 Hardening, 5 Optional) have been fully resolved in source code and validated by 76 automated pytest test cases and end-to-end pipeline execution on NASA C-MAPSS datasets (FD001–FD004).
 
 ### Key System Invariants
 1. **Safety-Critical Sandboxing**: Zero LLM components in operational dispatch, physical decision loops, or database write pathways.
 2. **Causal Data Integrity**: Strictly causal windowing, running medians, and imputation—zero future lookahead bias in streaming or batch execution.
 3. **Rigorous Uncertainty Bounds**: Non-parametric Conformal Prediction ($P_{10}, P_{50}, P_{90}$) with $84\%–88\%$ empirical coverage exceeding the nominal 80% target, accompanied by secondary non-linear consensus estimators.
-4. **Tamper-Evident Accountability**: SHA-256 block hash-chain ledger supporting FAA Part 145 and EASA M.A.306 auditability requirements with sub-second integrity verification.
+4. **Tamper-Evident Accountability**: Keyed HMAC-SHA256 block hash-chain ledger supporting FAA Part 145 and EASA M.A.306 auditability requirements with sub-second integrity verification.
 
 ---
 
@@ -123,7 +123,7 @@ Extracted directly from ground-truth executions recorded in `outputs/benchmark_s
 ### Benchmark Analysis:
 1. **Conformal Uncertainty Validity**: Empirical coverage across all subsets averages **83.2%**, satisfying the nominal 80% coverage contract. Critical near-failure engines ($RUL \le 50$) achieve **90.0%–100.0%** coverage.
 2. **Asymmetric Risk Mitigation**: Downward out-of-fold calibration shifts suppress late over-predictions ($19.3\%–35.9\%$), drastically curbing the exponential NASA penalty.
-3. **Anomaly Lead Times**: Baseline-subtracted Mahalanobis monitoring achieves **38 to 46 cycles** out-of-fold median warning lead time across fleet partitions while restricting false alarms to $\le 5.0\%$.
+3. **Anomaly Lead Times**: Baseline-subtracted IsolationForest monitoring achieves **38 to 54 cycles** out-of-fold median warning lead time across fleet partitions while restricting false alarms to $\le 5.0\%$.
 
 ---
 
