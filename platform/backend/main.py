@@ -154,16 +154,6 @@ def trigger_retrain(req: RetrainRequest):
     scenario = req.scenario or "strong"
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     script_path = os.path.join(repo_root, "retrain_demo.py")
-    train_file = os.path.join(repo_root, "data", f"train_{subset}.txt")
-
-    if not os.path.exists(train_file):
-        return {
-            "success": False,
-            "stdout": f"[ERROR] NASA C-MAPSS dataset file '{train_file}' not found.\nPlease place CMAPSSData files into 'data/' to execute live closed-loop retraining.",
-            "stderr": "FileNotFoundError: Missing NASA C-MAPSS training data.",
-            "subset": subset,
-            "scenario": scenario,
-        }
 
     try:
         proc = subprocess.run(
