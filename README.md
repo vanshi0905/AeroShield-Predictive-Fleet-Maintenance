@@ -78,11 +78,11 @@ venv\Scripts\activate   # Linux/macOS: source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Run Automated Verification (64 Tests)
+### 2. Run Automated Verification (76 Tests)
 ```bash
 pytest
 ```
-*64 tests passed across all core algorithms, platform, and voice endpoints.*
+*76 tests passed across all core algorithms, platform, and sota components.*
 
 ### 3. Launch the Cockpit
 ```bash
