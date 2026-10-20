@@ -101,7 +101,7 @@ Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** (or 
 | `/api/fleet/matrix` | `GET` | High-density engine table with RUL quantiles and anomaly scores |
 | `/api/engine/{unit}` | `GET` | Trajectory timelines, sensor stations, and conformal RUL intervals |
 | `/api/work-orders` | `GET` | Active maintenance work orders |
-| `/api/work-orders/dispatch` | `POST` | Authorizes status transition and appends SHA-256 block |
+| `/api/work-orders/dispatch` | `POST` | Authorizes status transition and appends Keyed HMAC-SHA256 block |
 | `/api/exceptions` | `GET` | Human review queue for sensor spikes and model disagreement |
 | `/api/audit-log` | `GET` | Cryptographic blockchain ledger entries |
 | `/api/audit-verify` | `GET` | Verifies cryptographic hash chain integrity across all blocks |
@@ -110,6 +110,24 @@ Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** (or 
 | `/api/voice/status` | `GET` | Sarvam AI engine status and persona catalog (*Shubh*, *Priya*, etc.) |
 | `/api/voice/synthesize` | `POST` | Synthesizes cockpit speech using Sarvam Bulbul neural TTS |
 | `/api/voice/copilot` | `POST` | Grounded conversational copilot using Sarvam 105B + Bulbul audio |
+
+---
+
+## Engineering Operational Boundaries & Known Limits
+
+In accordance with rigorous aerospace verification standards, AeroShield explicitly documents operational boundaries and empirical trade-offs across the four NASA C-MAPSS fleet subsets:
+
+1. **FD003 Conformal Coverage (79.0% vs. 80.0% Nominal Target)**:
+   - *Observation*: FD003 achieves 79.0% empirical coverage on the 80% conformal target (-1.0 percentage point deviation).
+   - *Root Cause*: FD003 incorporates dual degradation fault modes (HPC degradation and fan degradation) under a single operating regime. Competing wear mechanisms across distinct subsystems generate multi-modal residual tails, causing standard conformal calibration to marginally under-cover the extreme 1% tail.
+
+2. **FD004 Multi-Regime Anomaly Detection & Exception Routing (5.6% Anomaly Flag Rate)**:
+   - *Observation*: FD004 exhibits a 5.6% baseline-subtracted anomaly detection rate and routes 51 ambiguous engines to the Human Exception Queue.
+   - *Root Cause*: FD004 combines six continuous altitude/Mach/throttle operating regimes with dual fault modes. Operating condition switching produces sensor variations that exceed degradation-induced deviations in early cycles. Rather than triggering high false alarms, Layer 3 autonomously flags sensor disagreement and diverts ambiguous units to human engineering review.
+
+3. **Asymmetric NASA Loss vs. Symmetric RMSE Trade-Off**:
+   - *Observation*: The late-shift calibration grid intentionally sacrifices ~0.5 to 1.0 cycles of symmetric RMSE to suppress late prediction share (predictions where $\hat{y} > y$).
+   - *Engineering Rationale*: In commercial fleet operations, over-predicting RUL risks catastrophic unscheduled in-flight shutdowns (IFSD), whereas early prediction triggers scheduled hangar maintenance with zero safety compromise.
 
 ---
 

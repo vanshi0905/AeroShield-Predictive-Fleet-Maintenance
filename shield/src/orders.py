@@ -19,6 +19,9 @@ class OrderManager:
         self.mv, self.rv, self.ch = model_version, rule_version, config_hash
         self.stale_factor, self.reopen_window, self.reopen_limit = stale_factor, reopen_window, reopen_limit
         key_str = hmac_key or os.environ.get("AEROSHIELD_HMAC_KEY", "aeroshield-v3-secret-key")
+        env_mode = os.environ.get("AEROSHIELD_ENV", "development").lower()
+        if env_mode in ("production", "prod") and not hmac_key and not os.environ.get("AEROSHIELD_HMAC_KEY"):
+            raise RuntimeError("CRITICAL SECURITY ERROR: AEROSHIELD_HMAC_KEY must be explicitly provided in production mode.")
         self.hmac_key = key_str.encode() if isinstance(key_str, str) else key_str
         os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
         self.conn = sqlite3.connect(db_path)

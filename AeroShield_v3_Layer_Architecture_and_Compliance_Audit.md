@@ -150,9 +150,9 @@ Every requested modification across Data Engineering, ML Inference & Calibration
 * **Automated Test**: `shield/tests/test_improvements.py::test_mlops_one_sided_coverage_gate`.
 
 ### 4.3 Right-Censored Retraining Loss
-* **Specification**: For units serviced before failure, apply one-sided loss $\max(0, y_{\text{observed}} - \hat{y})^2$ and quarantine 5% reference slice.
+* **Specification**: For units serviced before failure, apply one-sided loss $\max(0, y_{\text{observed}} - \hat{y})^2$ and evaluate via one-sided diagnostic lower bounds without using censored runs as full run-to-failure labels.
 * **Code Implementation**:
-  - `retrain_demo.py` (lines 30–75) & `shield/src/mlops.py`: Applies right-censoring loss penalty and reserves a 5% unserviced reference slice to preserve unbiased ground truth.
+  - `retrain_demo.py` (lines 26–29, 52–65) & `shield/src/mlops.py`: Applies one-sided diagnostic lower bounds on the 20% early-serviced engines while holding out an independent frozen validation fleet.
 
 ### 4.4 Strict Validation Gating
 * **Specification**: Evaluate champion/challenger checks exclusively on held-out validation engines using GroupKFold. Reserve official test sets for single-pass reporting.

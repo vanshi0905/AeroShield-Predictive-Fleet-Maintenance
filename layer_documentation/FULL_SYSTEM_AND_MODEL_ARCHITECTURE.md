@@ -70,7 +70,7 @@ Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-
                                     ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │ Layer 2: Machine Learning & Conformal Uncertainty Quantification       │
-│ • Baseline-Subtracted Anomaly Detection (100% Detection, <=5% FAR)     │
+│ • Baseline-Subtracted Anomaly Detection (Out-of-Fold Gating, <=5% FAR) │
 │ • Quantile HistGradientBoosting Estimator (P10, P50, P90)              │
 │ • Non-Linear Secondary Consensus Estimator (Prevents false divergence) │
 │ • Non-Parametric Conformal Prediction (80% Empirical Coverage Gate)   │
@@ -82,7 +82,7 @@ Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-
 │ • Deterministic 4-Tier Operational Decision Matrix (Critical to Normal)│
 │ • Human Review Queue for Sensor Faults & Model Disagreements           │
 │ • SQLite Work Order State Machine (DRAFT -> DISPATCHED -> COMPLETED)   │
-│ • Tamper-Evident SHA-256 Cryptographic Hash Chain (Part 145 Auditability) │
+│ • Tamper-Evident Keyed HMAC-SHA256 Hash Chain (Part 145 Auditability) │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
                                     ▼

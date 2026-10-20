@@ -48,12 +48,17 @@ bridge = DataBridge()
 voice_engine = SarvamVoiceEngine()
 
 # Secure default API key: required for write endpoints
+AEROSHIELD_ENV = os.getenv("AEROSHIELD_ENV", "development").lower()
 ADMIN_API_KEY = os.getenv("AEROSHIELD_API_KEY", "aeroshield-dev-key")
+
+if AEROSHIELD_ENV in ("production", "prod"):
+    if not os.getenv("AEROSHIELD_API_KEY") or ADMIN_API_KEY == "aeroshield-dev-key":
+        raise RuntimeError("CRITICAL SECURITY ERROR: AEROSHIELD_API_KEY must be explicitly set in production mode.")
 
 def verify_write_access(x_api_key: Optional[str] = Header(None)):
     """Access control guard (Fault F24). Write operations require a valid X-API-Key header.
     Defaults to 'aeroshield-dev-key' for local development; override with AEROSHIELD_API_KEY in production."""
-    if ADMIN_API_KEY and x_api_key != ADMIN_API_KEY:
+    if not x_api_key or x_api_key != ADMIN_API_KEY:
         raise HTTPException(status_code=401, detail="Unauthorized: Valid X-API-Key required for write operations")
 
 class OrderActionRequest(BaseModel):
