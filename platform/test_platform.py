@@ -100,7 +100,25 @@ def test_api_mlops():
     assert data["thresholds"]["psi_limit"] == 0.20
     assert data["thresholds"]["coverage_target"] == 0.80
 
-def test_api_dispatch_work_order():
+PRIVATE_TEST_KEY = "local-test-key-not-the-published-one"
+
+
+def test_published_dev_key_cannot_dispatch(monkeypatch):
+    monkeypatch.setenv("AEROSHIELD_API_KEY", "aeroshield-dev-key")
+    res = client.post(
+        "/api/work-orders/dispatch",
+        json={
+            "subset": "FD001",
+            "order_id": "WO-DOES-NOT-NEED-TO-EXIST",
+            "new_status": "DISPATCHED",
+        },
+        headers={"X-API-Key": "aeroshield-dev-key"},
+    )
+    assert res.status_code == 401
+
+
+def test_api_dispatch_work_order(monkeypatch):
+    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
     # Fetch an order from work_orders
     wo_res = client.get("/api/work-orders?subset=FD001")
     orders = wo_res.json()["work_orders"]
@@ -126,7 +144,7 @@ def test_api_dispatch_work_order():
                 "new_status": "DISPATCHED",
                 "operator": "Fleet Maintenance Controller"
             },
-            headers={"X-API-Key": "aeroshield-dev-key"}
+            headers={"X-API-Key": PRIVATE_TEST_KEY}
         )
         assert res.status_code == 200
         assert res.json()["success"] is True
@@ -139,6 +157,7 @@ def test_api_dispatch_work_order():
 
 
 def test_api_retrain_trigger_security_and_execution(monkeypatch):
+    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
     # 1. Unauthenticated request must be rejected (401)
     res_unauth = client.post("/api/retrain/trigger", json={"subset": "FD001"})
     assert res_unauth.status_code == 401
@@ -160,7 +179,7 @@ def test_api_retrain_trigger_security_and_execution(monkeypatch):
     res = client.post(
         "/api/retrain/trigger",
         json={"subset": "FD001", "scenario": "strong"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": PRIVATE_TEST_KEY}
     )
     assert res.status_code == 200
     data = res.json()
@@ -195,6 +214,7 @@ def test_api_voice_status(monkeypatch):
     assert res_en.json()["configured"] is True
 
 def test_api_voice_synthesize(monkeypatch):
+    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
     try:
         from platform.backend.main import voice_engine
     except ImportError:
@@ -203,7 +223,7 @@ def test_api_voice_synthesize(monkeypatch):
     res = client.post("/api/voice/synthesize", json={
         "text": "AeroShield telemetry systems nominal.",
         "speaker": "shubh"
-    })
+    }, headers={"X-API-Key": PRIVATE_TEST_KEY})
     assert res.status_code == 200
     data = res.json()
     assert data["success"] is True
@@ -211,6 +231,7 @@ def test_api_voice_synthesize(monkeypatch):
     assert len(data["audio_base64"]) > 10
 
 def test_api_voice_copilot(monkeypatch):
+    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
     try:
         from platform.backend.main import voice_engine
     except ImportError:
@@ -227,7 +248,7 @@ def test_api_voice_copilot(monkeypatch):
         "query": "What is the status of Engine 1 in FD001?",
         "subset": "FD001",
         "speaker": "shubh"
-    })
+    }, headers={"X-API-Key": PRIVATE_TEST_KEY})
     assert res.status_code == 200
     data = res.json()
     assert data["success"] is True
@@ -237,7 +258,8 @@ def test_api_voice_copilot(monkeypatch):
 
 
 def test_voice_adversarial_injection_leaves_orders_and_audit_untouched(monkeypatch):
-    """F1 Injection test: Sending hostile prompts to voice copilot leaves orders and audit hash 100% unchanged."""
+    """Hostile copilot prompts do not change orders or the audit hash."""
+    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
     try:
         from platform.backend.main import voice_engine
     except ImportError:
@@ -268,7 +290,7 @@ def test_voice_adversarial_injection_leaves_orders_and_audit_untouched(monkeypat
             "query": prompt,
             "subset": "FD001",
             "speaker": "shubh"
-        })
+        }, headers={"X-API-Key": PRIVATE_TEST_KEY})
         assert res.status_code == 200
 
     audit_after = bridge.get_audit_log("FD001", limit=100)

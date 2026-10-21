@@ -47,19 +47,43 @@ from .voice_agent import SarvamVoiceEngine, AVAILABLE_SPEAKERS
 bridge = DataBridge()
 voice_engine = SarvamVoiceEngine()
 
-# Secure default API key: required for write endpoints
+# The string below used to be the development default, and it is in git history.
+# It is not a secret. Every mode rejects it. Writes stay closed until
+# AEROSHIELD_API_KEY is set to some other value.
+PUBLISHED_DEV_API_KEY = "aeroshield-dev-key"
 AEROSHIELD_ENV = os.getenv("AEROSHIELD_ENV", "development").lower()
-ADMIN_API_KEY = os.getenv("AEROSHIELD_API_KEY", "aeroshield-dev-key")
 
-if AEROSHIELD_ENV in ("production", "prod"):
-    if not os.getenv("AEROSHIELD_API_KEY") or ADMIN_API_KEY == "aeroshield-dev-key":
-        raise RuntimeError("CRITICAL SECURITY ERROR: AEROSHIELD_API_KEY must be explicitly set in production mode.")
+
+def _admin_api_key() -> str:
+    return os.getenv("AEROSHIELD_API_KEY", "").strip()
+
+
+def _writes_configured() -> bool:
+    key = _admin_api_key()
+    return bool(key) and key != PUBLISHED_DEV_API_KEY
+
+
+if AEROSHIELD_ENV in ("production", "prod") and not _writes_configured():
+    raise RuntimeError(
+        "AEROSHIELD_API_KEY must be set to a private value in production. "
+        "The published development key is rejected."
+    )
+
 
 def verify_write_access(x_api_key: Optional[str] = Header(None)):
-    """Access control guard (Fault F24). Write operations require a valid X-API-Key header.
-    Defaults to 'aeroshield-dev-key' for local development; override with AEROSHIELD_API_KEY in production."""
-    if not x_api_key or x_api_key != ADMIN_API_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized: Valid X-API-Key required for write operations")
+    """Dispatch, retrain, and voice posts need a private X-API-Key.
+
+    Read at request time so a missing or published key cannot authorize a call.
+    """
+    key = _admin_api_key()
+    if not key or key == PUBLISHED_DEV_API_KEY or not x_api_key or x_api_key != key:
+        raise HTTPException(
+            status_code=401,
+            detail=(
+                "Unauthorized. Set AEROSHIELD_API_KEY to a private value and send it "
+                "as X-API-Key. The published development key is rejected."
+            ),
+        )
 
 class OrderActionRequest(BaseModel):
     subset: str = "FD001"
@@ -196,7 +220,7 @@ def get_voice_status():
         "default_speaker": "shubh"
     }
 
-@app.post("/api/voice/synthesize")
+@app.post("/api/voice/synthesize", dependencies=[Depends(verify_write_access)])
 def synthesize_voice(req: VoiceSynthesizeRequest):
     """Synthesizes tactical cockpit audio using Sarvam Bulbul neural TTS."""
     clean_text = req.text.strip()
@@ -210,7 +234,7 @@ def synthesize_voice(req: VoiceSynthesizeRequest):
         "format": "audio/wav"
     }
 
-@app.post("/api/voice/copilot")
+@app.post("/api/voice/copilot", dependencies=[Depends(verify_write_access)])
 def query_voice_copilot(req: VoiceCopilotRequest):
     """Interacts with the grounded AeroShield Voice Copilot (Sarvam 105B + Bulbul)."""
     clean_query = req.query.strip()

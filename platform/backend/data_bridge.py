@@ -12,10 +12,19 @@ from typing import Dict, List, Any, Optional
 import numpy as np
 import pandas as pd
 
-HMAC_SECRET = os.environ.get("AEROSHIELD_HMAC_KEY", "aeroshield-v3-secret-key").encode()
+# The sample databases under outputs/ were sealed with this published string.
+# Leave AEROSHIELD_HMAC_KEY unset to check those files. A different key will
+# not match them. This key is not a secret.
+PUBLISHED_DEMO_HMAC_KEY = "aeroshield-v3-secret-key"
+_configured_hmac = os.environ.get("AEROSHIELD_HMAC_KEY", "").strip()
+HMAC_SECRET = (
+    _configured_hmac.encode()
+    if _configured_hmac and _configured_hmac != PUBLISHED_DEMO_HMAC_KEY
+    else PUBLISHED_DEMO_HMAC_KEY.encode()
+)
 
 def compute_audit_hash(prev_h: str, ts: str, order_id: str, event: str, details_str: str) -> str:
-    """Computes tamper-evident keyed HMAC-SHA256 hash across audit chain."""
+    """Recomputes the demo HMAC used by the checked-in sample ledgers."""
     payload = f"{prev_h}|{ts}|{order_id}|{event}|{details_str}".encode()
     return hmac.new(HMAC_SECRET, payload, hashlib.sha256).hexdigest()
 
@@ -497,7 +506,18 @@ class DataBridge:
         }
 
     def dispatch_work_order(self, subset: str, order_id: str, new_status: str, operator: str = "Chief Maintenance Engineer") -> Dict[str, Any]:
-        """Updates work order lifecycle and appends a tamper-evident audit log entry."""
+        """Updates work order lifecycle and appends a demo audit row.
+
+        Production will not extend the sample databases. Those files were sealed
+        with the published demo key.
+        """
+        mode = os.environ.get("AEROSHIELD_ENV", "development").lower()
+        configured = os.environ.get("AEROSHIELD_HMAC_KEY", "").strip()
+        if mode in ("production", "prod") and (not configured or configured == PUBLISHED_DEMO_HMAC_KEY):
+            return {
+                "success": False,
+                "error": "Production will not append to the sample ledger. Set a private AEROSHIELD_HMAC_KEY and use a ledger sealed with that key.",
+            }
         db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
             return {"success": False, "error": "Database not found"}

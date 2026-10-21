@@ -1,4 +1,5 @@
 import sqlite3
+import pytest
 from shield.src.orders import OrderManager
 
 def mk(tmp_path):
@@ -20,6 +21,16 @@ def test_provenance_in_every_audit_row(tmp_path):
     om = mk(tmp_path)
     for (d,) in om.conn.execute("SELECT details FROM audit_log"):
         assert '"model_version": "v9"' in d and '"rule_version": "r1"' in d
+
+def test_production_refuses_published_demo_key(tmp_path, monkeypatch):
+    monkeypatch.setenv("AEROSHIELD_ENV", "production")
+    monkeypatch.delenv("AEROSHIELD_HMAC_KEY", raising=False)
+    with pytest.raises(RuntimeError):
+        OrderManager(str(tmp_path / "prod.db"))
+    monkeypatch.setenv("AEROSHIELD_HMAC_KEY", "aeroshield-v3-secret-key")
+    with pytest.raises(RuntimeError):
+        OrderManager(str(tmp_path / "prod2.db"))
+
 
 def test_keyed_hmac_tamper_forgery_resistance(tmp_path):
     """An attacker with write access to SQLite cannot forge hashes without the secret HMAC key."""
