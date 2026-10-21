@@ -18,9 +18,9 @@ Tactical Flight Cockpit (dashboard.html / public/index.html)
    │
    ├───────────────────────────────┬───────────────────────────────┐
    ▼                               ▼                               ▼
-1. Cycle scrubber             2. Demo hash chain             3. Tactile Audio
-   • Time-travel replay          • Linear block continuum       • Web Audio API clicks
-   • Conformal P10-P90 glow      • 1-Click HMAC copy            • Timeline tick feedback
+1. Cycle scrubber             2. Demo hash chain             3. Visual Avionics
+   • Time-travel replay          • Linear block continuum       • Silent visual status
+   • Conformal P10-P90 glow      • 1-Click HMAC copy            • Scrub bar feedback
    • Real-time gauge needles     • Sealed state machine         • Zero external assets
    │                               │                               │
    └───────────────────────────────┼───────────────────────────────┘

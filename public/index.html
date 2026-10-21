@@ -156,7 +156,7 @@
     <!-- Brand / Title -->
     <div class="flex items-center gap-3.5">
       <!-- Precision Aerospace Turbofan Rotor Emblem -->
-      <div onclick="playSFX('click'); toggleLogoSpeed()" class="relative w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/80 p-1 flex items-center justify-center group cursor-pointer shadow-sm hover:border-sky-500/50 transition" title="AeroShield Turbofan Digital Twin">
+      <div onclick="toggleLogoSpeed()" class="relative w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/80 p-1 flex items-center justify-center group cursor-pointer shadow-sm hover:border-sky-500/50 transition" title="AeroShield Turbofan Digital Twin">
         <svg id="vortex-svg" class="w-8 h-8 transition-transform duration-700 ease-out group-hover:rotate-180" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Concentric Precision Shroud Rings -->
           <circle cx="50" cy="50" r="46" stroke="#334155" stroke-width="1.5" />
@@ -190,15 +190,8 @@
       </div>
     </div>
 
-    <!-- Right Controls: Sound FX Toggle + Subset Selector + Telemetry Badges -->
+    <!-- Right Controls: Subset Selector + Telemetry Badges -->
     <div class="flex items-center gap-3 flex-wrap">
-
-      <!-- Sound FX Toggle Button -->
-      <button onclick="toggleSoundFX()" id="sound-fx-btn" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition flex items-center gap-2 text-xs font-medium shadow-sm group active:scale-95" title="Toggle Aeronautical Sound Effects">
-        <i data-lucide="volume-2" id="sound-fx-icon" class="w-3.5 h-3.5 text-sky-400"></i>
-        <span class="text-[11px] font-sans" id="sound-fx-label">Sound FX: ON</span>
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="sound-fx-indicator"></span>
-      </button>
 
       <!-- Subset Selector Pills -->
       <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-900 border border-slate-800">
@@ -1339,275 +1332,12 @@
     let matrixCurrentPage = 1;
     let matrixPageSize = 30;
 
-    // ==========================================
-    // TACTILE AEROSPACE SOUND SYNTHESIZER (Web Audio API)
-    // Pure synthetic audio - Zero latency, zero external assets
-    // ==========================================
-    let soundFXEnabled = localStorage.getItem('aeroshield_sfx_enabled') !== 'false';
-    let audioCtx = null;
-
-    function initAudioContext() {
-      if (!audioCtx) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioContextClass) {
-          audioCtx = new AudioContextClass();
-        }
-      }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    // Auto-unlock audio on user interaction
-    document.addEventListener('click', () => {
-      initAudioContext();
-    }, { once: true });
-
-    function toggleSoundFX() {
-      initAudioContext();
-      soundFXEnabled = !soundFXEnabled;
-      localStorage.setItem('aeroshield_sfx_enabled', soundFXEnabled ? 'true' : 'false');
-      updateSoundFXUI();
-
-      if (soundFXEnabled) {
-        showToast('Tactical Sound Effects Enabled', 'info');
-        playSFX('success');
-      } else {
-        showToast('Sound Effects Muted', 'info');
-      }
-    }
-
-    function updateSoundFXUI() {
-      const icon = document.getElementById('sound-fx-icon');
-      const label = document.getElementById('sound-fx-label');
-      const ind = document.getElementById('sound-fx-indicator');
-      const btn = document.getElementById('sound-fx-btn');
-
-      if (!btn) return;
-
-      if (soundFXEnabled) {
-        if (icon) icon.setAttribute('data-lucide', 'volume-2');
-        if (label) label.innerText = 'Sound FX: ON';
-        if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]';
-        btn.classList.remove('opacity-60');
-      } else {
-        if (icon) icon.setAttribute('data-lucide', 'volume-x');
-        if (label) label.innerText = 'Sound FX: Muted';
-        if (ind) ind.className = 'w-1.5 h-1.5 rounded-full bg-slate-500';
-        btn.classList.add('opacity-60');
-      }
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    }
-
-    function playSFX(type = 'click') {
-      if (!soundFXEnabled) return;
-      initAudioContext();
-      if (!audioCtx) return;
-
-      try {
-        const now = audioCtx.currentTime;
-
-        if (type === 'click') {
-          // Tactile mechanical micro-click (25ms)
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(1200, now);
-          osc.frequency.exponentialRampToValueAtTime(350, now + 0.025);
-          gain.gain.setValueAtTime(0.045, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.026);
-
-        } else if (type === 'tab') {
-          // Aeronautics deck shift transition tone (dual-harmonic smooth glide)
-          const osc1 = audioCtx.createOscillator();
-          const osc2 = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc1.type = 'sine';
-          osc2.type = 'sine';
-          osc1.frequency.setValueAtTime(880, now);
-          osc1.frequency.exponentialRampToValueAtTime(660, now + 0.055);
-          osc2.frequency.setValueAtTime(1320, now);
-          osc2.frequency.exponentialRampToValueAtTime(990, now + 0.055);
-          gain.gain.setValueAtTime(0.035, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-          osc1.connect(gain);
-          osc2.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc1.start(now);
-          osc2.start(now);
-          osc1.stop(now + 0.062);
-          osc2.stop(now + 0.062);
-
-        } else if (type === 'scrub') {
-          // Mechanical ratchet tick (for timeline slider scrubbing)
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(1600, now);
-          gain.gain.setValueAtTime(0.02, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.015);
-
-        } else if (type === 'tick') {
-          // Discrete step tick
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(1000, now);
-          gain.gain.setValueAtTime(0.03, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.022);
-
-        } else if (type === 'play') {
-          // Ascending two-tone avionics cue (D5 -> A5)
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(587.33, now);
-          osc.frequency.setValueAtTime(880, now + 0.05);
-          gain.gain.setValueAtTime(0.04, now);
-          gain.gain.setValueAtTime(0.04, now + 0.05);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.135);
-
-        } else if (type === 'pause') {
-          // Descending two-tone avionics cue (A5 -> D5)
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(880, now);
-          osc.frequency.setValueAtTime(587.33, now + 0.05);
-          gain.gain.setValueAtTime(0.035, now);
-          gain.gain.setValueAtTime(0.035, now + 0.05);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.135);
-
-        } else if (type === 'subset') {
-          // Acoustic radar sweep ping (swept sine 440 -> 880 -> 1050 Hz)
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
-          osc.frequency.exponentialRampToValueAtTime(1050, now + 0.09);
-          gain.gain.setValueAtTime(0.045, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.115);
-
-        } else if (type === 'dispatch') {
-          // Heavy solenoid/hydraulic relay lock (low mechanical thud + metallic contact)
-          const oscLow = audioCtx.createOscillator();
-          const gainLow = audioCtx.createGain();
-          oscLow.type = 'sine';
-          oscLow.frequency.setValueAtTime(140, now);
-          oscLow.frequency.exponentialRampToValueAtTime(45, now + 0.09);
-          gainLow.gain.setValueAtTime(0.08, now);
-          gainLow.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-          oscLow.connect(gainLow);
-          gainLow.connect(audioCtx.destination);
-          oscLow.start(now);
-          oscLow.stop(now + 0.095);
-
-          const oscClick = audioCtx.createOscillator();
-          const gainClick = audioCtx.createGain();
-          oscClick.type = 'triangle';
-          oscClick.frequency.setValueAtTime(1250, now + 0.015);
-          oscClick.frequency.exponentialRampToValueAtTime(600, now + 0.045);
-          gainClick.gain.setValueAtTime(0.04, now + 0.015);
-          gainClick.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-          oscClick.connect(gainClick);
-          gainClick.connect(audioCtx.destination);
-          oscClick.start(now + 0.015);
-          oscClick.stop(now + 0.055);
-
-        } else if (type === 'retrain') {
-          // Low turbine spool-up hum
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(150, now);
-          osc.frequency.exponentialRampToValueAtTime(420, now + 0.32);
-          gain.gain.setValueAtTime(0.02, now);
-          gain.gain.linearRampToValueAtTime(0.05, now + 0.15);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.36);
-
-        } else if (type === 'promote' || type === 'success') {
-          // Major triad harmonic chord (C5 523Hz, E5 659Hz, G5 784Hz bell decay)
-          const notes = [523.25, 659.25, 783.99];
-          notes.forEach((freq, idx) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            const startTime = now + (idx * 0.025);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, startTime);
-            gain.gain.setValueAtTime(0.035, startTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.28);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(startTime);
-            osc.stop(startTime + 0.29);
-          });
-
-        } else if (type === 'alert') {
-          // Master caution dual-tone pulse (740Hz + 880Hz)
-          const osc1 = audioCtx.createOscillator();
-          const osc2 = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc1.type = 'sawtooth';
-          osc2.type = 'sine';
-          osc1.frequency.setValueAtTime(740, now);
-          osc2.frequency.setValueAtTime(880, now);
-          gain.gain.setValueAtTime(0.05, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-          osc1.connect(gain);
-          osc2.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc1.start(now);
-          osc2.start(now);
-          osc1.stop(now + 0.135);
-          osc2.stop(now + 0.135);
-        }
-      } catch (e) {
-        console.warn('Audio SFX error:', e);
-      }
-    }
-
-    // Backward-compatibility shims
-    function playAvionicsChime(type = 'ping') {
-      if (type === 'alert') playSFX('alert');
-      else if (type === 'confirm') playSFX('success');
-      else playSFX('click');
-    }
-
-
-
-    }
-
+    // Sound disabled - pure visual avionics dashboard
+    // Global silent no-ops
+    function playSFX() {}
+    function toggleSoundFX() {}
+    function updateSoundFXUI() {}
+    function playAvionicsChime() {}
 
     // Toast Notification Dispatcher
     function showToast(message, type = 'info') {
@@ -1648,7 +1378,6 @@
 
     // Main App Initialization
     async function initDashboard() {
-      updateSoundFXUI();
       await fetchFleetReadiness();
       await fetchFleetMatrix();
       await fetchWorkOrders();
@@ -1659,7 +1388,6 @@
     }
 
     function showTab(tabId) {
-      playSFX('tab');
       activeTab = tabId;
       document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('tab-active');
@@ -1699,7 +1427,6 @@
       if (badge) badge.innerText = `${subset} Active`;
       currentDrilldownData = null;
       showToast(`Switched telemetry pipeline to ${subset}`, 'info');
-      playSFX('subset');
       await initDashboard();
     }
 
@@ -1854,7 +1581,6 @@
     }
 
     function sortFleetMatrix(col) {
-      playSFX('click');
       if (currentSortColumn === col) {
         currentSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
       } else {
@@ -1874,14 +1600,12 @@
     }
 
     function changePageSize(sz) {
-      playSFX('click');
       matrixPageSize = parseInt(sz) || 30;
       matrixCurrentPage = 1;
       filterFleetMatrix();
     }
 
     function setMatrixPage(p) {
-      playSFX('click');
       matrixCurrentPage = p;
       filterFleetMatrix();
     }
@@ -2029,13 +1753,9 @@
         document.getElementById('drilldown-status-badge').className = `px-3 py-1 rounded-lg text-xs font-extrabold mono ${badgeColor}`;
 
         if (data.status === "CRITICAL") {
-          playSFX('alert');
         } else if (data.status === "HIGH") {
-          playSFX('alert');
         } else if (data.status === "NEEDS_HUMAN") {
-          playSFX('tick');
         } else {
-          playSFX('click');
         }
 
         const slider = document.getElementById('replay-slider');
@@ -2090,11 +1810,9 @@
         clearInterval(playbackInterval);
         playbackInterval = null;
         btn.setAttribute('data-lucide', 'play');
-        playSFX('pause');
         showToast('Timeline replay paused', 'info');
       } else {
         btn.setAttribute('data-lucide', 'pause');
-        playSFX('play');
         const speed = parseInt(document.getElementById('playback-speed').value) || 150;
         showToast('Timeline replay running', 'info');
         playbackInterval = setInterval(() => {
@@ -2111,7 +1829,6 @@
     }
 
     function stepReplayCycle(delta) {
-      playSFX('tick');
       const slider = document.getElementById('replay-slider');
       let val = parseInt(slider.value) + delta;
       val = Math.max(1, Math.min(parseInt(slider.max), val));
@@ -2120,14 +1837,12 @@
     }
 
     function resetReplayStart() {
-      playSFX('click');
       const slider = document.getElementById('replay-slider');
       slider.value = 1;
       updateReplayFrame(1, false);
     }
 
     function jumpReplayEnd() {
-      playSFX('click');
       if (!currentDrilldownData) return;
       const slider = document.getElementById('replay-slider');
       slider.value = currentDrilldownData.total_cycles;
@@ -2407,7 +2122,6 @@
 
     // 4. Autonomous Triage & Work Orders
     function setOrderViewMode(mode) {
-      playSFX('click');
       orderViewMode = mode;
       const cardsBtn = document.getElementById('view-mode-cards');
       const tableBtn = document.getElementById('view-mode-table');
@@ -2590,7 +2304,6 @@
           return;
         }
         if (data.success) {
-          playSFX('dispatch');
           showToast(`Order ${orderId} updated to ${status}. Block appended to audit ledger.`, 'success');
           await fetchWorkOrders();
           await fetchHumanExceptions();
@@ -2642,7 +2355,6 @@
       if (navigator.clipboard) {
         navigator.clipboard.writeText(hash);
         showToast(`Copied HMAC-SHA256 seal to clipboard: ${hash.slice(0, 14)}...`, 'info');
-        playSFX('click');
       }
     }
 
@@ -2771,8 +2483,6 @@
         btn.disabled = false;
         btn.innerHTML = `<i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> VERIFY CRYPTOGRAPHIC CHAIN`;
         lucide.createIcons();
-
-        playSFX('promote');
         showToast(`Chain check: ${data.message} (${data.total_entries} blocks)`, 'success');
         await fetchAuditLog();
       } catch (e) {
@@ -2795,7 +2505,6 @@
     }
 
     function switchDriftScenario(scenario) {
-      playSFX('click');
       selectedDriftScenario = scenario;
       renderMlopsViews();
       const labels = {
@@ -3144,8 +2853,6 @@
       
       const ts = new Date().toISOString().slice(11, 19);
       consoleBox.innerHTML += `<p class="text-sky-400 font-mono text-[11px] pt-1">[${ts} UTC] [JOB_SPAWN] Dispatching retraining job on ${currentSubset} (${selectedDriftScenario})...</p>`;
-      playSFX('retrain');
-
       try {
         const res = await fetch('/api/retrain/trigger', {
           method: 'POST',
@@ -3164,7 +2871,6 @@
           return;
         }
         if (data.success) {
-          playSFX('promote');
           showToast(`Retraining pipeline execution completed on ${currentSubset}`, 'success');
           consoleBox.innerHTML += `<pre class="text-[10px] text-slate-300 p-2.5 rounded-lg bg-black/70 border border-slate-800/80 font-mono leading-relaxed mt-2 select-text whitespace-pre-wrap">${data.stdout}</pre>`;
           consoleBox.scrollTop = consoleBox.scrollHeight;

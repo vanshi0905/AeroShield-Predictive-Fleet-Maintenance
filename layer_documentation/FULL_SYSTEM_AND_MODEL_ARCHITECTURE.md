@@ -100,7 +100,7 @@ Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100
 │ Layer 5: Operational Defense Telemetry Cockpit & Edge Serving          │
 │ • FastAPI Async REST Backend & Vercel Serverless Edge Integration      │
 │ • Interactive Avionics Flight Cycle Scrubber & 60fps Replay            │
-│ • Tactical Cockpit Controls & Web Audio API Feedback                 │
+│ • Tactical Cockpit Controls & Deterministic State Indicators         │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -231,8 +231,7 @@ If any condition fails, the challenger is retained in staging (`gated=true`) and
 * **60fps Time-Travel Scrubber**: Smooth replay slider allowing flight controllers to scrub back to any historical cycle and inspect sensor deviations at the exact degradation inflection knee.
 * **Glow Conformal Prediction Envelope**: Visualizes $P_{10}$–$P_{90}$ uncertainty bands with gradient fills and live crosshairs.
 
-### 2. Tactile Avionics Audio & Zero-LLM Deterministic Serving
-* **Web Audio API Synth**: Lightweight, browser-native tactile audio feedback for tab switches and milestone scrubbing without external media assets or dependencies.
+### 2. Pure Visual Avionics & Zero-LLM Deterministic Serving
 * **Zero External Dependencies**: All operational triage, anomaly isolation, and dispatch logic execute as pure, deterministic closed-loop code with zero external LLM dependencies.
 
 ### 3. Serverless Edge Deployment (Vercel)

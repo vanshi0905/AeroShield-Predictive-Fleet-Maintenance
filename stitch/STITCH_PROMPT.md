@@ -17,7 +17,7 @@ Design a world-class, production-grade Web Dashboard for "AeroShield" — an Aut
 - Top bar with:
   1. AeroShield Logo: High-tech aerospace turbine insignia with glowing status pill "SYSTEM NOMINAL - ALL SENSORS STREAMING".
   2. Fleet Partition Switcher: Segmented buttons for [FD001 (100 Engines - Sea Level)], [FD002 (260 Engines - 6 Flight Regimes)], [FD003 (100 Engines - Dual Fault)], [FD004 (248 Engines - Multi-Regime & Complex Faults)].
-  3. Tactical Audio Controls: Audio mute/unmute toggle (Web Audio API tactile synth feedback) and telemetry status pill.
+  3. Telemetry status pill and fleet readiness metrics.
   4. Global Clock: UTC mission elapsed clock with live flight cycle refresh ticker.
 
 ## 4 Main Navigation Tabs:
