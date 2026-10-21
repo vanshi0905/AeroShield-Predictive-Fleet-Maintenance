@@ -11,7 +11,7 @@
 
 | Item | Finding | Code Implementation Location | Verification Command | Status |
 | :--- | :--- | :--- | :--- | :---: |
-| **3.1** | Revoke exposed Sarvam API key | `platform/backend/voice_agent.py` line 16; `.env.example` line 14 | Key revoked on Sarvam console; zero plaintext keys in git | **RESOLVED** |
+| **3.1** | Revoke exposed API key & decommission voice agent | Key revoked on provider console; voice module completely excised; zero external keys | **RESOLVED** |
 | **3.2** | Dashboard 401 on Dispatch/Retrain buttons | `platform/frontend/dashboard.html` lines 2581 & 3139; `public/index.html` | Injected `X-API-Key: aeroshield-dev-key` into `fetch()` headers | **RESOLVED** |
 | **3.3** | Production safety guard for default secrets | `platform/backend/main.py` lines 50–57; `shield/src/orders.py` lines 21–25 | `RuntimeError` raised if `AEROSHIELD_ENV=production` with default keys | **RESOLVED** |
 | **3.4** | Multi-subset output completeness | `outputs/FD001/` through `outputs/FD004/`; `outputs/benchmark_summary.csv` | Full `model_v1.joblib`, `metrics.json`, and predictions for all 4 subsets | **RESOLVED** |

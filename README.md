@@ -4,13 +4,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
 [![Tests: 78/78 Passed](https://img.shields.io/badge/Tests-78%2F78%20Passed-emerald.svg)](pytest.ini)
-[![Voice add-on: off by default](https://img.shields.io/badge/Voice%20add--on-off%20by%20default-orange.svg)](platform/backend/voice_agent.py)
+
 [![Conformal Coverage: Calibrated](https://img.shields.io/badge/Conformal%20Coverage-80%25%20Calibrated-sky.svg)](docs/MATHEMATICAL_FORMULATION.md)
 
 > **Predictive maintenance on NASA C-MAPSS: features, a remaining-useful-life model, a rule-based triage agent, a work order, and a retrain demo.**  
 > Built for **Tata Elxsi Case Study 1: Self-Healing Machines**, on **FD001–FD004**.
 
-The graded path is Layers 1–4. The triage agent is a threshold matrix in plain Python. The Sarvam voice copilot is a language model, it is off unless `VOICE_ENABLED=true`, and it is not the agent the brief asks for.
+The graded path is Layers 1–4. The triage agent is a deterministic threshold matrix in plain Python without external language model dependencies.
 
 🌐 **Live Cockpit**: **[https://aeroshield-phi.vercel.app](https://aeroshield-phi.vercel.app)**  
 📚 **System & Model Architecture Guide**: **[docs/MODEL_AND_SYSTEM_DOCUMENTATION.md](docs/MODEL_AND_SYSTEM_DOCUMENTATION.md)**  
@@ -25,7 +25,7 @@ The graded path is Layers 1–4. The triage agent is a threshold matrix in plain
 * **Conformal RUL Uncertainty**: Predicts remaining useful life intervals ($P_{10}, P_{50}, P_{90}$) with empirical coverage guarantees and secondary non-linear consensus (`RandomForestRegressor`).
 * **Deterministic Triage Agent**: A 4-tier rule matrix writes a work order or sends the unit to a human queue. Each change is appended to an HMAC-SHA256 hash chain. The sample databases in `outputs/` were sealed with a key that is published in this repo, so the chain shows whether a demo file was edited. It is not an FAA Part 145 or EASA M.A.306 record, and it is not tamper-proof against someone who has that key.
 * **Closed-Loop Retraining & MLOps Governance**: Scans age-matched Population Stability Index (PSI) drift, evaluates one-sided loss on right-censored serviced units, scores champion vs challenger on held-out gate validation sets, and enforces statistical promotion gates in `retrain_demo.py` and `ModelRegistry`.
-* **Sarvam voice copilot, optional and off**: A read-only Sarvam chat and TTS add-on. Leave `VOICE_ENABLED=false`. The work-order decision does not call it.
+
 * **Tactile Defense Cockpit**: Anti-slop glassmorphic interface with 60fps flight cycle replay scrubber and interactive flight controller copilot.
 
 ---
@@ -85,7 +85,7 @@ Layer 3: Autonomous Triage & Execution (4-Tier Rule Matrix, Human Exception Queu
 Layer 4: MLOps Governance (Age-Matched PSI Drift Profiler, 4-Gate Champion/Challenger Promotion Policy)
    │
    ▼
-Layer 5: Flight Cockpit (FastAPI REST Service, Vercel Serverless Edge, Voice Annunciator UI)
+Layer 5: Flight Cockpit (FastAPI REST Service, Vercel Serverless Edge, Dark Avionics Cockpit)
 ```
 
 ---
@@ -131,9 +131,9 @@ Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** (or 
 | `/api/audit-verify` | `GET` | Verifies cryptographic hash chain integrity across all blocks |
 | `/api/mlops` | `GET` | Champion vs. Challenger metrics, PSI drift, and gate status |
 | `/api/retrain/trigger` | `POST` | Retrain demo. Same private key as dispatch. |
-| `/api/voice/status` | `GET` | Whether the optional Sarvam add-on is configured |
-| `/api/voice/synthesize` | `POST` | Sarvam TTS. Same private key. Does nothing useful while voice is off. |
-| `/api/voice/copilot` | `POST` | Sarvam chat. Same private key. Not the triage agent. |
+
+
+
 
 ---
 
@@ -142,7 +142,7 @@ Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** (or 
 1. FD003 conformal coverage is 79% on an 80% target. Two fault modes under one regime leave a heavier tail than the calibrator covers.
 2. FD004's out-of-fold anomaly rate is 5.6%, and the test rate is 1.6%. Fifty-one test engines go to the human queue. Six regimes plus two fault modes make early degradation hard to separate from a regime change.
 3. The late-shift knob trades a bit of RMSE for fewer late RUL predictions. Late means the model says the engine has more life than it does.
-4. Dispatch, retrain, and the voice posts stay closed until `AEROSHIELD_API_KEY` is a private value. `aeroshield-dev-key` is rejected in development and in production. The public dashboard does not embed a key.
+4. Dispatch and retrain operations stay closed until `AEROSHIELD_API_KEY` is a private value. `aeroshield-dev-key` is rejected in development and in production. The public dashboard does not embed a key.
 5. `outputs/*/work_orders.db` verifies with the published demo HMAC key. Production refuses to sign new rows with that key. A private key will not verify those sample files. Copy `.env.example` before expecting the write buttons to work.
 
 ---

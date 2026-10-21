@@ -13,7 +13,7 @@
 5. [Layer 2: ML Inference, Conformal Uncertainty & Anomaly Detection](#5-layer-2-ml-inference-conformal-uncertainty--anomaly-detection)
 6. [Layer 3: Autonomous Triage & Cryptographic Audit Ledger](#6-layer-3-autonomous-triage--cryptographic-audit-ledger)
 7. [Layer 4: Continuous MLOps Governance & Drift Protection](#7-layer-4-continuous-mlops-governance--drift-protection)
-8. [Layer 5: Flight Cockpit, Sarvam Voice Agent & Edge Serving](#8-layer-5-flight-cockpit-sarvam-voice-agent--edge-serving)
+8. [Layer 5: Operational Defense Cockpit & Edge Serving](#8-layer-5-operational-defense-cockpit--edge-serving)
 9. [Project Code Map & Component Index](#9-project-code-map--component-index)
 10. [Verification & Automated Test Suite (60/60 Tests)](#10-verification--automated-test-suite-6060-tests)
 
@@ -100,7 +100,7 @@ Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100
 │ Layer 5: Operational Defense Telemetry Cockpit & Edge Serving          │
 │ • FastAPI Async REST Backend & Vercel Serverless Edge Integration      │
 │ • Interactive Avionics Flight Cycle Scrubber & 60fps Replay            │
-│ • Sarvam AI Voice Copilot (sarvam-105b-conversations + Bulbul v3 TTS)  │
+│ • Tactical Cockpit Controls & Web Audio API Feedback                 │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -222,23 +222,18 @@ If any condition fails, the challenger is retained in staging (`gated=true`) and
 
 ---
 
-## 8. Layer 5: Flight Cockpit, Sarvam Voice Agent & Edge Serving
+## 8. Layer 5: Operational Defense Cockpit & Edge Serving
 
-**Source Code**: [`platform/backend/main.py`](./platform/backend/main.py), [`platform/backend/voice_agent.py`](./platform/backend/voice_agent.py), [`platform/frontend/dashboard.html`](./platform/frontend/dashboard.html), [`public/index.html`](./public/index.html)
+**Source Code**: [`platform/backend/main.py`](./platform/backend/main.py), [`platform/frontend/dashboard.html`](./platform/frontend/dashboard.html), [`public/index.html`](./public/index.html)
 
 ### 1. Interactive Flight Telemetry Cockpit
 * **Tactile Glassmorphism**: High-contrast, anti-slop defense avionics styling with Plus Jakarta Sans and monospace tabular numerals.
 * **60fps Time-Travel Scrubber**: Smooth replay slider allowing flight controllers to scrub back to any historical cycle and inspect sensor deviations at the exact degradation inflection knee.
 * **Glow Conformal Prediction Envelope**: Visualizes $P_{10}$–$P_{90}$ uncertainty bands with gradient fills and live crosshairs.
 
-### 2. Sarvam AI Conversational Voice Copilot
-* **Reasoning Agent (`sarvam-105b-conversations`)**: Grounded in live fleet telemetry. When asked a question, it queries active fleet readiness, single-engine RUL quantiles, and open work orders to produce concise (2–3 sentence), tactical briefings.
-* **Neural Speech Synthesis (`bulbul:v3`)**: Generates studio-grade WAV audio in $\approx 250$ms across 4 distinct voice personas:
-  * **Shubh**: Lead Tactical Commander (Authoritative default).
-  * **Priya**: Avionics Systems Officer (Tactical operational clarity).
-  * **Aditya**: Chief Fleet Engineer (Technical analysis).
-  * **Neha**: Flight Controller (Clear monitoring alerts).
-* **Live Speech-to-Text**: Web Speech API microphone integration allows hands-free voice queries in the cockpit.
+### 2. Tactile Avionics Audio & Zero-LLM Deterministic Serving
+* **Web Audio API Synth**: Lightweight, browser-native tactile audio feedback for tab switches and milestone scrubbing without external media assets or dependencies.
+* **Zero External Dependencies**: All operational triage, anomaly isolation, and dispatch logic execute as pure, deterministic closed-loop code with zero external LLM dependencies.
 
 ### 3. Serverless Edge Deployment (Vercel)
 * Optimized dependency architecture: Lean runtime dependencies (`fastapi`, `pydantic`, `pandas`, `pyarrow`) packaged under $341$ MB (well below Vercel's $500$ MB Lambda limit).
@@ -288,7 +283,6 @@ AeroShield-Predictive-Fleet-Maintenance/
 │   ├── backend/
 │   │   ├── main.py                    # FastAPI REST API endpoints
 │   │   ├── data_bridge.py             # High-throughput data bridge connecting models & SQLite
-│   │   └── voice_agent.py             # Sarvam AI Voice Copilot & Bulbul neural TTS engine
 │   ├── frontend/
 │   │   └── dashboard.html             # Cockpit UI (demo hash chain)
 │   ├── run_platform.py                # Local standalone platform launcher (Port 8050)
@@ -340,8 +334,6 @@ pytest -v
   - `test_api_audit_log_and_verify`: Validates live SHA-256 chain verification.
   - `test_api_mlops`: Validates PSI drift thresholds and champion metrics.
   - `test_api_dispatch_work_order`: Validates status updates and blockchain block appending.
-  - `test_api_voice_status`: Validates Sarvam AI engine connectivity and speaker personas.
-  - `test_api_voice_synthesize`: Validates Sarvam Bulbul neural speech synthesis.
-  - `test_api_voice_copilot`: Validates grounded Sarvam 105B conversational reasoning.
+  - `test_legacy_endpoints_decommissioned`: Validates that all legacy external endpoints return 404 Not Found.
 
 **Result**: `60 passed in 17.83s (100% Green)`.

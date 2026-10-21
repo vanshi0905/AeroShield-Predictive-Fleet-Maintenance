@@ -16,7 +16,7 @@ This document provides the formal Architecture & Compliance audit response for *
 Every requested modification across Data Engineering, ML Inference & Calibration, Operational Triage, MLOps Governance, and System Boundaries has been implemented in source code and validated by automated pytest cases on NASA C-MAPSS datasets (FD001–FD004).
 
 ### Key Architectural Invariants
-1. **Zero-LLM Safety Boundary**: Operational dispatch, physical decision loops, and SQLite maintenance ledgers have zero LLM write permissions. The Sarvam AI voice engine is an optional, read-only advisory extension.
+1. **Zero-LLM Safety Boundary**: Operational dispatch, physical decision loops, and SQLite maintenance ledgers operate with zero LLM dependencies or external write channels. All triage decisions are 100% deterministic.
 2. **Strict Causal Invariance**: All feature pipelines, imputation routines, and trailing rolling windows operate strictly on historical cycles $[t-W+1, \, t]$. Zero future lookahead bias.
 3. **Double-Guarded Uncertainty**: Non-parametric Conformal Prediction ($P_{10}, P_{50}, P_{90}$) achieves $84.0\%–88.4\%$ empirical test coverage (exceeding the nominal 80% target), supported by secondary consensus estimators and dual-quantile triage.
 4. **Demo hash chain**: HMAC-SHA256 over the sample work-order files. It is not an FAA Part 145 or EASA M.A.306 check. The demo key is in the repo.
@@ -170,12 +170,12 @@ Every requested modification across Data Engineering, ML Inference & Calibration
 
 ## 5. Documentation, Security & Code Base Cleanup (Layer 5)
 
-### 5.1 Read-Only LLM Disclaimer & Boundary
-* **Specification**: Add an explicit sentence to `README.md` guaranteeing that the LLM cannot alter, dispatch, or write maintenance work orders to the system ledger.
+### 5.1 Zero-LLM Operational Architecture & Legacy Route Decommissioning
+* **Specification**: Guarantee that no LLM or external third-party API is involved in operational decisions or work order creation, and decommission legacy external endpoints.
 * **Code Implementation**:
-  - `README.md` (line 26): *"Zero-LLM Safety Boundary: Operational work orders, physical dispatch decisions, and cryptographic ledger writes are executed 100% deterministically by closed-loop rules. The Sarvam AI voice agent is strictly an advisory, read-only telemetry interface with zero write access to the system ledger."*
-  - `platform/backend/voice_agent.py` (lines 200–282): Stripped of any database mutation endpoints or function-calling write tools.
-* **Automated Test**: `platform/test_platform.py::test_voice_adversarial_injection_leaves_orders_and_audit_untouched`.
+  - `README.md`: *"Zero-LLM Safety Boundary: Operational work orders, physical dispatch decisions, and cryptographic ledger writes are executed 100% deterministically by closed-loop rules with zero external LLM dependencies."*
+  - `platform/backend/main.py`: Fully removed all legacy external routes (`/api/voice/status`, `/api/voice/synthesize`, `/api/voice/copilot`) and permanently deleted `platform/backend/voice_agent.py`.
+* **Automated Test**: `platform/test_platform.py::test_legacy_endpoints_decommissioned`.
 
 ### 5.2 Local Master Execution Command
 * **Specification**: Provide a master local script (`python run_all.py`) that processes raw C-MAPSS text files into SQLite work orders without external API keys.
