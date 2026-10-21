@@ -1197,7 +1197,7 @@
             <div class="flex items-center p-0.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
               <button onclick="switchDriftScenario('gentle')" id="btn-drift-gentle" class="px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px]">Gentle Drift (&sigma;=0.02)</button>
               <button onclick="switchDriftScenario('strong')" id="btn-drift-strong" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]">Severe Shock (&sigma;=0.30)</button>
-              <button onclick="switchDriftScenario('adaptive')" id="btn-drift-adaptive" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]">Adaptive Calibration (Promoted)</button>
+
             </div>
             <span class="text-xs text-slate-300 font-medium px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-1.5">
               <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
@@ -2801,7 +2801,7 @@
       const labels = {
         gentle: 'Gentle Drift (σ=0.02)',
         strong: 'Severe Shock (σ=0.30)',
-        adaptive: 'Adaptive Calibration (Promoted)'
+
       };
       showToast(`Switched drift scenario to ${labels[scenario] || scenario}`, 'info');
     }
@@ -2827,14 +2827,14 @@
       };
 
       // 1. Update Scenario Buttons
-      const btnAdaptive = document.getElementById('btn-drift-adaptive');
+
       const btnGentle = document.getElementById('btn-drift-gentle');
       const btnStrong = document.getElementById('btn-drift-strong');
       const activeClass = "px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px] shadow-sm";
       const inactiveClass = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]";
       if (btnGentle) btnGentle.className = selectedDriftScenario === 'gentle' ? activeClass : inactiveClass;
       if (btnStrong) btnStrong.className = selectedDriftScenario === 'strong' ? activeClass : inactiveClass;
-      if (btnAdaptive) btnAdaptive.className = selectedDriftScenario === 'adaptive' ? activeClass : inactiveClass;
+
       if (false) {
         if (selectedDriftScenario === 'gentle') {
           btnGentle.className = "px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px] shadow-sm";

@@ -33,7 +33,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--subset", default="FD001")
     ap.add_argument("--out", default="outputs")
-    ap.add_argument("--scenario", default="strong", choices=["gentle", "strong", "adaptive", "both", "all"], help="Drift scenario to simulate (default: strong)")
+    ap.add_argument("--scenario", default="strong", choices=["gentle", "strong", "both"], help="Drift scenario to simulate (default: strong)")
     ap.add_argument("--allow-synthetic", action="store_true", default=False, help="Allow running demo on synthetic data if NASA files are missing")
     a = ap.parse_args()
     cfg, sc = load_cfg(a.subset); cap = cfg["CAP"]; rng = np.random.default_rng(0)
@@ -50,7 +50,7 @@ def main():
     reg.register_champion(a.subset, "v1", v1m, note="60-engine baseline")
     sd = train[SENS].std(); history = []
     cens_units = set(rng.choice(dlv, 6, replace=False))                      # 20% serviced before failure
-    all_scenarios = [("gentle", 0.02), ("strong", 0.30), ("adaptive", 0.15)]
+    all_scenarios = [("gentle", 0.02), ("strong", 0.30)]
     scenarios = [s for s in all_scenarios if a.scenario in ("both", "all") or s[0] == a.scenario]
     for name, k in scenarios:
         print(f"\n[demo] scenario '{name}' (sensor shift {k} sigma)")
@@ -89,38 +89,15 @@ def main():
         g_gate = g_new[g_new.unit.isin(gate_u)]
         champ_gate = evaluate(champ, g_gate); entry["champion_on_gate"] = champ_gate; entry["champion_on_frozen"] = m_champ_frz
         if any(trig.values()):
-            if name == "adaptive":
-                # Adaptive zero-point recalibration: sensors recalibrated using healthy baseline window
-                # Post-recalibration drift is reduced, allowing challenger to excel over drifted champion
-                k_eff = 0.015
-                d_adapt = train[train.unit.isin(dlv)].copy().reset_index(drop=True)
-                d_adapt[SENS] = d_adapt[SENS] + k_eff * sd.values
-                keep_adapt = []
-                for u, g in d_adapt.groupby("unit"):
-                    if u in cens_units:
-                        keep_adapt.append(g.iloc[:T_cens[u]])
-                    else:
-                        keep_adapt.append(g)
-                d_adapt = pd.concat(keep_adapt).reset_index(drop=True)
-                train_combined = pd.concat([base, d_adapt[d_adapt.unit.isin(retr_u)]]).reset_index(drop=True)
-                prep_chall = Preprocessor(cfg, sc).fit(train_combined)
-                tr = prep_chall.transform(train_combined)
-                chall = RULSystem(cfg, prep_chall.feature_cols, cap).fit(tr.reset_index(drop=True), verbose=False)
-                g_gate_chall = prep_chall.transform(d_adapt[d_adapt.unit.isin(gate_u)].reset_index(drop=True))
-                g_frz_chall = prep_chall.transform(train[train.unit.isin(frz)].reset_index(drop=True))
-                ch_gate, ch_frz = evaluate(chall, g_gate_chall), evaluate(chall, g_frz_chall)
-                gc = g_new[g_new.unit.isin(cens_gate)]
-                gc_chall = prep_chall.transform(d_adapt[d_adapt.unit.isin(cens_gate)].reset_index(drop=True))
-            else:
-                train_combined = pd.concat([base, d[d.unit.isin(retr_u)]]).reset_index(drop=True)
-                prep_chall = Preprocessor(cfg, sc).fit(train_combined)
-                tr = prep_chall.transform(train_combined)
-                chall = RULSystem(cfg, prep_chall.feature_cols, cap).fit(tr.reset_index(drop=True), verbose=False)
-                g_gate_chall = prep_chall.transform(d[d.unit.isin(gate_u)].reset_index(drop=True))
-                g_frz_chall = prep_chall.transform(train[train.unit.isin(frz)].reset_index(drop=True))
-                ch_gate, ch_frz = evaluate(chall, g_gate_chall), evaluate(chall, g_frz_chall)
-                gc = g_new[g_new.unit.isin(cens_gate)]
-                gc_chall = prep_chall.transform(d[d.unit.isin(cens_gate)].reset_index(drop=True))
+            train_combined = pd.concat([base, d[d.unit.isin(retr_u)]]).reset_index(drop=True)
+            prep_chall = Preprocessor(cfg, sc).fit(train_combined)
+            tr = prep_chall.transform(train_combined)
+            chall = RULSystem(cfg, prep_chall.feature_cols, cap).fit(tr.reset_index(drop=True), verbose=False)
+            g_gate_chall = prep_chall.transform(d[d.unit.isin(gate_u)].reset_index(drop=True))
+            g_frz_chall = prep_chall.transform(train[train.unit.isin(frz)].reset_index(drop=True))
+            ch_gate, ch_frz = evaluate(chall, g_gate_chall), evaluate(chall, g_frz_chall)
+            gc = g_new[g_new.unit.isin(cens_gate)]
+            gc_chall = prep_chall.transform(d[d.unit.isin(cens_gate)].reset_index(drop=True))
             entry["censored_check"] = {"champion": one_sided(champ, gc, T_cens), "challenger": one_sided(chall, gc_chall, T_cens)}
             extra = {"frozen_val_rmse_within_10pct": ch_frz["rmse"] <= m_champ_frz["rmse"] * 1.10}
             ver = f"v2-{name}"
