@@ -26,7 +26,7 @@ The graded path is Layers 1–4. The triage agent is a deterministic threshold m
 * **Deterministic Triage Agent**: A 4-tier rule matrix writes a work order or sends the unit to a human queue. Each change is appended to an HMAC-SHA256 hash chain. The sample databases in `outputs/` were sealed with a key that is published in this repo, so the chain shows whether a demo file was edited. It is not an FAA Part 145 or EASA M.A.306 record, and it is not tamper-proof against someone who has that key.
 * **Closed-Loop Retraining & MLOps Governance**: Scans age-matched Population Stability Index (PSI) drift, evaluates one-sided loss on right-censored serviced units, scores champion vs challenger on held-out gate validation sets, and enforces statistical promotion gates in `retrain_demo.py` and `ModelRegistry`.
 
-* **Tactile Defense Cockpit**: Anti-slop glassmorphic interface with 60fps flight cycle replay scrubber and interactive flight controller copilot.
+* **Cockpit**: Fleet table, cycle replay, work orders, and the retrain view. There is no voice agent and no language model in the decision path.
 
 ---
 
