@@ -3,7 +3,8 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 30,
-      "includeFiles": "outputs/**"
+      "includeFiles": "outputs/**/*.{json,csv,db,yaml,yml}",
+      "excludeFiles": "{data/**,outputs/**/*.parquet,outputs/**/*.joblib,outputs/mlflow.db,docs/**,layer_documentation/**,shield/tests/**,**/*.md,**/*.zip}"
     }
   },
   "rewrites": [

@@ -99,7 +99,7 @@ cd AeroShield-Predictive-Fleet-Maintenance
 
 python -m venv venv
 venv\Scripts\activate   # Linux/macOS: source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
 ### 2. Run the tests
