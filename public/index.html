@@ -988,7 +988,7 @@
         </div>
       </div>
 
-      <!-- FAA Part 145 / EASA M.A.306 Tamper-Evident Maintenance Ledger -->
+      <!-- Demo hash chain. Not an FAA or EASA record. -->
       <div class="vision-glass p-5 space-y-4">
         <!-- Section Header -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-3">
@@ -998,10 +998,10 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h3 class="font-bold text-white tracking-tight text-sm">Regulatory Maintenance Ledger & Chain of Custody</h3>
-                <span class="text-[10px] px-2 py-0.5 rounded font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">FAA Part 145 &bull; EASA M.A.306</span>
+                <h3 class="font-bold text-white tracking-tight text-sm">Demo maintenance ledger</h3>
+                <span class="text-[10px] px-2 py-0.5 rounded font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Sample hash chain</span>
               </div>
-              <p class="text-xs text-slate-400 font-sans">Tamper-evident Keyed HMAC-SHA256 immutable logbook sealing autonomous triage dispatches, technician authorizations, and sensor release seals</p>
+              <p class="text-xs text-slate-400 font-sans">HMAC-SHA256 chain of work-order events. The sample files use a published demo key, so this is not an FAA Part 145 or EASA M.A.306 record.</p>
             </div>
           </div>
 
@@ -1040,11 +1040,11 @@
           </div>
 
           <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">Airworthiness Standard</span>
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">What this is</span>
             <div class="flex items-baseline gap-1.5 mt-0.5">
-              <span class="text-sm font-bold text-slate-200">Part 145 / M.A.306</span>
+              <span class="text-sm font-bold text-slate-200">Student demo</span>
             </div>
-            <span class="text-[10px] text-slate-500 font-sans">Digital maintenance release</span>
+            <span class="text-[10px] text-slate-500 font-sans">Not a Part 145 release</span>
           </div>
 
           <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
@@ -1323,7 +1323,7 @@
 
   <!-- Core JavaScript Logic -->
   <script>
-    const aeroshieldApiKey = window.AEROSHIELD_API_KEY || 'aeroshield-dev-key';
+    const aeroshieldApiKey = window.AEROSHIELD_API_KEY || "";
     let currentSubset = "FD001";
     let activeTab = "fleet";
     let allEngines = [];
@@ -2585,6 +2585,10 @@
           body: JSON.stringify({ subset: currentSubset, order_id: orderId, new_status: status })
         });
         const data = await res.json();
+        if (!res.ok) {
+          showToast(data.detail || "Dispatch refused. Set a private AEROSHIELD_API_KEY. The published development key is rejected.", 'alert');
+          return;
+        }
         if (data.success) {
           playSFX('dispatch');
           showToast(`Order ${orderId} updated to ${status}. Block appended to audit ledger.`, 'success');
@@ -2769,7 +2773,7 @@
         lucide.createIcons();
 
         playSFX('promote');
-        showToast(`[FAA PART 145 VERIFIED] ${data.message} (${data.total_entries} blocks intact)`, 'success');
+        showToast(`Chain check: ${data.message} (${data.total_entries} blocks)`, 'success');
         await fetchAuditLog();
       } catch (e) {
         btn.disabled = false;
@@ -3155,6 +3159,10 @@
         btn.disabled = false;
         btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> EXECUTE RETRAINING & PREPROCESSOR ADAPTATION DEMO`;
 
+        if (!res.ok) {
+          consoleBox.innerHTML += `<p class="text-rose-400 font-mono text-[11px]">[${ts} UTC] [ERROR] ${data.detail || "Retrain refused. Set a private AEROSHIELD_API_KEY."}</p>`;
+          return;
+        }
         if (data.success) {
           playSFX('promote');
           showToast(`Retraining pipeline execution completed on ${currentSubset}`, 'success');
