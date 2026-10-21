@@ -5,6 +5,8 @@
 **Verification Date**: 2026-10-19  
 **Status**: 29/29 Gaps Resolved | 76/76 Pytest Passed (incl. SOTA & Tournament) | Single-Command Execution Verified  
 
+> Correction, 21 Oct 2026. The development API key and the sample ledger key are in this repo, so they are not secrets. Writes now reject `aeroshield-dev-key`. The hash chain is a demo, not an FAA Part 145 or EASA M.A.306 record. Where this file still describes that older wording, the root README is the one to quote.
+
 ---
 
 ## 1. Executive Summary & Verification Protocol
@@ -15,7 +17,7 @@ This document provides a dense, zero-fluff, verifiable technical response to the
 1. **Safety-Critical Sandboxing**: Zero LLM components in operational dispatch, physical decision loops, or database write pathways.
 2. **Causal Data Integrity**: Strictly causal windowing, running medians, and imputation—zero future lookahead bias in streaming or batch execution.
 3. **Rigorous Uncertainty Bounds**: Non-parametric Conformal Prediction ($P_{10}, P_{50}, P_{90}$) with $84\%–88\%$ empirical coverage exceeding the nominal 80% target, accompanied by secondary non-linear consensus estimators.
-4. **Tamper-Evident Accountability**: Keyed HMAC-SHA256 block hash-chain ledger supporting FAA Part 145 and EASA M.A.306 auditability requirements with sub-second integrity verification.
+4. **Demo ledger**: HMAC-SHA256 chain over the sample work-order databases. The sealing key is published, so this is not an FAA Part 145 or EASA M.A.306 record.
 
 ---
 
@@ -100,7 +102,7 @@ The Senior Claude audit designated 11 non-negotiable alignment items. Below is t
   - Corrected sensor labels: $s_2$ is Total Temperature at LPC Outlet ($T_{24}$), and $s_3$ is Total Temperature at HPC Outlet ($T_{30}$) across `thresholds.yaml`, `LAYER_1_DATA_ENGINEERING.md:66`, `dashboard.html:824,841,3270-3271`, and `public/index.html`.
   - Harmonized early anomaly warning lead times to **38–46 cycles** across all architecture docs and UI KPI badges.
   - Converted all Windows absolute file paths (`file:///c:/...`) to clean relative repository paths (`./shield/...`, `./platform/...`).
-  - Reworded regulatory claims to objective engineering terminology: *"designed to support FAA Part 145 and EASA M.A.306 auditability requirements through tamper-evident cryptographic hash chaining"* and *"targets zero unscheduled groundings (AOG)"*.
+  - That pass still said the ledger was built to support Part 145. The correction at the top of this file replaces that claim.
 * **Verification**: Grep inspection confirms zero remaining absolute paths and zero invalid sensor labels.
 
 ### 11. F21 — Comprehensive Exception Rule Test Suite

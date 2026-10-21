@@ -28,7 +28,7 @@ Design a world-class, production-grade Web Dashboard for "AeroShield" — an Aut
    - "CONFORMAL COVERAGE (80% SLA)": Value "84.0%" | Sub: "+4.0% above contract target"
    - "ANOMALY DETECTION RATE": Value "100.0%" | Sub: "False Alarm Rate: 2.0% (<=5% SLA)"
    - "EARLY WARNING LEAD TIME": Value "38-46 Cycles" | Sub: "Median pre-failure alert window"
-   - "UNSCHEDULED GROUNDINGS (AOG)": Value "0 TARGETED" | Sub: "FAA Part 145 & EASA M.A.306 compliant"
+   - "UNSCHEDULED GROUNDINGS (AOG)": Value "not a promise" | Sub: "student demo, not a Part 145 approval"
 2. Subsystem Health Matrix: 4 circular progress gauges for High Pressure Compressor (HPC), Low Pressure Turbine (LPT), Fan & Shaft Dynamics, and Combustor Gas-Path.
 3. Fleet Telemetry & Risk Table:
    - High-density tabular layout with search bar, status filter (ALL, CRITICAL, MEDIUM, WATCH, NORMAL), and sorting.

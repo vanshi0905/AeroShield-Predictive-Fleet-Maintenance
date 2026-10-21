@@ -12,14 +12,14 @@
 
 ## 1. System Role & Architecture
 
-Layer 5 delivers the human-machine interface (HMI), conversational intelligence, and cloud edge deployment for the AeroShield platform. It translates complex telemetry matrices, conformal prediction intervals, and cryptographic ledgers into an intuitive, 60fps tactile defense cockpit. It integrates the Sarvam AI voice engine, allowing flight controllers and maintenance chiefs to interact with the fleet via natural voice.
+Layer 5 is the cockpit. The case-study agent is the rule matrix in Layer 3, not this page. Sarvam chat and speech are an optional add-on and stay off unless `VOICE_ENABLED=true`.
 
 ```
 Tactical Flight Cockpit (dashboard.html / public/index.html)
    │
    ├───────────────────────────────┬───────────────────────────────┐
    ▼                               ▼                               ▼
-1. 60fps Avionics Scrubber    2. FAA Part 145 Ledger         3. Sarvam Voice Copilot
+1. Cycle scrubber             2. Demo hash chain             3. Sarvam voice (optional)
    • Time-travel replay          • Linear block continuum       • Speech-to-text mic
    • Conformal P10-P90 glow      • 1-Click SHA-256 copy         • Quick prompt chips
    • Real-time gauge needles     • Sealed state machine         • Waveform visualizer
@@ -55,7 +55,7 @@ Tactical Flight Cockpit (dashboard.html / public/index.html)
 3. **Autonomous Triage & Compliance Ledger**:
    - Industrial work order dispatch cards with barcode insignia, priority halos, and depot bay routing.
    - Human specialist exception queue with one-click approved overrides.
-   - **FAA Part 145 / EASA M.A.306 Regulatory Ledger**: A clean, linear block continuum timeline with 1-click clipboard hash copy and cryptographic verification.
+   - **Demo hash chain**: A timeline of ledger blocks with copy and a verify button. The sample key is published, so the badge does not say Part 145.
 4. **MLOps Governance & Retraining Gate**:
    - Champion vs. Challenger side-by-side metric comparison table.
    - Interactive Population Stability Index (PSI) distribution charts across the 4 flight stages.

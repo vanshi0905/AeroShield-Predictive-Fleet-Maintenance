@@ -5,6 +5,8 @@
 **Subject**: Systematic Resolution and Mathematical Defense of AeroShield Predictive Fleet Maintenance Platform (v4 Audit)  
 **Status**: All 7 Remaining Gap Items (3.1–3.7) Resolved & Fully Verified (76/76 Tests Green)  
 
+> Correction, 21 Oct 2026. Section 3.2 left `aeroshield-dev-key` as the development default, and `.env.example` published it. That default is gone. The API rejects that string in every mode. Voice posts need the same private key. The ledger key in the sample databases is still the published demo key, on purpose, so those files still verify. It is not a regulatory seal.
+
 ---
 
 ## 1. Executive Summary & Defense

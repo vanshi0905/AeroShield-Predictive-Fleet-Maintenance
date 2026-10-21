@@ -5,6 +5,8 @@
 **Case Study**: Tata Elxsi Case Study 1 — Self-Healing Machines (Turbofan Fleet Maintenance)  
 **Verification Status**: Verified Compliant (All 5 Layers & 29 Sub-Items) | 76/76 Pytest Tests Passing | Zero Future Leakage Proven  
 
+> Correction, 21 Oct 2026. "Compliant" here meant the internal checklist, not FAA Part 145 or EASA M.A.306. The sample ledger key is published. Writes reject the old published API key. Quote the root README for scores.
+
 ---
 
 ## Executive Summary & System Verification Status
@@ -17,7 +19,7 @@ Every requested modification across Data Engineering, ML Inference & Calibration
 1. **Zero-LLM Safety Boundary**: Operational dispatch, physical decision loops, and SQLite maintenance ledgers have zero LLM write permissions. The Sarvam AI voice engine is an optional, read-only advisory extension.
 2. **Strict Causal Invariance**: All feature pipelines, imputation routines, and trailing rolling windows operate strictly on historical cycles $[t-W+1, \, t]$. Zero future lookahead bias.
 3. **Double-Guarded Uncertainty**: Non-parametric Conformal Prediction ($P_{10}, P_{50}, P_{90}$) achieves $84.0\%–88.4\%$ empirical test coverage (exceeding the nominal 80% target), supported by secondary consensus estimators and dual-quantile triage.
-4. **Cryptographic Airworthiness Audit**: Tamper-evident keyed HMAC-SHA256 hash chaining supporting FAA Part 145 and EASA M.A.306 compliance verification in $<1$ ms.
+4. **Demo hash chain**: HMAC-SHA256 over the sample work-order files. It is not an FAA Part 145 or EASA M.A.306 check. The demo key is in the repo.
 
 ---
 
@@ -185,7 +187,7 @@ Every requested modification across Data Engineering, ML Inference & Calibration
 * **Specification**: Remove hardcoded absolute local paths from documentation. Replace absolute marketing claims with qualified engineering wording.
 * **Code Implementation**:
   - All file paths across `docs/`, `layer_documentation/`, and `README.md` use clean relative paths (`./shield/...`, `./platform/...`).
-  - Claims converted to: *"designed to minimize unplanned groundings"* and *"designed to support FAA Part 145 and EASA M.A.306 auditability requirements"*.
+  - The Part 145 wording from this pass was still too strong. The current README says the ledger is a demo hash chain with a published key.
 
 ### 5.4 Metric Standardization & Official NASA C-MAPSS Benchmark Table
 * **Specification**: Report capped RMSE ($y \le 125$), standard uncapped RMSE, NASA asymmetric loss on final test window, 95% bootstrap CIs, and test-set coverage for $RUL \le 50$.

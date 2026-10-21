@@ -19,7 +19,7 @@ Normalized Feature Vector from Layer 1
    • Healthy Baseline (t <= 20 cycles)                • RUL_cap = 125 cycles
    • Deviation d_base relative to baseline            • Eliminates flat initial wear
    • Threshold tau = 3.0                              
-   • 100.0% Detection, <= 5.0% FAR                    
+   • OOF rate is not the test rate              
    │                                                       │
    │                                                       ▼
    │                                               3. Quantile HistGradientBoosting
@@ -52,7 +52,7 @@ Inference Output Vector to Layer 3 Triage
   The baseline-subtracted sensor deviation $d_{\text{base}}$ at flight cycle $t$ is:
   $$d_{\text{base}}(s_{j, t}) = \frac{s_{j, t} - \mu_{j, \text{base}}}{\sigma_{j, \text{base}}}$$
   An `IsolationForest` ensemble ($N=200$ trees) is trained on the baseline-subtracted deviation vector $\mathbf{d}_{\text{base}}$. Anomaly scores $s_t = -\text{decision\_function}(\mathbf{d}_{\text{base}})$ are smoothed with an EWMA ($\alpha = 0.3$) and confirmed when the score exceeds an out-of-fold calibrated threshold for $\ge 2$ consecutive cycles.
-* **Results**: True anomaly detection achieved **100.0%** on FD001 (lead 38 cyc, FA 4.0%) and FD002 (lead 43 cyc, FA 5.0%), and **69.0%** on FD003 (lead 39 cyc, FA 2.0%). Under FD004 (dual fault, 6 regimes), detection is 5.6% on raw thresholds; 51 of 248 units are routed safely to the **Human Exception Queue** as fail-safe protection.
+* **Results**: The 100% / 100% / 69% / 5.6% detection rates, and the 38–54 cycle leads, are out-of-fold on the training engines. On the test engines the same `metrics.json` files record 29%, 38%, 19%, and 1.6%. FD004 sends 51 of 248 test engines to the human queue. Do not quote the training rate as the test rate.
 
 ### B. Piecewise Linear Capped Target
 In turbofan engines, physical wear is negligible during early flight cycles (crack propagation and material loss remain latent). Modeling RUL linearly from cycle 0 forces models to fit meaningless variations during healthy operation. AeroShield enforces a piecewise linear target capped at $RUL_{\text{cap}} = 125$ cycles:

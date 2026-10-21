@@ -28,7 +28,7 @@ Inference Output from Layer 2 (P10, P50, P90, Anomaly Score, Secondary Opinion)
    └───────────────────────────┬──────────────────────┘
                                │
                                ▼
-5. FAA Part 145 / EASA M.A.306 SHA-256 Cryptographic Ledger
+5. Demo HMAC hash chain (not an FAA or EASA record)
    • Merkle block linkage: Hash_i = SHA256(Entry || PrevHash || TS || Order || Action || Signer)
    • 100% Tamper-Evident Historical Verification
 ```
@@ -61,8 +61,8 @@ Work orders follow a strict, ACID-compliant SQLite state transition flow:
 * `COMPLETED`: Maintenance performed and signed off by depot technicians.
 * `OVERRIDDEN`: Human review exception inspected and approved.
 
-### D. Tamper-Evident SHA-256 Cryptographic Audit Ledger (FAA Part 145 & EASA M.A.306 Audit Support)
-To support rigorous aviation auditability, AeroShield maintains an immutable chain of custody designed to support FAA Part 145 and EASA M.A.306 auditability requirements through tamper-evident cryptographic hash chaining for all maintenance releases, component replacements, and operational dispatches.
+### D. Demo HMAC hash chain
+Work-order events are appended as an HMAC-SHA256 chain so a reviewer can see that a sample row was not edited in place. The key that seals `outputs/*/work_orders.db` is published in this repository. That makes the chain a demo. It is not an FAA Part 145 or EASA M.A.306 maintenance record, and someone who has the key can recompute it.
 
 AeroShield enforces this via a cryptographically linked SHA-256 blockchain ledger:
 1. **Genesis Block**: Sealed with initial root nonce:

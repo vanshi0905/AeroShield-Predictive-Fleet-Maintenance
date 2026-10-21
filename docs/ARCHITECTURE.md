@@ -78,10 +78,10 @@ AeroShield is a closed-loop autonomous predictive maintenance and digital twin p
   4. $\text{Turbine Temperature Ratio} = s_4 / s_3$
 
 ### Anomaly Detection & Conformal Calibration
-* In contrast to unnormalized raw rolling means, anomaly detection uses baseline-subtracted sensor deviations ($z$-scores) computed against early flight cycles ($t \le 20$). This achieves a **100.0% true detection rate** on complex multi-regime datasets (FD002/FD004) while holding false alarms strictly below $5.0\%$.
+* Anomaly scores use baseline-subtracted sensor deviations against the early cycles of each engine. Out-of-fold detection is 100% on FD001 and FD002, 69% on FD003, and 5.6% on FD004. Test-set detection is 29%, 38%, 19%, and 1.6%. FD004 is not a 100% detection result.
 * RUL uncertainty is quantified via non-parametric conformal prediction, yielding statistically validated P10, P50, and P90 quantile intervals.
 
 ### Tamper-Evident Audit Chain
-Every autonomous maintenance action generates a cryptographically signed block with SHA-256 hash linkage:
+Each work-order event is appended to an HMAC-SHA256 chain. The sample databases use a published demo key, so this is not an FAA Part 145 or EASA M.A.306 record. The link is:
 $$\text{Hash}_i = \text{SHA256}(\text{EntryID} \parallel \text{Timestamp} \parallel \text{OrderID} \parallel \text{Action} \parallel \text{Hash}_{i-1})$$
 The integrity of the entire historical maintenance log can be verified in millisecond latency via the dashboard or API endpoint `/api/audit-verify`.

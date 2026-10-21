@@ -24,10 +24,10 @@
 AeroShield is an industrial predictive maintenance and digital twin platform built to fulfill **Tata Elxsi Case Study 1: Self-Healing Machines**. The system monitors connected fleets of high-bypass turbofans, high-pressure compressors (HPC), and aeroderivative gas turbines.
 
 ### Core Objectives Solved:
-* **High Fleet Availability**: **Targets zero unscheduled groundings (AOG)** by detecting mechanical degradation **38–46 cycles** before functional failure across fleet partitions.
+* **Early warning, on the training folds**: Out-of-fold median lead is 38 to 54 cycles, depending on the subset. That is not the test-set detection rate. See the root README.
 * **Asymmetric Risk Mitigation**: Optimizes predictions against the official NASA exponential scoring metric, severely penalizing delayed maintenance over-predictions ($d > 0$) that risk catastrophic in-flight shutdowns (IFSD).
 * **Calibrated Confidence Bounds**: Quantifies remaining useful life (RUL) uncertainty through non-parametric **Conformal Prediction ($P_{10}, P_{50}, P_{90}$)** with calibrated empirical coverage ($84\%–88\%$, exceeding the 80% nominal target).
-* **Closed-Loop Execution & Compliance**: Replaces ungrounded LLM hallucinations with a deterministic 4-tier decision matrix, human exception routing, and an immutable **SHA-256 cryptographic audit ledger** designed to support FAA Part 145 and EASA M.A.306 auditability requirements through tamper-evident cryptographic hash chaining.
+* **Closed-loop triage**: A 4-tier rule matrix writes a work order or routes the unit to a person. The audit log is an HMAC hash chain over the sample databases. The key for those files is published in the repo, so this is not an FAA Part 145 or EASA M.A.306 record.
 * **Continuous Drift Protection**: Scans age-matched Population Stability Index (PSI) drift across flight phases, protecting serving pipelines through a strict 4-condition statistical promotion gate.
 
 ---
@@ -36,17 +36,19 @@ AeroShield is an industrial predictive maintenance and digital twin platform bui
 
 Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-Propulsion System Simulation (C-MAPSS):
 
+Last-cycle test RUL, from `outputs/FD00x/metrics.json`:
+
 | Metric | FD001 | FD002 | FD003 | FD004 |
 | :--- | :---: | :---: | :---: | :---: |
-| **Operating Regimes** | Single (Sea Level) | 6 Multi-Altitude/Mach | Single (Sea Level) | 6 Multi-Altitude/Mach |
-| **Fault Modes** | HPC Degradation | HPC Degradation | HPC + Fan Degradation | HPC + Fan Degradation |
-| **Fleet Test Engines** | 100 units | 259 units | 100 units | 248 units |
-| **Capped Test RMSE** | **11.30 cycles** | **13.97 cycles** | **11.23 cycles** | **14.85 cycles** |
-| **NASA Asymmetric Loss** | **2,779** | **14,520** | **2,680** | **16,840** |
-| **Conformal Coverage (80% Target)** | **84.0%** | **88.4%** | **86.0%** | **87.5%** |
-| **Anomaly Detection Rate** | **100.0%** | **100.0%** | **100.0%** | **100.0%** |
-| **False Alarm Rate (FAR)** | **4.0%** | **5.0%** | **3.5%** | **4.8%** |
-| **Mean Warning Lead Time** | **38 cycles** | **43 cycles** | **40 cycles** | **46 cycles** |
+| Operating regimes | 1 | 6 | 1 | 6 |
+| Fault modes | HPC | HPC | HPC + fan | HPC + fan |
+| Test engines | 100 | 259 | 100 | 248 |
+| Capped RMSE | 11.30 | 13.97 | 11.59 | 21.49 |
+| Uncapped RMSE | 12.98 | 27.01 | 13.34 | 33.49 |
+| NASA score, uncapped truth | 213 | 8,519 | 260 | 15,018 |
+| Conformal coverage (80% target) | 84% | 88% | 79% | 81% |
+
+Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100% / 4% false alarms / 38 cycles, FD002 100% / 5% / 43, FD003 69% / 2% / 39, FD004 5.6% / 4.4% / 54. On the test engines the flag rates are 29%, 38%, 19%, and 1.6%. The README keeps both tables.
 
 ---
 
@@ -82,7 +84,7 @@ Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-
 │ • Deterministic 4-Tier Operational Decision Matrix (Critical to Normal)│
 │ • Human Review Queue for Sensor Faults & Model Disagreements           │
 │ • SQLite Work Order State Machine (DRAFT -> DISPATCHED -> COMPLETED)   │
-│ • Tamper-Evident Keyed HMAC-SHA256 Hash Chain (Part 145 Auditability) │
+│ • HMAC-SHA256 hash chain (demo key is published; not a Part 145 record) │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
                                     ▼
@@ -139,10 +141,8 @@ In FD002 and FD004, turbofans traverse 6 distinct flight conditions across altit
   $$d_{\text{base}}(s_{j, t}) = \frac{s_{j, t} - \mu_{j, \text{healthy}}}{\sigma_{j, \text{healthy}}}$$
   The anomaly score $s_t = -\text{decision\_function}(d_{\text{base}})$ is smoothed with an EWMA ($\alpha = 0.3$) and confirmed only when the score exceeds an out-of-fold calibrated threshold for $\ge 2$ consecutive cycles.
 * **Empirical Performance**:
-  - **FD001**: 100.0% detection rate, 38 cycles median lead time, 4.0% engine false alarm rate.
-  - **FD002**: 100.0% detection rate, 43 cycles median lead time, 5.0% engine false alarm rate.
-  - **FD003**: 69.0% detection rate, 39 cycles median lead time, 2.0% engine false alarm rate.
-  - **FD004**: 5.6% detection rate under complex 6-regime multi-fault conditions; units with ambiguous or low-confidence anomaly signals are safely routed to the **Human Exception Queue** (51 of 248 units) to maintain operational safety.
+  - Out-of-fold: FD001 100% detection, 38-cycle median lead, 4% engine false alarms. FD002 100%, 43 cycles, 5%. FD003 69%, 39 cycles, 2%. FD004 5.6%, 54 cycles, 4.4%.
+  - Test engines, same file: FD001 29%, FD002 38%, FD003 19%, FD004 1.6%. FD004 also sends 51 of 248 test engines to the human queue.
 
 ### 2. Piecewise Linear Target & Quantile Pinball Loss
 Degradation in turbofans is negligible during initial operational cycles. Thus, Remaining Useful Life (RUL) is modeled as a piecewise constant capped target ($RUL_{\text{cap}} = 125$ cycles):
@@ -188,7 +188,7 @@ The autonomous engine isolates edge cases and routes them to human reliability e
 * **Model Disagreement**: Divergence between primary quantile and secondary non-linear model $> 25$ cycles.
 Work orders remain in status `NEEDS_HUMAN` until a certified technician records an authorized override.
 
-### 3. Tamper-Evident SHA-256 Cryptographic Audit Ledger (FAA Part 145 & EASA M.A.306 Audit Support)
+### 3. Demo HMAC hash chain (not an FAA or EASA record)
 Every state transition (`DRAFT` $\to$ `DISPATCHED` $\to$ `COMPLETED`) appends a cryptographically sealed block to an immutable SHA-256 chain:
 $$\text{Hash}_i = \text{SHA256}(\text{EntryID} \parallel \text{PrevHash} \parallel \text{Timestamp} \parallel \text{OrderID} \parallel \text{Action} \parallel \text{Operator})$$
 Chain integrity is verifiable in $\mathcal{O}(N)$ sub-second time via `/api/audit-verify`. Any bit-level modification to historical maintenance records breaks the parent digest continuum and triggers immediate integrity alerts.
@@ -290,7 +290,7 @@ AeroShield-Predictive-Fleet-Maintenance/
 │   │   ├── data_bridge.py             # High-throughput data bridge connecting models & SQLite
 │   │   └── voice_agent.py             # Sarvam AI Voice Copilot & Bulbul neural TTS engine
 │   ├── frontend/
-│   │   └── dashboard.html             # Tactical cockpit UI (FAA Part 145 compliance ledger)
+│   │   └── dashboard.html             # Cockpit UI (demo hash chain)
 │   ├── run_platform.py                # Local standalone platform launcher (Port 8050)
 │   └── test_platform.py               # Platform integration test suite (13 tests)
 │
