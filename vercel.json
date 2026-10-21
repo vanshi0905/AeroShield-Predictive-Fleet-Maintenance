@@ -7,6 +7,25 @@
       "excludeFiles": "{data/**,outputs/**/*.parquet,outputs/**/*.joblib,outputs/mlflow.db,docs/**,layer_documentation/**,shield/tests/**,**/*.md,**/*.zip}"
     }
   },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
