@@ -200,3 +200,38 @@ def test_legacy_endpoints_decommissioned():
 
 
 
+
+
+def test_api_predict_live_inference():
+    """Tests end-to-end live raw telemetry ingestion, dynamic ratios, and non-LLM triage evaluation."""
+    payload = {
+        "subset": "FD001",
+        "unit": 99,
+        "cycle": 140,
+        "op1": 0.001,
+        "op2": 0.0002,
+        "op3": 100.0,
+        "sensors": {
+            "s2": 642.5,
+            "s3": 1595.0,
+            "s4": 1410.0,
+            "s7": 552.0,
+            "s8": 2388.1,
+            "s9": 9052.0,
+            "s11": 47.8,
+            "s13": 2388.0,
+            "s14": 8132.0
+        }
+    }
+    res = client.post("/api/predict", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    trace = data["pipeline_trace"]
+    assert trace["engine_unit"] == 99
+    assert trace["cycle"] == 140
+    assert "fan_speed_ratio" in trace["aerodynamic_features"]
+    assert "compressor_pressure_ratio" in trace["aerodynamic_features"]
+    assert "p10_lower_bound" in trace["conformal_rul_bounds"]
+    assert "p50_median_rul" in trace["conformal_rul_bounds"]
+    assert trace["rule_triage_decision"]["severity"] in ("CRITICAL", "HIGH", "MEDIUM", "NORMAL")

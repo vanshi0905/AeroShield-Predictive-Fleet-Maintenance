@@ -4,7 +4,7 @@ FastAPI REST API Backend connecting the Vision UI cockpit to the SHIELD pipeline
 
 import os
 import sys
-from typing import Optional
+from typing import Optional, Dict, Any
 from fastapi import FastAPI, HTTPException, Query, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
@@ -93,6 +93,15 @@ class RetrainRequest(BaseModel):
     subset: str = "FD001"
     scenario: Optional[str] = "strong"
 
+class PredictTelemetryRequest(BaseModel):
+    subset: str = "FD001"
+    unit: int = 1
+    cycle: int = 100
+    op1: float = 0.0
+    op2: float = 0.0
+    op3: float = 100.0
+    sensors: Optional[Dict[str, float]] = None
+
 @app.get("/")
 @app.get("/dashboard")
 def serve_dashboard():
@@ -161,6 +170,19 @@ def dispatch_work_order(req: OrderActionRequest):
     if not res.get("success"):
         raise HTTPException(status_code=400, detail=res.get("error", "Dispatch failed"))
     return res
+
+@app.post("/api/predict")
+def predict_live_telemetry(req: PredictTelemetryRequest):
+    """Executes live dynamic inference on raw telemetry inputs, evaluates the triage agent, and updates SQLite state."""
+    return bridge.predict_telemetry(
+        subset=req.subset,
+        unit=req.unit,
+        cycle=req.cycle,
+        op1=req.op1,
+        op2=req.op2,
+        op3=req.op3,
+        sensors=req.sensors
+    )
 
 @app.post("/api/retrain/trigger", dependencies=[Depends(verify_write_access)])
 def trigger_retrain(req: RetrainRequest):
