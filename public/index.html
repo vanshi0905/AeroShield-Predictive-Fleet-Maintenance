@@ -2885,7 +2885,25 @@
       lucide.createIcons();
     }
 
-    window.onload = initDashboard;
+        let hasDashboardInitialized = false;
+    async function safeInitDashboard() {
+      if (hasDashboardInitialized) return;
+      hasDashboardInitialized = true;
+      try {
+        await initDashboard();
+      } catch (err) {
+        console.error("Dashboard initialization error:", err);
+      }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      setTimeout(safeInitDashboard, 10);
+    } else {
+      document.addEventListener('DOMContentLoaded', safeInitDashboard);
+      window.addEventListener('load', safeInitDashboard);
+    }
+    // Safety fallback
+    setTimeout(safeInitDashboard, 250);
   </script>
 </body>
 </html>
