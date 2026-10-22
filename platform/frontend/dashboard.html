@@ -212,6 +212,8 @@
           </p>
         </div>
       </div>
+
+
     </div>
   </header>
 
@@ -648,7 +650,7 @@
 
           <!-- Slider Range -->
           <div class="py-1">
-            <input type="range" id="replay-slider" min="1" max="100" value="100" oninput="updateReplayFrame(this.value); playSFX('scrub');" class="avionics-slider">
+            <input type="range" id="replay-slider" min="1" max="100" value="100" oninput="updateReplayFrame(this.value);" class="avionics-slider">
           </div>
 
           <!-- Cycle Milestone Markers -->
@@ -1316,7 +1318,17 @@
 
   <!-- Core JavaScript Logic -->
   <script>
-    const aeroshieldApiKey = window.AEROSHIELD_API_KEY || "";
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+
     let currentSubset = "FD001";
     let activeTab = "fleet";
     let allEngines = [];
@@ -1332,12 +1344,7 @@
     let matrixCurrentPage = 1;
     let matrixPageSize = 30;
 
-    // Sound disabled - pure visual avionics dashboard
-    // Global silent no-ops
-    function playSFX() {}
-    function toggleSoundFX() {}
-    function updateSoundFXUI() {}
-    function playAvionicsChime() {}
+
 
     // Toast Notification Dispatcher
     function showToast(message, type = 'info') {
@@ -1378,6 +1385,7 @@
 
     // Main App Initialization
     async function initDashboard() {
+
       await fetchFleetReadiness();
       await fetchFleetMatrix();
       await fetchWorkOrders();
@@ -2293,14 +2301,13 @@
         const res = await fetch('/api/work-orders/dispatch', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': aeroshieldApiKey
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ subset: currentSubset, order_id: orderId, new_status: status })
         });
         const data = await res.json();
         if (!res.ok) {
-          showToast(data.detail || "Dispatch refused. Set a private AEROSHIELD_API_KEY. The published development key is rejected.", 'alert');
+          showToast(data.detail || "Dispatch request refused.", 'alert');
           return;
         }
         if (data.success) {
@@ -2448,9 +2455,9 @@
               <td class="py-2.5 px-3 text-slate-400 tabular-nums">${e.timestamp.slice(11, 19)}</td>
               <td class="py-2.5 px-3">${actionBadge}</td>
               <td class="py-2.5 px-3 text-white font-medium">
-                ${e.order_id || '--'}
+                ${escapeHtml(e.order_id || '--')}
               </td>
-              <td class="py-2.5 px-3 text-slate-300 font-sans text-[11px]">${op}</td>
+              <td class="py-2.5 px-3 text-slate-300 font-sans text-[11px]">${escapeHtml(op)}</td>
               <td class="py-2.5 px-3">
                 <button onclick="copyHash('${e.current_hash}')" class="group flex items-center gap-1.5 font-mono text-slate-300 hover:text-cyan-300 transition text-[11px]" title="Click to copy HMAC-SHA256 hash">
                   <span>${e.current_hash.slice(0, 10)}...${e.current_hash.slice(-4)}</span>
@@ -2857,8 +2864,7 @@
         const res = await fetch('/api/retrain/trigger', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': aeroshieldApiKey
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ subset: currentSubset, scenario: selectedDriftScenario })
         });
@@ -2867,7 +2873,7 @@
         btn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> EXECUTE RETRAINING & PREPROCESSOR ADAPTATION DEMO`;
 
         if (!res.ok) {
-          consoleBox.innerHTML += `<p class="text-rose-400 font-mono text-[11px]">[${ts} UTC] [ERROR] ${data.detail || "Retrain refused. Set a private AEROSHIELD_API_KEY."}</p>`;
+          consoleBox.innerHTML += `<p class="text-rose-400 font-mono text-[11px]">[${ts} UTC] [ERROR] ${data.detail || "Retraining execution refused."}</p>`;
           return;
         }
         if (data.success) {

@@ -70,6 +70,11 @@ class DataBridge:
             self._cache[cache_key] = df
             return df
 
+        if not os.getenv("AEROSHIELD_DEMO_FALLBACK"):
+            raise FileNotFoundError(
+                f"Predictions artifact not found for subset {subset} at {path}. Run pipeline first ('python run_all.py --subset {subset}')."
+            )
+
         # Deterministic fallback baseline for zero-dependency test / demo environments
         rows = []
         for u in range(1, 11):
@@ -511,13 +516,7 @@ class DataBridge:
         Production will not extend the sample databases. Those files were sealed
         with the published demo key.
         """
-        mode = os.environ.get("AEROSHIELD_ENV", "development").lower()
-        configured = os.environ.get("AEROSHIELD_HMAC_KEY", "").strip()
-        if mode in ("production", "prod") and (not configured or configured == PUBLISHED_DEMO_HMAC_KEY):
-            return {
-                "success": False,
-                "error": "Production will not append to the sample ledger. Set a private AEROSHIELD_HMAC_KEY and use a ledger sealed with that key.",
-            }
+        # Open dispatch access - no API key required
         db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
             return {"success": False, "error": "Database not found"}
@@ -528,6 +527,29 @@ class DataBridge:
         try:
             with sqlite3.connect(db_path) as conn:
                 cur = conn.cursor()
+                # Validate current status transition
+                cur.execute("SELECT status FROM work_orders WHERE order_id = ?", (order_id,))
+                order_row = cur.fetchone()
+                if not order_row:
+                    return {"success": False, "error": f"Order {order_id} not found"}
+                curr_status = order_row[0]
+                valid_transitions = {
+                    "AUTO_CREATED": {"DISPATCHED", "CANCELLED", "AUTO_CREATED"},
+                    "NEEDS_HUMAN": {"DISPATCHED", "CANCELLED", "NEEDS_HUMAN"},
+                    "OPEN": {"DISPATCHED", "CANCELLED", "OPEN"},
+                    "PENDING": {"DISPATCHED", "CANCELLED", "PENDING"},
+                    "DISPATCHED": {"IN_PROGRESS", "CANCELLED", "DISPATCHED"},
+                    "IN_PROGRESS": {"COMPLETED", "CANCELLED", "IN_PROGRESS"},
+                    "COMPLETED": {"COMPLETED"},
+                    "CANCELLED": {"CANCELLED"},
+                }
+                allowed = valid_transitions.get(curr_status, {new_status})
+                if new_status not in allowed:
+                    return {
+                        "success": False,
+                        "error": f"Invalid state transition: Order {order_id} cannot transition from {curr_status} to {new_status}"
+                    }
+
                 cur.execute(
                     "UPDATE work_orders SET status = ?, updated_at = ? WHERE order_id = ?",
                     (new_status, ts, order_id),

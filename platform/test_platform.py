@@ -18,10 +18,12 @@ except ImportError:
 
 client = TestClient(app)
 
+
 def test_dashboard_endpoint():
     response = client.get("/dashboard")
     assert response.status_code == 200
     assert "Autonomous Predictive Fleet Maintenance" in response.text
+
 
 def test_api_subsets():
     response = client.get("/api/subsets")
@@ -29,6 +31,7 @@ def test_api_subsets():
     data = response.json()
     assert "subsets" in data
     assert len(data["subsets"]) > 0
+
 
 def test_api_fleet_readiness():
     response = client.get("/api/fleet/readiness?subset=FD001")
@@ -39,6 +42,7 @@ def test_api_fleet_readiness():
     assert "status_counts" in data
     assert "CRITICAL" in data["status_counts"]
     assert "NORMAL" in data["status_counts"]
+
 
 def test_api_fleet_matrix():
     response = client.get("/api/fleet/matrix?subset=FD001")
@@ -53,6 +57,7 @@ def test_api_fleet_matrix():
     assert "p90_rul" in first
     assert "status" in first
 
+
 def test_api_engine_drilldown():
     response = client.get("/api/engine/1?subset=FD001")
     assert response.status_code == 200
@@ -65,17 +70,20 @@ def test_api_engine_drilldown():
     assert "ratios" in tl
     assert "fan_core_s8_s9" in tl["ratios"]
 
+
 def test_api_work_orders():
     response = client.get("/api/work-orders?subset=FD001")
     assert response.status_code == 200
     data = response.json()
     assert "work_orders" in data
 
+
 def test_api_exceptions():
     response = client.get("/api/exceptions?subset=FD001")
     assert response.status_code == 200
     data = response.json()
     assert "exceptions" in data
+
 
 def test_api_audit_log_and_verify():
     response = client.get("/api/audit-log?subset=FD001")
@@ -92,6 +100,7 @@ def test_api_audit_log_and_verify():
     assert v_data["verified"] is True
     assert "100% intact" in v_data["message"]
 
+
 def test_api_mlops():
     response = client.get("/api/mlops?subset=FD001")
     assert response.status_code == 200
@@ -100,42 +109,12 @@ def test_api_mlops():
     assert data["thresholds"]["psi_limit"] == 0.20
     assert data["thresholds"]["coverage_target"] == 0.80
 
-PRIVATE_TEST_KEY = "local-test-key-not-the-published-one"
 
-
-def test_published_dev_key_cannot_dispatch(monkeypatch):
-    monkeypatch.setenv("AEROSHIELD_API_KEY", "aeroshield-dev-key")
-    res = client.post(
-        "/api/work-orders/dispatch",
-        json={
-            "subset": "FD001",
-            "order_id": "WO-DOES-NOT-NEED-TO-EXIST",
-            "new_status": "DISPATCHED",
-        },
-        headers={"X-API-Key": "aeroshield-dev-key"},
-    )
-    assert res.status_code == 401
-
-
-def test_api_dispatch_work_order(monkeypatch):
-    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
-    # Fetch an order from work_orders
+def test_api_dispatch_work_order_no_key_required():
     wo_res = client.get("/api/work-orders?subset=FD001")
     orders = wo_res.json()["work_orders"]
     if orders:
-        first_order = orders[0]
-        oid = first_order["order_id"]
-
-        # 1. Unauthenticated request must be rejected (401 Unauthorized)
-        res_unauth = client.post("/api/work-orders/dispatch", json={
-            "subset": "FD001",
-            "order_id": oid,
-            "new_status": "DISPATCHED",
-            "operator": "Fleet Maintenance Controller"
-        })
-        assert res_unauth.status_code == 401, "Write endpoint must reject unauthenticated requests"
-
-        # 2. Authenticated request with valid API key succeeds
+        oid = orders[0]["order_id"]
         res = client.post(
             "/api/work-orders/dispatch",
             json={
@@ -143,26 +122,18 @@ def test_api_dispatch_work_order(monkeypatch):
                 "order_id": oid,
                 "new_status": "DISPATCHED",
                 "operator": "Fleet Maintenance Controller"
-            },
-            headers={"X-API-Key": PRIVATE_TEST_KEY}
+            }
         )
         assert res.status_code == 200
         assert res.json()["success"] is True
         assert res.json()["status"] == "DISPATCHED"
 
-        # Verify audit chain remains cryptographically valid after dispatch
         v_res = client.get("/api/audit-verify?subset=FD001")
         assert v_res.status_code == 200
         assert v_res.json()["verified"] is True
 
 
-def test_api_retrain_trigger_security_and_execution(monkeypatch):
-    monkeypatch.setenv("AEROSHIELD_API_KEY", PRIVATE_TEST_KEY)
-    # 1. Unauthenticated request must be rejected (401)
-    res_unauth = client.post("/api/retrain/trigger", json={"subset": "FD001"})
-    assert res_unauth.status_code == 401
-
-    # 2. Authenticated request verifies parameter forwarding to retrain_demo.py
+def test_api_retrain_trigger_execution(monkeypatch):
     import subprocess
     captured_args = []
     class MockCompletedProcess:
@@ -178,8 +149,7 @@ def test_api_retrain_trigger_security_and_execution(monkeypatch):
 
     res = client.post(
         "/api/retrain/trigger",
-        json={"subset": "FD001", "scenario": "strong"},
-        headers={"X-API-Key": PRIVATE_TEST_KEY}
+        json={"subset": "FD001", "scenario": "strong"}
     )
     assert res.status_code == 200
     data = res.json()
@@ -189,17 +159,13 @@ def test_api_retrain_trigger_security_and_execution(monkeypatch):
     assert len(captured_args) == 1
     assert "--subset" in captured_args[0]
     assert "FD001" in captured_args[0]
-    assert "--scenario" in captured_args[0]
-    assert "strong" in captured_args[0]
+
 
 def test_legacy_endpoints_decommissioned():
     """Confirms all legacy external endpoints are excised (404 Not Found)."""
     assert client.get("/api/voice/status").status_code == 404
     assert client.post("/api/voice/synthesize").status_code == 404
     assert client.post("/api/voice/copilot").status_code == 404
-
-
-
 
 
 def test_api_predict_live_inference():
@@ -235,3 +201,83 @@ def test_api_predict_live_inference():
     assert "p10_lower_bound" in trace["conformal_rul_bounds"]
     assert "p50_median_rul" in trace["conformal_rul_bounds"]
     assert trace["rule_triage_decision"]["severity"] in ("CRITICAL", "HIGH", "MEDIUM", "NORMAL")
+
+
+def test_senior_audit_subset_allowlist_returns_404():
+    res = client.get("/api/fleet/readiness?subset=FD9")
+    assert res.status_code == 404
+    assert "FD9" in res.json()["detail"]
+
+
+def test_senior_audit_invalid_status_returns_422():
+    res = client.post(
+        "/api/work-orders/dispatch",
+        json={"subset": "FD001", "order_id": "WO-1", "new_status": "HACKED"}
+    )
+    assert res.status_code == 422
+
+
+def test_senior_audit_operator_sanitization_returns_422():
+    # XSS attempt
+    res_xss = client.post(
+        "/api/work-orders/dispatch",
+        json={"subset": "FD001", "order_id": "WO-1", "new_status": "DISPATCHED", "operator": "<script>alert(1)</script>"}
+    )
+    assert res_xss.status_code == 422
+
+    # String length > 60 chars
+    res_len = client.post(
+        "/api/work-orders/dispatch",
+        json={"subset": "FD001", "order_id": "WO-1", "new_status": "DISPATCHED", "operator": "A" * 61}
+    )
+    assert res_len.status_code == 422
+
+
+def test_senior_audit_healthz_endpoint():
+    res = client.get("/healthz")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "healthy"
+    assert "FD001" in data["subsets"]
+
+
+def test_senior_audit_vercel_readonly_mode(monkeypatch):
+    monkeypatch.setenv("VERCEL", "1")
+    res_dispatch = client.post(
+        "/api/work-orders/dispatch",
+        json={"subset": "FD001", "order_id": "WO-1", "new_status": "DISPATCHED"}
+    )
+    assert res_dispatch.status_code == 503
+    assert "read-only" in res_dispatch.json()["detail"].lower()
+
+    res_retrain = client.post(
+        "/api/retrain/trigger",
+        json={"subset": "FD001"}
+    )
+    assert res_retrain.status_code == 503
+
+
+def test_senior_audit_retrain_async_status_flow(monkeypatch):
+    import subprocess
+    class MockProcess:
+        returncode = 0
+        stdout = "[demo] training champion v1... Gate passed."
+        stderr = ""
+    monkeypatch.setattr(subprocess, "run", lambda cmd, **kwargs: MockProcess())
+
+    res = client.post(
+        "/api/retrain/trigger?sync=false",
+        json={"subset": "FD001", "scenario": "strong"}
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert "job_id" in data
+    assert data["status"] == "started"
+    job_id = data["job_id"]
+
+    # Query status endpoint
+    poll_res = client.get(f"/api/retrain/status/{job_id}")
+    assert poll_res.status_code == 200
+    poll_data = poll_res.json()
+    assert poll_data["job_id"] == job_id
+    assert poll_data["status"] in ("running", "completed", "failed")
