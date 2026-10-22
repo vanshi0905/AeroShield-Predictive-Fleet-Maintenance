@@ -54,13 +54,26 @@ ScenarioType = Literal["gentle", "strong", "adaptive", "both", "all"]
 
 PUBLISHED_DEV_API_KEY = "aeroshield-dev-key"
 _api_key_env = os.environ.get("AEROSHIELD_API_KEY", "").strip()
-ACTIVE_API_KEY = _api_key_env if _api_key_env else PUBLISHED_DEV_API_KEY
+# Write routes are closed unless a private key is configured. The published dev key is accepted ONLY when the
+# operator explicitly opts in with AEROSHIELD_DEMO_MODE=true (one-click demos on a trusted machine).
+DEMO_MODE = os.environ.get("AEROSHIELD_DEMO_MODE", "").strip().lower() in ("1", "true", "yes")
+if _api_key_env and _api_key_env != PUBLISHED_DEV_API_KEY:
+    ACTIVE_API_KEY = _api_key_env
+elif DEMO_MODE:
+    ACTIVE_API_KEY = PUBLISHED_DEV_API_KEY
+else:
+    ACTIVE_API_KEY = ""
 
 
 def verify_write_access(x_api_key: Optional[str] = Header(None, alias="X-API-Key")) -> str:
     """Validates the operator API key for state-mutating write routes.
-    Rejects unauthorized requests with 401 Unauthorized.
+    Rejects unauthorized requests with 401 Unauthorized or 503 Service Unavailable when closed.
     """
+    if not ACTIVE_API_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="Write routes are closed: set a private AEROSHIELD_API_KEY on the server (see .env.example)."
+        )
     if not x_api_key or not hmac.compare_digest(x_api_key.encode("utf-8"), ACTIVE_API_KEY.encode("utf-8")):
         raise HTTPException(
             status_code=401,
@@ -208,6 +221,7 @@ def healthz():
         "ready_subsets": ready_subsets,
         "mode": "read-only-serverless" if is_vercel else "stateful-read-write",
         "auth_enabled": True,
+        "demo_mode": ACTIVE_API_KEY == PUBLISHED_DEV_API_KEY,
         "database_connected": len(ready_subsets) > 0,
     }
 

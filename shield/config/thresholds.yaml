@@ -52,6 +52,7 @@ HEALTHY_RUL: 110
 # Order volume / lifecycle
 WINDOW_CYCLES: 20
 MEDIUM_BUDGET: 10           # MEDIUM orders per maintenance window (CRITICAL/HIGH never capped)
+STALE_ESCALATION_IN_REPLAY: false   # replay has no operator acks; true marks nearly every order STALE -> NEEDS_HUMAN
 STALE_FACTOR: 2.0           # open > STALE_FACTOR x due window with no acknowledgement -> human
 REOPEN_WINDOW: 20
 REOPEN_LIMIT: 3

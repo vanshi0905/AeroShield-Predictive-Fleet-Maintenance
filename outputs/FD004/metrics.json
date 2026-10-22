@@ -101,7 +101,7 @@
     "work_orders": 120,
     "orders_per_100_engines_per_100_cycles": 9.956192751891676,
     "orders_per_100_engines": 48.38709677419355,
-    "stale_escalated": 119
+    "stale_escalated": 0
   },
   "audit_ok": true,
   "audit_msg": "Verified 2264 audit entries. Integrity 100% intact.",

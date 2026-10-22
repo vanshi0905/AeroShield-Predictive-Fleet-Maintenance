@@ -2301,13 +2301,26 @@
       lucide.createIcons();
     }
 
+        // Demo mode (server started with AEROSHIELD_DEMO_MODE=true) lets the dashboard use the published demo key.
+    fetch('/healthz').then(r => r.json()).then(h => { window.__demoKey = h.demo_mode ? 'aeroshield-dev-key' : null; }).catch(() => {});
+
+    function getOperatorKey() {
+      if (window.__demoKey) return window.__demoKey;
+      let k = sessionStorage.getItem('aeroshield_key');
+      if (!k) {
+        k = window.prompt('Operator API key (the AEROSHIELD_API_KEY configured on the server):') || '';
+        if (k) sessionStorage.setItem('aeroshield_key', k);
+      }
+      return k;
+    }
+
     async function dispatchOrder(orderId, status) {
       try {
         const res = await fetch('/api/work-orders/dispatch', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-API-Key': 'aeroshield-dev-key'
+            'X-API-Key': getOperatorKey()
           },
           body: JSON.stringify({ subset: currentSubset, order_id: orderId, new_status: status })
         });
@@ -2872,7 +2885,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-API-Key': 'aeroshield-dev-key'
+            'X-API-Key': getOperatorKey()
           },
           body: JSON.stringify({ subset: currentSubset, scenario: selectedDriftScenario })
         });

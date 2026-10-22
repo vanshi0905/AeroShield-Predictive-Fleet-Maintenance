@@ -279,8 +279,9 @@ class ShieldPipeline:
                     fault_demo[int(u_)] = {"injected": kind, "status": d["status"], "reason": d["exception_reason"]}
                 om_.conn.commit()
                 print(f"[5] fault injection demo -> {sum(v['status']=='NEEDS_HUMAN' for v in fault_demo.values())}/3 routed to human queue")
-        # In offline batch replay, preserve agent-generated work order statuses without synthetic staleness escalation
-        stale = []
+        # A replay has no operator acknowledging orders, so escalating "stale" here would push almost every order
+        # into the human queue. Staleness escalation belongs to live operation; enable only for experiments.
+        stale = om_.flag_stale(int(te["cycle"].max())) if self.cfg.get("STALE_ESCALATION_IN_REPLAY", False) else []
         ok, msg = om_.verify_audit_chain()
         final = te.groupby("unit").tail(1)
         counts = final["severity"].where(final["status"] != "NEEDS_HUMAN", "NEEDS_HUMAN").value_counts().to_dict()

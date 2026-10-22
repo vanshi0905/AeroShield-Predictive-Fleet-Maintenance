@@ -11,12 +11,29 @@ REPO_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 sys.path.insert(0, REPO_ROOT)
 sys.path.insert(0, os.path.join(REPO_ROOT, "platform"))
 
+TEST_KEY = "test-only-private-key"
+os.environ["AEROSHIELD_API_KEY"] = TEST_KEY   # must be set before the app module is imported
+
 try:
-    from platform.backend.main import app
+    import platform.backend.main as main_mod
 except ImportError:
-    from backend.main import app
+    import backend.main as main_mod
+app = main_mod.app
 
 client = TestClient(app)
+
+@pytest.fixture(autouse=True, scope="session")
+def preserve_work_orders_db():
+    """Ensures test writes do not dirty the committed outputs/FD001/work_orders.db."""
+    db_path = os.path.join(REPO_ROOT, "outputs", "FD001", "work_orders.db")
+    backup_data = None
+    if os.path.exists(db_path):
+        with open(db_path, "rb") as f:
+            backup_data = f.read()
+    yield
+    if backup_data is not None and os.path.exists(db_path):
+        with open(db_path, "wb") as f:
+            f.write(backup_data)
 
 
 def test_dashboard_endpoint():
@@ -132,7 +149,7 @@ def test_api_dispatch_work_order_auth():
                 "new_status": "DISPATCHED",
                 "operator": "Fleet Maintenance Controller"
             },
-            headers={"X-API-Key": "aeroshield-dev-key"}
+            headers={"X-API-Key": TEST_KEY}
         )
         assert res.status_code == 200
         assert res.json()["success"] is True
@@ -168,7 +185,7 @@ def test_api_retrain_trigger_execution(monkeypatch):
     res_invalid = client.post(
         "/api/retrain/trigger",
         json={"subset": "FD001", "scenario": "malicious"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res_invalid.status_code == 422
 
@@ -176,7 +193,7 @@ def test_api_retrain_trigger_execution(monkeypatch):
     res = client.post(
         "/api/retrain/trigger",
         json={"subset": "FD001", "scenario": "strong"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res.status_code == 200
     data = res.json()
@@ -221,13 +238,13 @@ def test_api_predict_live_inference():
     assert res_unauth.status_code == 401
 
     # 2. Absurd input bounds testing (Senior N2) -> 422
-    assert client.post("/api/predict", json={**payload, "unit": -5}, headers={"X-API-Key": "aeroshield-dev-key"}).status_code == 422
-    assert client.post("/api/predict", json={**payload, "cycle": 1000000000}, headers={"X-API-Key": "aeroshield-dev-key"}).status_code == 422
-    assert client.post("/api/predict", json={**payload, "op1": 1e300}, headers={"X-API-Key": "aeroshield-dev-key"}).status_code == 422
-    assert client.post("/api/predict", json={**payload, "sensors": {"s99": 10.0}}, headers={"X-API-Key": "aeroshield-dev-key"}).status_code == 422
+    assert client.post("/api/predict", json={**payload, "unit": -5}, headers={"X-API-Key": TEST_KEY}).status_code == 422
+    assert client.post("/api/predict", json={**payload, "cycle": 1000000000}, headers={"X-API-Key": TEST_KEY}).status_code == 422
+    assert client.post("/api/predict", json={**payload, "op1": 1e300}, headers={"X-API-Key": TEST_KEY}).status_code == 422
+    assert client.post("/api/predict", json={**payload, "sensors": {"s99": 10.0}}, headers={"X-API-Key": TEST_KEY}).status_code == 422
 
     # 3. Valid authenticated request -> 200
-    res = client.post("/api/predict", json=payload, headers={"X-API-Key": "aeroshield-dev-key"})
+    res = client.post("/api/predict", json=payload, headers={"X-API-Key": TEST_KEY})
     assert res.status_code == 200
     data = res.json()
     assert data["status"] == "success"
@@ -251,7 +268,7 @@ def test_senior_audit_invalid_status_returns_422():
     res = client.post(
         "/api/work-orders/dispatch",
         json={"subset": "FD001", "order_id": "WO-1", "new_status": "HACKED"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res.status_code == 422
 
@@ -261,7 +278,7 @@ def test_senior_audit_operator_sanitization_returns_422():
     res_xss = client.post(
         "/api/work-orders/dispatch",
         json={"subset": "FD001", "order_id": "WO-1", "new_status": "DISPATCHED", "operator": "<script>alert(1)</script>"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res_xss.status_code == 422
 
@@ -269,7 +286,7 @@ def test_senior_audit_operator_sanitization_returns_422():
     res_len = client.post(
         "/api/work-orders/dispatch",
         json={"subset": "FD001", "order_id": "WO-1", "new_status": "DISPATCHED", "operator": "A" * 61},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res_len.status_code == 422
 
@@ -287,7 +304,7 @@ def test_senior_audit_vercel_readonly_mode(monkeypatch):
     res_dispatch = client.post(
         "/api/work-orders/dispatch",
         json={"subset": "FD001", "order_id": "WO-1", "new_status": "DISPATCHED"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res_dispatch.status_code == 503
     assert "read-only" in res_dispatch.json()["detail"].lower()
@@ -295,7 +312,7 @@ def test_senior_audit_vercel_readonly_mode(monkeypatch):
     res_retrain = client.post(
         "/api/retrain/trigger",
         json={"subset": "FD001"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res_retrain.status_code == 503
 
@@ -311,7 +328,7 @@ def test_senior_audit_retrain_async_status_flow(monkeypatch):
     res = client.post(
         "/api/retrain/trigger?sync=false",
         json={"subset": "FD001", "scenario": "strong"},
-        headers={"X-API-Key": "aeroshield-dev-key"}
+        headers={"X-API-Key": TEST_KEY}
     )
     assert res.status_code == 200
     data = res.json()
@@ -325,3 +342,29 @@ def test_senior_audit_retrain_async_status_flow(monkeypatch):
     poll_data = poll_res.json()
     assert poll_data["job_id"] == job_id
     assert poll_data["status"] in ("running", "completed", "failed")
+
+
+def test_published_dev_key_is_rejected():
+    res = client.post("/api/work-orders/dispatch",
+                      json={"subset": "FD001", "order_id": "X", "new_status": "DISPATCHED"},
+                      headers={"X-API-Key": "aeroshield-dev-key"})
+    assert res.status_code == 401
+
+
+def test_write_routes_closed_without_private_key(monkeypatch):
+    monkeypatch.setattr(main_mod, "ACTIVE_API_KEY", "")
+    for key in (None, "aeroshield-dev-key", TEST_KEY):
+        headers = {"X-API-Key": key} if key else {}
+        res = client.post("/api/work-orders/dispatch",
+                          json={"subset": "FD001", "order_id": "X", "new_status": "DISPATCHED"}, headers=headers)
+        assert res.status_code == 503
+
+
+def test_demo_mode_is_opt_in_and_reported(monkeypatch):
+    assert client.get("/healthz").json()["demo_mode"] is False
+    monkeypatch.setattr(main_mod, "ACTIVE_API_KEY", main_mod.PUBLISHED_DEV_API_KEY)
+    assert client.get("/healthz").json()["demo_mode"] is True
+    res = client.post("/api/work-orders/dispatch",
+                      json={"subset": "FD001", "order_id": "NOPE", "new_status": "DISPATCHED"},
+                      headers={"X-API-Key": "aeroshield-dev-key"})
+    assert res.status_code != 401 and res.status_code != 503   # auth passed; order simply does not exist
