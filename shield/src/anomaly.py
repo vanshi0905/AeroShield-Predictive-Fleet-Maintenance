@@ -11,7 +11,7 @@ class AnomalyDetector:
         self.model = None; self.threshold = None
 
     def _fit(self, X):
-        return IsolationForest(n_estimators=200, random_state=self.seed, n_jobs=1).fit(X)
+        return IsolationForest(n_estimators=200, random_state=self.seed, n_jobs=-1).fit(X)
 
     @staticmethod
     def raw_score(model, X):

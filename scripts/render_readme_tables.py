@@ -29,8 +29,8 @@ def load(s):
 
 def blocks(M):
     t1 = [
-        "| Dataset | Operating Regimes | Fault Modes | Test Engines | Uncapped RMSE | NASA Score (Uncapped) | Capped RMSE (95% CI) | Late % | Conformal Coverage (80% Target) | Coverage when RUL ≤ 50 | Engines Needing a Human (final) |",
-        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |"
+        "| Dataset | Operating Regimes | Fault Modes | Test Engines | Uncapped RMSE | NASA Score (Uncapped) | Capped RMSE (95% CI) | Late % | Conformal Coverage (80% Target) | Coverage when RUL ≤ 50 | Final-Cycle Engines Needing Human | Replay Exception Events (Cockpit) |",
+        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |"
     ]
     for s in SUBSETS:
         m = M[s]
@@ -40,7 +40,7 @@ def blocks(M):
         t1.append(
             f"| **{s}** | {cond} | {fault} | {lw['n_engines']} | **{lw['rmse_uncapped_truth']:.2f}** | **{lw['nasa_uncapped_truth']:,.1f}** | "
             f"{lw['rmse_capped_truth']:.2f} [{ci[0]:.1f}, {ci[1]:.1f}] | {pct(lw['late_share'])} | **{pct(lw['coverage'])}** | "
-            f"{pct(lw['coverage_rul_le_50'])} | {m['severity_mix'].get('NEEDS_HUMAN', 0)} |"
+            f"{pct(lw['coverage_rul_le_50'])} | {m['severity_mix'].get('NEEDS_HUMAN', 0)} | {db_open_exceptions(s)} |"
         )
     t2 = [
         "| Dataset | Training: engines flagged | Training: false-alarm rate | Training: median lead (cycles) | Test: engines flagged | Test: false-alarm rate | Test: median lead (cycles) |",

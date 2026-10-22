@@ -25,16 +25,21 @@ Metrics reflect evaluation on the final cycle of every held-out test engine acro
 Following standard literature convention, **Uncapped RMSE** compares predictions against the raw physical truth; the asymmetric **NASA Score** heavily penalizes dangerous late predictions ($s_i = e^{d_i/10}-1$ for $d_i > 0$, vs $e^{-d_i/13}-1$ for early warnings); and **Capped RMSE** ($RUL_{cap} = 125$) reflects industrial degradation plateauing (Zheng et al., Babu et al.).
 
 <!-- BEGIN:SCORE_TABLE -->
-| Dataset | Operating Regimes | Fault Modes | Test Engines | Uncapped RMSE | NASA Score (Uncapped) | Capped RMSE (95% CI) | Late % | Conformal Coverage (80% Target) | Coverage when RUL ≤ 50 | Engines Needing a Human (final) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **FD001** | 1 regime | HPC Degradation | 100 | **12.98** | **213.5** | 11.30 [9.3, 13.3] | 29.0% | **84.0%** | 100.0% | 0 |
-| **FD002** | 6 regimes | HPC Degradation | 259 | **27.01** | **8,519.2** | 13.97 [12.6, 15.3] | 19.3% | **88.4%** | 98.9% | 6 |
-| **FD003** | 1 regime | HPC + Fan Degradation | 100 | **13.25** | **266.0** | 11.42 [9.3, 13.4] | 36.0% | **84.0%** | 93.1% | 3 |
-| **FD004** | 6 regimes | HPC + Fan Degradation | 248 | **33.49** | **15,017.6** | 21.49 [19.1, 23.8] | 35.9% | **81.5%** | 90.0% | 51 |
+| Dataset | Operating Regimes | Fault Modes | Test Engines | Uncapped RMSE | NASA Score (Uncapped) | Capped RMSE (95% CI) | Late % | Conformal Coverage (80% Target) | Coverage when RUL ≤ 50 | Final-Cycle Engines Needing Human | Replay Exception Events (Cockpit) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **FD001** | 1 regime | HPC Degradation | 100 | **12.98** | **213.5** | 11.30 [9.3, 13.3] | 29.0% | **84.0%** | 100.0% | 0 | 10 |
+| **FD002** | 6 regimes | HPC Degradation | 259 | **27.01** | **8,519.2** | 13.97 [12.6, 15.3] | 19.3% | **88.4%** | 98.9% | 6 | 95 |
+| **FD003** | 1 regime | HPC + Fan Degradation | 100 | **13.25** | **266.0** | 11.42 [9.3, 13.4] | 36.0% | **84.0%** | 93.1% | 3 | 37 |
+| **FD004** | 6 regimes | HPC + Fan Degradation | 248 | **33.49** | **15,017.6** | 21.49 [19.1, 23.8] | 35.9% | **81.5%** | 90.0% | 51 | 128 |
 <!-- END:SCORE_TABLE -->
 
 > [!NOTE]
 > **Conformal Coverage Milestone**: All four subsets meet or exceed the rigorous 80% coverage target (FD001: 84.0%, FD002: 88.4%, FD003: 84.0%, FD004: 81.5%). In safety-critical near-failure operations ($RUL \le 50$), empirical coverage exceeds 90%–100% across the fleet.
+
+> [!NOTE]
+> **Reconciling Human Exception Metrics (Final Test Engines vs. Replay Events)**:
+> - **Final-Cycle Engines Needing Human (0, 6, 3, 51)**: Evaluates fleet health on the final observed test cycle for each engine. An engine is only flagged if its terminal snapshot could not be autonomously resolved (e.g. wide epistemic conformal interval $P_{90} - P_{10} > 60$ cycles). In single-regime fleets (FD001), 100% of final cycles are handled autonomously (0 exceptions).
+> - **Replay Exception Events in Cockpit / `/api/exceptions` (10, 95, 37, 128)**: Cumulative exception records in the SQLite audit ledger across the full historical simulation. This counts transient sensor data-quality violations, simulated sensor fault demonstrations, and intermediate cycles where epistemic interval width widened temporarily before narrowing as degradation progressed.
 
 ---
 
@@ -108,13 +113,11 @@ Telemetry Stream ──► Feature Pipeline ──► Quantile Model ──► C
      * **Coverage Guarantee**: Conformal coverage $\ge 75\%$ (within 5 points of the 80% target).
      * **Late Share Limit**: Late prediction share $\le$ Champion late share $+ 5\%$.
 3. **Closed-Loop Retraining Demo (`retrain_demo.py`)**:
-   * Supports dynamic fleet partitioning across all subsets (60% baseline, 10% frozen validation, 30% delivered fleet with 20% early service right-censoring).
-   * Evaluates multiple drift scenarios:
-     * **Gentle Drift** ($\sigma=0.02$ step): Challenger rejected (noise within nominal tolerances; model mutation rejected).
-     * **Severe Shock** ($\sigma=0.30$ step): Challenger rejected (per-engine baseline features absorb uniform offset, protecting champion stability).
-     * **Adaptive Calibration** ($\sigma=0.45$ progressive drift): Challenger PROMOTED! (Champion RMSE 12.80 $
-ightarrow$ Challenger RMSE 12.62, NASA 8,004 $
-ightarrow$ 7,074, coverage 78.8%). Passes all 4 gates and updates `outputs/FD001/retrain_registry.json`.
+   * Evaluates end-to-end MLOps governance with dynamic fleet partitioning (60% baseline training, 10% frozen validation, 30% delivered fleet with right-censoring):
+     * **Gentle Drift** ($\sigma=0.02$ step): Challenger rejected (noise is within nominal bounds; gate prevents frivolous retraining).
+     * **Severe Shock** ($\sigma=0.30$ step): Challenger rejected (per-engine baseline features absorb uniform offset; gate protects champion stability).
+     * **Progressive Degradation Drift** ($\sigma=0.45$ progressive calibration drift): Challenger PROMOTED! (Champion RMSE 12.80 $\rightarrow$ Challenger RMSE 12.62, NASA 8,004 $\rightarrow$ 7,074, coverage 78.8%). Successfully verifies that the automated promotion path and gate enforcement (`outputs/FD001/retrain_registry.json`) function end-to-end under genuine physical drift.
+   * **Note on Statistical Significance**: This demo exercises the automated promotion path against the 4 statistical non-inferiority gates. It demonstrates that the governance pipeline works end-to-end, rather than claiming statistical significance over small 15-engine evaluation slices.
 4. **Age-Matched Drift Detection**:
    * Measures Population Stability Index (PSI) and Kolmogorov-Smirnov ($p$-value) within matched engine operating age bins ($1..50, 51..100, \dots$), preventing fleet aging from falsely triggering retraining alarms.
 5. **Live MLOps Cockpit Tab**:
@@ -234,10 +237,10 @@ pip install -r requirements-dev.txt
 ```bash
 pytest
 ```
-*80 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, and API endpoint security.*
+*83 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, and API endpoint security.*
 
 ### 3. Run Pipeline End-to-End
-Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset in ~15 seconds:
+Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset (~3–5 minutes per subset depending on CPU hardware):
 ```bash
 python run_all.py --subset FD001
 ```

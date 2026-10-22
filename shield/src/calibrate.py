@@ -43,7 +43,7 @@ class SecondaryEstimator:
             max_depth=8,
             min_samples_leaf=10,
             random_state=random_state,
-            n_jobs=1,
+            n_jobs=-1,
         )
 
     def fit(self, X, y, sample_weight=None):

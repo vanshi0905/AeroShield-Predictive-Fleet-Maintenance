@@ -975,9 +975,12 @@
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex items-center gap-2">
               <div class="p-1 rounded bg-purple-500/10 text-purple-400"><i data-lucide="user-x" class="w-5 h-5"></i></div>
-              <h3 class="font-bold text-white tracking-wide">Human Exception Queue</h3>
+              <div>
+                <h3 class="font-bold text-white tracking-wide">Human Exception Queue</h3>
+                <p class="text-[10px] text-slate-400 font-normal" id="exception-subtitle">Replay events vs final-cycle engines</p>
+              </div>
             </div>
-            <span class="text-xs text-purple-300 font-medium px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 whitespace-nowrap shrink-0" id="exception-badge">0 Pending</span>
+            <span class="text-xs text-purple-300 font-medium px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 whitespace-nowrap shrink-0" id="exception-badge">0 Events</span>
           </div>
 
           <div class="space-y-3 max-h-[32rem] overflow-y-auto pr-1" id="exceptions-list">
@@ -2347,7 +2350,13 @@
         const res = await fetch(`/api/exceptions?subset=${currentSubset}`);
         const data = await res.json();
         const exc = data.exceptions || [];
-        document.getElementById('exception-badge').innerText = `${exc.length} Pending`;
+        const finalMap = { "FD001": 0, "FD002": 6, "FD003": 3, "FD004": 51 };
+        const finalCnt = finalMap[currentSubset] ?? 0;
+        document.getElementById('exception-badge').innerText = `${exc.length} Events (${finalCnt} Final)`;
+        const subEl = document.getElementById('exception-subtitle');
+        if (subEl) {
+          subEl.innerText = `${exc.length} logged replay events • ${finalCnt} engines requiring human triage at final cycle`;
+        }
 
         const list = document.getElementById('exceptions-list');
         if (!exc.length) {
