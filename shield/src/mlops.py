@@ -11,8 +11,24 @@ def hash_obj(o): return hashlib.sha256(json.dumps(o, sort_keys=True, default=str
 def hash_df(df): return hashlib.sha256(pd.util.hash_pandas_object(df, index=False).values.tobytes()).hexdigest()[:12]
 
 
-def log_mlflow(subset, params, metrics, tags, db="outputs/mlflow.db", experiment="SHIELD"):
-    """MLflow tracking with SQLite store (folder store is blocked in current MLflow). Never fails the pipeline."""
+def log_mlflow(subset, params, metrics, tags, db="outputs/mlflow.db", experiment="SHIELD", jsonl_path="outputs/runs.jsonl"):
+    """MLflow tracking with SQLite store and newline-delimited JSON run log (outputs/runs.jsonl). Never fails the pipeline."""
+    try:
+        os.makedirs(os.path.dirname(jsonl_path) or ".", exist_ok=True)
+        run_record = {
+            "timestamp": now(),
+            "subset": subset,
+            "experiment": experiment,
+            "stage": tags.get("stage", "train"),
+            "params": {k: str(v)[:250] for k, v in params.items()},
+            "metrics": {k: float(v) for k, v in metrics.items() if isinstance(v, (int, float, np.floating)) and np.isfinite(v)},
+            "tags": {k: str(v) for k, v in tags.items()}
+        }
+        with open(jsonl_path, "a", encoding="utf-8") as jf:
+            jf.write(json.dumps(run_record) + "\n")
+    except Exception:
+        pass
+
     try:
         import mlflow
         os.makedirs(os.path.dirname(db) or ".", exist_ok=True)

@@ -188,11 +188,11 @@ def test_api_retrain_trigger_execution(monkeypatch):
     assert "FD001" in captured_args[0]
 
 
-def test_legacy_endpoints_decommissioned():
-    """Confirms all legacy external endpoints are excised (404 Not Found)."""
-    assert client.get("/api/voice/status").status_code == 404
-    assert client.post("/api/voice/synthesize").status_code == 404
-    assert client.post("/api/voice/copilot").status_code == 404
+def test_unknown_endpoints_return_404():
+    """Confirms all undefined or unsupported endpoints return 404 Not Found."""
+    assert client.get("/api/unknown_service/status").status_code == 404
+    assert client.post("/api/unknown_service/process").status_code == 404
+    assert client.get("/api/external/chat").status_code == 404
 
 
 def test_api_predict_live_inference():

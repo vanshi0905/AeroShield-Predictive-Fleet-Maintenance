@@ -8,6 +8,7 @@ import os
 import sqlite3
 import hmac
 import hashlib
+import argparse
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLISHED_DEMO_HMAC_KEY = "aeroshield-v3-secret-key"
@@ -67,6 +68,11 @@ def verify_audit(subset: str = "FD001") -> bool:
 
 
 if __name__ == "__main__":
-    sub = sys.argv[1] if len(sys.argv) > 1 else "FD001"
-    ok = verify_audit(sub)
+    parser = argparse.ArgumentParser(description="Verify AeroShield cryptographic audit hash chain.")
+    parser.add_argument("positional_subset", nargs="?", default=None, help="Subset to verify (e.g. FD001)")
+    parser.add_argument("--subset", "-s", default="FD001", help="Subset to verify (default: FD001)")
+    args = parser.parse_args()
+
+    target_subset = args.positional_subset or args.subset
+    ok = verify_audit(target_subset)
     sys.exit(0 if ok else 1)
