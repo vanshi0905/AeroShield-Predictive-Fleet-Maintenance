@@ -27,7 +27,7 @@
         "oof_fold_rmse_mean": 10.386528063907075,
         "oof_fold_rmse_sd": 0.5940930360904718
       },
-      "path": "outputs\\FD001\\model_v1.joblib",
+      "path": "outputs/FD001/model_v1.joblib",
       "promoted_at": "2026-10-19T10:27:03.111196+00:00",
       "note": "initial training"
     },
@@ -90,7 +90,7 @@
           "oof_fold_rmse_mean": 10.386528063907075,
           "oof_fold_rmse_sd": 0.5940930360904718
         },
-        "path": "outputs\\FD001\\model_v1.joblib",
+        "path": "outputs/FD001/model_v1.joblib",
         "promoted_at": "2026-10-15T18:26:49.040607+00:00",
         "note": "initial training"
       },
@@ -121,7 +121,7 @@
           "oof_fold_rmse_mean": 10.386528063907075,
           "oof_fold_rmse_sd": 0.5940930360904718
         },
-        "path": "outputs\\FD001\\model_v1.joblib",
+        "path": "outputs/FD001/model_v1.joblib",
         "promoted_at": "2026-10-15T19:04:49.229378+00:00",
         "note": "initial training"
       },
@@ -152,7 +152,7 @@
           "oof_fold_rmse_mean": 10.386528063907075,
           "oof_fold_rmse_sd": 0.5940930360904718
         },
-        "path": "outputs\\FD001\\model_v1.joblib",
+        "path": "outputs/FD001/model_v1.joblib",
         "promoted_at": "2026-10-19T09:23:15.821876+00:00",
         "note": "initial training"
       },
@@ -183,7 +183,7 @@
           "oof_fold_rmse_mean": 10.386528063907075,
           "oof_fold_rmse_sd": 0.5940930360904718
         },
-        "path": "outputs\\FD001\\model_v1.joblib",
+        "path": "outputs/FD001/model_v1.joblib",
         "promoted_at": "2026-10-19T10:06:00.244143+00:00",
         "note": "initial training"
       }
@@ -217,7 +217,7 @@
         "oof_fold_rmse_mean": 9.994664347853984,
         "oof_fold_rmse_sd": 1.6395984748667785
       },
-      "path": "outputs\\FD003\\model_v1.joblib",
+      "path": "outputs/FD003/model_v1.joblib",
       "promoted_at": "2026-10-22T08:14:43.629031+00:00",
       "note": "initial training"
     },
@@ -283,7 +283,7 @@
         "oof_fold_rmse_mean": 12.892511922397258,
         "oof_fold_rmse_sd": 0.24962029229174176
       },
-      "path": "outputs\\FD002\\model_v1.joblib",
+      "path": "outputs/FD002/model_v1.joblib",
       "promoted_at": "2026-10-15T19:09:25.460762+00:00",
       "note": "initial training"
     },
@@ -346,7 +346,7 @@
           "oof_fold_rmse_mean": 19.06351968197611,
           "oof_fold_rmse_sd": 0.6769895690460226
         },
-        "path": "outputs\\FD002\\model_v1.joblib",
+        "path": "outputs/FD002/model_v1.joblib",
         "promoted_at": "2026-10-15T18:33:46.504515+00:00",
         "note": "initial training"
       }

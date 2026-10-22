@@ -332,7 +332,7 @@ pytest -v
   - `test_api_exceptions`: Validates human specialist queue.
   - `test_api_audit_log_and_verify`: Validates live SHA-256 chain verification.
   - `test_api_mlops`: Validates PSI drift thresholds and champion metrics.
-  - `test_api_dispatch_work_order`: Validates status updates and blockchain block appending.
+  - `test_api_dispatch_work_order`: Validates status updates and cryptographic hash chain block appending.
   - `test_legacy_endpoints_decommissioned`: Validates that all legacy external endpoints return 404 Not Found.
 
 **Result**: `60 passed in 17.83s (100% Green)`.

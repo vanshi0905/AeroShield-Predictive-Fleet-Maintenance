@@ -80,7 +80,7 @@ Covered in automated test suites:
 * [`platform/test_platform.py`](../platform/test_platform.py) (13 tests):
   - `test_serve_dashboard`: Validates tactical HTML delivery.
   - `test_api_subsets`, `test_api_fleet_readiness`, `test_api_fleet_matrix`, `test_api_engine_drilldown`: Validates core data endpoints.
-  - `test_api_work_orders`, `test_api_exceptions`, `test_api_audit_log`, `test_api_audit_verify`: Validates triage and blockchain verification.
+  - `test_api_work_orders`, `test_api_exceptions`, `test_api_audit_log`, `test_api_audit_verify`: Validates triage and cryptographic hash chain verification.
   - `test_api_dispatch_work_order`, `test_api_retrain_trigger`: Validates write authorization and retrain trigger.
   - `test_api_mlops`: Validates MLOps drift and gate metrics.
   - `test_legacy_endpoints_decommissioned`: Validates that all legacy external endpoints return 404 Not Found.

@@ -4,7 +4,7 @@
     "api/index.py": {
       "maxDuration": 30,
       "includeFiles": "outputs/**",
-      "excludeFiles": "{data/**,docs/**,layer_documentation/**,shield/tests/**,**/*.md,**/*.zip}"
+      "excludeFiles": "{data/**,docs/**,shield/tests/**,**/*.md,**/*.zip}"
     }
   },
   "headers": [

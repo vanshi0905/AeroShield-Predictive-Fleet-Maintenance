@@ -109,6 +109,7 @@ class ModelRegistry:
     def champion(self, subset): return self.data.get(subset, {}).get("champion")
 
     def register_champion(self, subset, version, metrics, path="", note="initial training"):
+        path = str(path).replace("\\", "/") if path else ""
         s = self.data.setdefault(subset, {"champion": None, "history": []})
         if s["champion"]: s["champion"]["status"] = "archived"; s["history"].append(s["champion"])
         s["champion"] = {"version": version, "status": "champion", "metrics": metrics, "path": path, "promoted_at": now(), "note": note}

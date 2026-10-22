@@ -50,7 +50,7 @@ bridge = DataBridge()
 VALID_SUBSETS = ("FD001", "FD002", "FD003", "FD004")
 SubsetType = Literal["FD001", "FD002", "FD003", "FD004"]
 StatusType = Literal["DISPATCHED", "IN_PROGRESS", "COMPLETED", "CANCELLED"]
-ScenarioType = Literal["gentle", "strong", "both"]
+ScenarioType = Literal["gentle", "strong", "adaptive", "both", "all"]
 
 PUBLISHED_DEV_API_KEY = "aeroshield-dev-key"
 _api_key_env = os.environ.get("AEROSHIELD_API_KEY", "").strip()
@@ -98,7 +98,7 @@ class OrderActionRequest(BaseModel):
 
 class RetrainRequest(BaseModel):
     subset: SubsetType = "FD001"
-    scenario: ScenarioType = "strong"
+    scenario: ScenarioType = "adaptive"
 
 
 class PredictTelemetryRequest(BaseModel):

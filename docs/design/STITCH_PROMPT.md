@@ -70,7 +70,7 @@ Design a world-class, production-grade Web Dashboard for "AeroShield" — an Aut
 3. Human-in-the-Loop Exception Queue:
    - Dedicated panel highlighting unconfirmed sensor spikes, frozen telemetry readings, or sensor dropouts that require manual engineer sign-off.
 4. Tamper-Evident Cryptographic Audit Ledger (SHA-256):
-   - Visual blockchain / block hash chain table with verified chain status badge ("100% INTACT - 0 TAMPERING DETECTED").
+   - Visual cryptographic hash chain / block hash chain table with verified chain status badge ("100% INTACT - 0 TAMPERING DETECTED").
    - Columns: Block #, Timestamp, Order ID, Event Type, Action, Previous Hash, Block SHA-256 Digest.
    - "Verify Chain Integrity" interactive button with sub-second recalculation animation.
 

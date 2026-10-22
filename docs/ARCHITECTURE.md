@@ -41,7 +41,7 @@ AeroShield is a closed-loop autonomous predictive maintenance and digital twin p
 │    * Tier 4 (Healthy):  RUL > 80 cyc   --> Cleared for Sortie Envelope                 │
 │  - Human Exception Queue: Sensor Spikes & Primary/Secondary Model Disagreements        │
 │  - SQLite Order Lifecycle State Machine (DRAFT -> DISPATCHED -> COMPLETED)             │
-│  - Tamper-Evident SHA-256 Blockchain Audit Chain (Immutable Event Provenance)          │
+│  - Tamper-Evident SHA-256 cryptographic hash chain Audit Chain (Immutable Event Provenance)          │
 └───────────────────────────────────────────┬────────────────────────────────────────────┘
                                             │
                                             ▼

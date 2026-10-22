@@ -64,7 +64,7 @@ Work orders follow a strict, ACID-compliant SQLite state transition flow:
 ### D. Demo HMAC hash chain
 Work-order events are appended as an HMAC-SHA256 chain so a reviewer can see that a sample row was not edited in place. The key that seals `outputs/*/work_orders.db` is published in this repository. That makes the chain a demo. It is not an FAA Part 145 or EASA M.A.306 maintenance record, and someone who has the key can recompute it.
 
-AeroShield enforces this via a cryptographically linked SHA-256 blockchain ledger:
+AeroShield enforces this via a cryptographically linked SHA-256 tamper-evident audit ledger:
 1. **Genesis Block**: Sealed with initial root nonce:
    $$\text{Hash}_0 = \text{SHA256}(\text{"GENESIS\_"} \parallel 0^{32})$$
 2. **Successive Block Sealing**: For entry $i \ge 1$:

@@ -1,3 +1,4 @@
+<!-- Production static edge distribution for Vercel preview. Source: platform/frontend/dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1193,8 +1194,9 @@
           <div class="flex items-center gap-2.5 flex-wrap">
             <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Drift Scenario:</span>
             <div class="flex items-center p-0.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-              <button onclick="switchDriftScenario('gentle')" id="btn-drift-gentle" class="px-2.5 py-1 rounded-md font-medium bg-slate-800 text-white border border-slate-700/80 transition text-[11px]">Gentle Drift (&sigma;=0.02)</button>
+              <button onclick="switchDriftScenario('adaptive')" id="btn-drift-adaptive" class="px-2.5 py-1 rounded-md font-medium bg-slate-800 text-emerald-400 border border-emerald-500/30 transition text-[11px]">Adaptive Calibration (Promoted)</button>
               <button onclick="switchDriftScenario('strong')" id="btn-drift-strong" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]">Severe Shock (&sigma;=0.30)</button>
+              <button onclick="switchDriftScenario('gentle')" id="btn-drift-gentle" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition text-[11px]">Gentle Drift (&sigma;=0.02)</button>
 
             </div>
             <span class="text-xs text-slate-300 font-medium px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-1.5">
@@ -1337,7 +1339,7 @@
     let allEngines = [];
     let currentDrilldownData = null;
     let currentMlopsData = null;
-    let selectedDriftScenario = "gentle";
+    let selectedDriftScenario = "adaptive";
     let rulChartInstance = null;
     let anomChartInstance = null;
     let playbackInterval = null;
@@ -2519,8 +2521,9 @@
       selectedDriftScenario = scenario;
       renderMlopsViews();
       const labels = {
-        gentle: 'Gentle Drift (σ=0.02)',
+        adaptive: 'Adaptive Calibration (Promoted)',
         strong: 'Severe Shock (σ=0.30)',
+        gentle: 'Gentle Drift (σ=0.02)',
 
       };
       showToast(`Switched drift scenario to ${labels[scenario] || scenario}`, 'info');
