@@ -203,11 +203,11 @@
       </div>
 
       <!-- Live Badges -->
-      <div class="flex items-center gap-3 border-l border-slate-800/80 pl-3">
+      <div class="flex items-center gap-3 border-l border-slate-800/80 pl-3 whitespace-nowrap shrink-0">
         <div class="text-right">
-          <p class="text-[10px] text-slate-400 font-medium">Conformal Target</p>
-          <p class="text-xs font-semibold text-emerald-300 flex items-center justify-end gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <p class="text-[10px] text-slate-400 font-medium whitespace-nowrap">Conformal Target</p>
+          <p class="text-xs font-semibold text-emerald-300 flex items-center justify-end gap-1.5 whitespace-nowrap shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
             80.0% Coverage
           </p>
         </div>
@@ -377,19 +377,19 @@
                 <p class="text-xs text-slate-400">Multi-stage compressor gas-path, turbine creep & shaft balance telemetry</p>
               </div>
             </div>
-            <span class="text-xs text-slate-400 font-medium hidden sm:inline px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Gas-Path Telemetry</span>
+            <span class="text-xs text-slate-400 font-medium hidden sm:inline px-2 py-0.5 rounded bg-slate-900 border border-slate-800 whitespace-nowrap shrink-0">Gas-Path Telemetry</span>
           </div>
 
           <!-- Circular / Segmented Progress Subsystem Cards -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="subsystem-grid">
             
             <!-- HPC Card -->
-            <div class="p-4 vision-glass-subtle border border-rose-500/20 hover:border-rose-500/40 transition rounded-xl flex items-center justify-between gap-3">
-              <div class="space-y-1">
-                <span class="text-[11px] text-slate-400 font-semibold uppercase">High-Pressure Compressor</span>
-                <p class="text-sm font-extrabold text-white">HPC Stage 1-8</p>
-                <p class="text-xs font-bold text-rose-400 mono mt-1" id="sub-hpc">-- Orders</p>
-                <p class="text-[10px] text-slate-400">Static Drop &Delta;Ps30/P30</p>
+            <div class="p-3.5 vision-glass-subtle border border-rose-500/20 hover:border-rose-500/40 transition rounded-xl flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase block truncate">High-Pressure Compressor</span>
+                <p class="text-sm font-extrabold text-white truncate">HPC Stage 1-8</p>
+                <p class="text-xs font-bold text-rose-400 mono mt-1 whitespace-nowrap shrink-0" id="sub-hpc">-- Orders</p>
+                <p class="text-[10px] text-slate-400 truncate">Static Drop &Delta;Ps30/P30</p>
               </div>
               <!-- Mini SVG Ring Meter -->
               <div class="relative w-14 h-14 flex items-center justify-center">
@@ -402,12 +402,12 @@
             </div>
 
             <!-- LPT Card -->
-            <div class="p-4 vision-glass-subtle border border-amber-500/20 hover:border-amber-500/40 transition rounded-xl flex items-center justify-between gap-3">
-              <div class="space-y-1">
-                <span class="text-[11px] text-slate-400 font-semibold uppercase">Low-Pressure Turbine</span>
-                <p class="text-sm font-extrabold text-white">LPT & Blades</p>
-                <p class="text-xs font-bold text-amber-400 mono mt-1" id="sub-lpt">-- Orders</p>
-                <p class="text-[10px] text-slate-400">EGT Margin & Creep &Delta;T50</p>
+            <div class="p-3.5 vision-glass-subtle border border-amber-500/20 hover:border-amber-500/40 transition rounded-xl flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase block truncate">Low-Pressure Turbine</span>
+                <p class="text-sm font-extrabold text-white truncate">LPT & Blades</p>
+                <p class="text-xs font-bold text-amber-400 mono mt-1 whitespace-nowrap shrink-0" id="sub-lpt">-- Orders</p>
+                <p class="text-[10px] text-slate-400 truncate">EGT Margin & Creep &Delta;T50</p>
               </div>
               <!-- Mini SVG Ring Meter -->
               <div class="relative w-14 h-14 flex items-center justify-center">
@@ -420,12 +420,12 @@
             </div>
 
             <!-- Fan & LP Shaft Card -->
-            <div class="p-4 vision-glass-subtle border border-cyan-500/20 hover:border-cyan-500/40 transition rounded-xl flex items-center justify-between gap-3">
-              <div class="space-y-1">
-                <span class="text-[11px] text-slate-400 font-semibold uppercase">Fan & LP Shaft</span>
-                <p class="text-sm font-extrabold text-white">Fan Dynamic Balance</p>
-                <p class="text-xs font-bold text-cyan-400 mono mt-1" id="sub-fan">-- Orders</p>
-                <p class="text-[10px] text-slate-400">Corrected Speed &Delta;NRf</p>
+            <div class="p-3.5 vision-glass-subtle border border-cyan-500/20 hover:border-cyan-500/40 transition rounded-xl flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase block truncate">Fan & LP Shaft</span>
+                <p class="text-sm font-extrabold text-white truncate">Fan Dynamic Balance</p>
+                <p class="text-xs font-bold text-cyan-400 mono mt-1 whitespace-nowrap shrink-0" id="sub-fan">-- Orders</p>
+                <p class="text-[10px] text-slate-400 truncate">Corrected Speed &Delta;NRf</p>
               </div>
               <!-- Mini SVG Ring Meter -->
               <div class="relative w-14 h-14 flex items-center justify-center">
@@ -445,10 +445,10 @@
               <span class="text-slate-300 font-medium">Gas-Path Interaction Ratios:</span>
             </div>
             <div class="flex items-center gap-2.5 flex-wrap">
-              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s8/s9 (Fan/Core Speed)</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s13/s14 (Corrected Speed)</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s11/s7 (Pressure Ratio)</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium">s4/s3 (Temperature Ratio)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium whitespace-nowrap shrink-0">s8/s9 (Fan/Core Speed)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium whitespace-nowrap shrink-0">s13/s14 (Corrected Speed)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium whitespace-nowrap shrink-0">s11/s7 (Pressure Ratio)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[11px] font-medium whitespace-nowrap shrink-0">s4/s3 (Temperature Ratio)</span>
             </div>
           </div>
         </div>
@@ -460,39 +460,39 @@
               <div class="p-1 rounded bg-sky-500/10 text-sky-400"><i data-lucide="pie-chart" class="w-5 h-5"></i></div>
               <h3 class="font-bold text-white tracking-wide">Fleet Risk Severity Mix</h3>
             </div>
-            <span class="text-xs text-slate-400 font-medium">Distribution</span>
+            <span class="text-xs text-slate-400 font-medium whitespace-nowrap shrink-0">Distribution</span>
           </div>
 
           <div class="space-y-2 text-xs font-medium" id="severity-list">
-            <div class="flex items-center justify-between p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/15 transition">
-              <span class="text-rose-300 font-medium flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Critical (RUL &le; 25)
+            <div class="flex items-center justify-between p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/15 transition gap-2">
+              <span class="text-rose-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0"></span> Critical (RUL &le; 25)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums" id="count-critical">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-critical">--</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition">
-              <span class="text-amber-300 font-medium flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> High Priority (RUL &le; 50)
+            <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition gap-2">
+              <span class="text-amber-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span> High Priority (RUL &le; 50)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums" id="count-high">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-high">--</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/15 transition">
-              <span class="text-yellow-300 font-medium flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Medium Priority (RUL &le; 80)
+            <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/15 transition gap-2">
+              <span class="text-yellow-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 shrink-0"></span> Medium Priority (RUL &le; 80)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums" id="count-medium">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-medium">--</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/15 transition">
-              <span class="text-emerald-300 font-medium flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Healthy (Nominal)
+            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/15 transition gap-2">
+              <span class="text-emerald-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span> Healthy (Nominal)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums" id="count-normal">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-normal">--</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/15 transition">
-              <span class="text-purple-300 font-medium flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Review Required (Exception)
+            <div class="flex items-center justify-between p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/15 transition gap-2">
+              <span class="text-purple-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0"></span> Review Required (Exception)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums" id="count-human">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-human">--</span>
             </div>
           </div>
         </div>
@@ -507,7 +507,7 @@
               <h3 class="font-bold text-white tracking-wide">Turbofan Fleet Health Matrix</h3>
               <p class="text-xs text-slate-400">Click column headers to sort &bull; Select any row for Engine Drill-down & Time-Travel</p>
             </div>
-            <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-sky-300 font-medium ml-2" id="matrix-count">0 Engines</span>
+            <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-sky-300 font-medium ml-2 whitespace-nowrap shrink-0" id="matrix-count">0 Engines</span>
           </div>
 
           <!-- Search & Filter Controls -->
@@ -606,7 +606,7 @@
             <button onclick="stepUnit(1)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition" title="Next Engine">
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
-            <span id="drilldown-status-badge" class="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Healthy</span>
+            <span id="drilldown-status-badge" class="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 whitespace-nowrap shrink-0">Healthy</span>
           </div>
         </div>
 
@@ -646,7 +646,7 @@
                 <option value="80">2x (Fast)</option>
                 <option value="35">4x (Turbo)</option>
               </select>
-              <span class="font-semibold text-white text-xs px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 tabular-nums" id="replay-cycle-label">Cycle -- of --</span>
+              <span class="font-semibold text-white text-xs px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 tabular-nums whitespace-nowrap shrink-0" id="replay-cycle-label">Cycle -- of --</span>
             </div>
           </div>
 
@@ -657,61 +657,61 @@
 
           <!-- Cycle Milestone Markers -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-sans">
-            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
-              <span class="text-sky-400 font-semibold block">● Cycle 1</span>
-              <span>Commissioning / Baseline</span>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 min-w-0">
+              <span class="text-sky-400 font-semibold block whitespace-nowrap truncate">● Cycle 1</span>
+              <span class="block whitespace-nowrap truncate text-slate-400">Baseline / Start</span>
             </div>
-            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
-              <span class="text-amber-400 font-semibold block" id="milestone-anom">● Anomaly Onset</span>
-              <span>Residual Shift &Delta;dbase &gt; &tau;</span>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 min-w-0">
+              <span class="text-amber-400 font-semibold block whitespace-nowrap truncate" id="milestone-anom">● Anomaly Onset</span>
+              <span class="block whitespace-nowrap truncate text-slate-400">Shift &Delta;dbase &gt; &tau;</span>
             </div>
-            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
-              <span class="text-purple-400 font-semibold block" id="milestone-knee">● Degradation Knee</span>
-              <span>P10 Bound Divergence</span>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 min-w-0">
+              <span class="text-purple-400 font-semibold block whitespace-nowrap truncate" id="milestone-knee">● Degradation Knee</span>
+              <span class="block whitespace-nowrap truncate text-slate-400">P10 Bound Divergence</span>
             </div>
-            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400">
-              <span class="text-rose-400 font-semibold block" id="milestone-crit">● Critical Cutoff</span>
-              <span>RUL &le; 25 Depot Dispatch</span>
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-400 min-w-0">
+              <span class="text-rose-400 font-semibold block whitespace-nowrap truncate" id="milestone-crit">● Critical Cutoff</span>
+              <span class="block whitespace-nowrap truncate text-slate-400">RUL &le; 25 Dispatch</span>
             </div>
           </div>
         </div>
 
         <!-- 4 Aerodynamic Gas-Path Ratios Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-sky-400 space-y-1">
-            <div class="flex items-center justify-between">
-              <p class="text-[11px] text-slate-400 font-medium">Fan/Core Speed (s8/s9)</p>
-              <span class="text-[11px] text-sky-400 font-semibold tabular-nums" id="ratio-s8-s9-dev">Nominal</span>
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-sky-400 space-y-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="text-[11px] text-slate-400 font-medium truncate min-w-0">Fan/Core (s8/s9)</p>
+              <span class="text-[11px] text-sky-400 font-semibold tabular-nums whitespace-nowrap shrink-0" id="ratio-s8-s9-dev">Nominal</span>
             </div>
-            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s8-s9-val">--</h4>
-            <p class="text-[10px] text-slate-500">Physical Nf / Nc ratio</p>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums whitespace-nowrap" id="ratio-s8-s9-val">--</h4>
+            <p class="text-[10px] text-slate-500 truncate">Physical Nf / Nc ratio</p>
           </div>
           
-          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-emerald-400 space-y-1">
-            <div class="flex items-center justify-between">
-              <p class="text-[11px] text-slate-400 font-medium">Corrected Speed (s13/s14)</p>
-              <span class="text-[11px] text-emerald-400 font-semibold tabular-nums" id="ratio-s13-s14-dev">Nominal</span>
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-emerald-400 space-y-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="text-[11px] text-slate-400 font-medium truncate min-w-0">Corrected (s13/s14)</p>
+              <span class="text-[11px] text-emerald-400 font-semibold tabular-nums whitespace-nowrap shrink-0" id="ratio-s13-s14-dev">Nominal</span>
             </div>
-            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s13-s14-val">--</h4>
-            <p class="text-[10px] text-slate-500">Corrected NRf / NRc ratio</p>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums whitespace-nowrap" id="ratio-s13-s14-val">--</h4>
+            <p class="text-[10px] text-slate-500 truncate">Corrected NRf / NRc ratio</p>
           </div>
           
-          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-amber-400 space-y-1">
-            <div class="flex items-center justify-between">
-              <p class="text-[11px] text-slate-400 font-medium">Pressure Ratio (s11/s7)</p>
-              <span class="text-[11px] text-amber-400 font-semibold tabular-nums" id="ratio-s11-s7-dev">Nominal</span>
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-amber-400 space-y-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="text-[11px] text-slate-400 font-medium truncate min-w-0">Pressure (s11/s7)</p>
+              <span class="text-[11px] text-amber-400 font-semibold tabular-nums whitespace-nowrap shrink-0" id="ratio-s11-s7-dev">Nominal</span>
             </div>
-            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s11-s7-val">--</h4>
-            <p class="text-[10px] text-slate-500">HPC Static/Total Ps30 / P30</p>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums whitespace-nowrap" id="ratio-s11-s7-val">--</h4>
+            <p class="text-[10px] text-slate-500 truncate">Ps30 / P30 ratio</p>
           </div>
           
-          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-rose-400 space-y-1">
-            <div class="flex items-center justify-between">
-              <p class="text-[11px] text-slate-400 font-medium">Temp Ratio (s4/s3)</p>
-              <span class="text-[11px] text-rose-400 font-semibold tabular-nums" id="ratio-s4-s3-dev">Nominal</span>
+          <div class="p-3.5 rounded-xl vision-glass-subtle border-l-4 border-rose-400 space-y-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="text-[11px] text-slate-400 font-medium truncate min-w-0">Temp Ratio (s4/s3)</p>
+              <span class="text-[11px] text-rose-400 font-semibold tabular-nums whitespace-nowrap shrink-0" id="ratio-s4-s3-dev">Nominal</span>
             </div>
-            <h4 class="text-lg font-bold text-slate-100 tabular-nums" id="ratio-s4-s3-val">--</h4>
-            <p class="text-[10px] text-slate-500">LPT / HPC Outlet T50 / T30</p>
+            <h4 class="text-lg font-bold text-slate-100 tabular-nums whitespace-nowrap" id="ratio-s4-s3-val">--</h4>
+            <p class="text-[10px] text-slate-500 truncate">T50 / T30 ratio</p>
           </div>
         </div>
 
@@ -726,104 +726,104 @@
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs" id="sensor-telemetry-meters">
             <!-- s2 Meter -->
-            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s2 <span class="text-[10px] text-slate-500">T24 LPC Outlet</span></span>
-                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s2">--</span>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle min-w-0">
+              <div class="flex items-center justify-between text-[11px] gap-1">
+                <span class="text-slate-300 font-medium truncate min-w-0">s2 <span class="text-[10px] text-slate-500">T24 LPC</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums whitespace-nowrap shrink-0" id="meter-s2">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
                 <div id="meter-bar-s2" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
               </div>
-              <div class="flex items-center justify-between text-[9px] text-slate-500">
-                <span>-3σ</span>
-                <span id="meter-status-s2" class="text-emerald-400 font-medium">Nominal</span>
-                <span>+3σ</span>
+              <div class="flex items-center justify-between text-[9px] text-slate-500 whitespace-nowrap">
+                <span class="shrink-0">-3σ</span>
+                <span id="meter-status-s2" class="text-emerald-400 font-medium whitespace-nowrap shrink-0">Nominal</span>
+                <span class="shrink-0">+3σ</span>
               </div>
             </div>
 
             <!-- s3 Meter -->
-            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s3 <span class="text-[10px] text-slate-500">T30 HPC Outlet</span></span>
-                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s3">--</span>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle min-w-0">
+              <div class="flex items-center justify-between text-[11px] gap-1">
+                <span class="text-slate-300 font-medium truncate min-w-0">s3 <span class="text-[10px] text-slate-500">T30 HPC</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums whitespace-nowrap shrink-0" id="meter-s3">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
                 <div id="meter-bar-s3" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
               </div>
-              <div class="flex items-center justify-between text-[9px] text-slate-500">
-                <span>-3σ</span>
-                <span id="meter-status-s3" class="text-emerald-400 font-medium">Nominal</span>
-                <span>+3σ</span>
+              <div class="flex items-center justify-between text-[9px] text-slate-500 whitespace-nowrap">
+                <span class="shrink-0">-3σ</span>
+                <span id="meter-status-s3" class="text-emerald-400 font-medium whitespace-nowrap shrink-0">Nominal</span>
+                <span class="shrink-0">+3σ</span>
               </div>
             </div>
 
             <!-- s4 Meter -->
-            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s4 <span class="text-[10px] text-slate-500">T50 LPT</span></span>
-                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s4">--</span>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle min-w-0">
+              <div class="flex items-center justify-between text-[11px] gap-1">
+                <span class="text-slate-300 font-medium truncate min-w-0">s4 <span class="text-[10px] text-slate-500">T50 LPT</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums whitespace-nowrap shrink-0" id="meter-s4">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
                 <div id="meter-bar-s4" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
               </div>
-              <div class="flex items-center justify-between text-[9px] text-slate-500">
-                <span>-3σ</span>
-                <span id="meter-status-s4" class="text-emerald-400 font-medium">Nominal</span>
-                <span>+3σ</span>
+              <div class="flex items-center justify-between text-[9px] text-slate-500 whitespace-nowrap">
+                <span class="shrink-0">-3σ</span>
+                <span id="meter-status-s4" class="text-emerald-400 font-medium whitespace-nowrap shrink-0">Nominal</span>
+                <span class="shrink-0">+3σ</span>
               </div>
             </div>
 
             <!-- s7 Meter -->
-            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s7 <span class="text-[10px] text-slate-500">P30 HPC</span></span>
-                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s7">--</span>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle min-w-0">
+              <div class="flex items-center justify-between text-[11px] gap-1">
+                <span class="text-slate-300 font-medium truncate min-w-0">s7 <span class="text-[10px] text-slate-500">P30 HPC</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums whitespace-nowrap shrink-0" id="meter-s7">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
                 <div id="meter-bar-s7" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
               </div>
-              <div class="flex items-center justify-between text-[9px] text-slate-500">
-                <span>-3σ</span>
-                <span id="meter-status-s7" class="text-emerald-400 font-medium">Nominal</span>
-                <span>+3σ</span>
+              <div class="flex items-center justify-between text-[9px] text-slate-500 whitespace-nowrap">
+                <span class="shrink-0">-3σ</span>
+                <span id="meter-status-s7" class="text-emerald-400 font-medium whitespace-nowrap shrink-0">Nominal</span>
+                <span class="shrink-0">+3σ</span>
               </div>
             </div>
 
             <!-- s11 Meter -->
-            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s11 <span class="text-[10px] text-slate-500">Ps30 Stat</span></span>
-                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s11">--</span>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle min-w-0">
+              <div class="flex items-center justify-between text-[11px] gap-1">
+                <span class="text-slate-300 font-medium truncate min-w-0">s11 <span class="text-[10px] text-slate-500">Ps30 Stat</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums whitespace-nowrap shrink-0" id="meter-s11">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
                 <div id="meter-bar-s11" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
               </div>
-              <div class="flex items-center justify-between text-[9px] text-slate-500">
-                <span>-3σ</span>
-                <span id="meter-status-s11" class="text-emerald-400 font-medium">Nominal</span>
-                <span>+3σ</span>
+              <div class="flex items-center justify-between text-[9px] text-slate-500 whitespace-nowrap">
+                <span class="shrink-0">-3σ</span>
+                <span id="meter-status-s11" class="text-emerald-400 font-medium whitespace-nowrap shrink-0">Nominal</span>
+                <span class="shrink-0">+3σ</span>
               </div>
             </div>
 
             <!-- s12 Meter -->
-            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="text-slate-300 font-medium">s12 <span class="text-[10px] text-slate-500">Phi Flow</span></span>
-                <span class="font-semibold text-slate-200 text-xs tabular-nums" id="meter-s12">--</span>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 vision-glass-subtle min-w-0">
+              <div class="flex items-center justify-between text-[11px] gap-1">
+                <span class="text-slate-300 font-medium truncate min-w-0">s12 <span class="text-[10px] text-slate-500">Phi Flow</span></span>
+                <span class="font-semibold text-slate-200 text-xs tabular-nums whitespace-nowrap shrink-0" id="meter-s12">--</span>
               </div>
               <div class="relative w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/30 to-rose-500/30 pointer-events-none"></div>
                 <div id="meter-bar-s12" class="h-full bg-sky-400 rounded-full transition-all duration-150" style="width: 50%"></div>
               </div>
-              <div class="flex items-center justify-between text-[9px] text-slate-500">
-                <span>-3σ</span>
-                <span id="meter-status-s12" class="text-emerald-400 font-medium">Nominal</span>
-                <span>+3σ</span>
+              <div class="flex items-center justify-between text-[9px] text-slate-500 whitespace-nowrap">
+                <span class="shrink-0">-3σ</span>
+                <span id="meter-status-s12" class="text-emerald-400 font-medium whitespace-nowrap shrink-0">Nominal</span>
+                <span class="shrink-0">+3σ</span>
               </div>
             </div>
           </div>
@@ -840,7 +840,7 @@
               <div class="p-1 rounded bg-cyan-500/10 text-cyan-400"><i data-lucide="trending-down" class="w-4 h-4"></i></div>
               <h4 class="font-bold text-white text-sm">RUL Degradation & 80% Conformal Band</h4>
             </div>
-            <span class="text-[11px] mono text-cyan-300 font-semibold" id="rul-legend-text">P10 - P50 - P90 [80% Bound]</span>
+            <span class="text-[11px] mono text-cyan-300 font-semibold whitespace-nowrap shrink-0" id="rul-legend-text">P10 - P50 - P90 [80% Bound]</span>
           </div>
           <div class="h-72 relative">
             <canvas id="rulChart"></canvas>
@@ -854,7 +854,7 @@
               <div class="p-1 rounded bg-amber-500/10 text-amber-400"><i data-lucide="alert-triangle" class="w-4 h-4"></i></div>
               <h4 class="font-bold text-white text-sm">Early-Warning Anomaly Trajectory (dbase)</h4>
             </div>
-            <span class="text-[11px] mono text-amber-300 font-semibold" id="anom-threshold-label">Threshold: --</span>
+            <span class="text-[11px] mono text-amber-300 font-semibold whitespace-nowrap shrink-0" id="anom-threshold-label">Threshold: --</span>
           </div>
           <div class="h-72 relative">
             <canvas id="anomalyChart"></canvas>
@@ -876,45 +876,45 @@
               <p class="text-xs text-slate-400">Zero-LLM Autonomous Maintenance Rule Engine with Budget & Re-opening Guardrails</p>
             </div>
           </div>
-          <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/20">Rules Engine v2.1</span>
+          <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/20 whitespace-nowrap shrink-0">Rules Engine v2.1</span>
         </div>
 
         <!-- Flow diagram boxes -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
-          <div class="p-3.5 vision-glass-subtle border-l-4 border-rose-500/80 space-y-1 rounded-lg">
-            <div class="flex items-center justify-between">
-              <p class="font-semibold text-rose-300">Tier 1: Critical</p>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 font-medium border border-rose-500/20">AOG Grounding</span>
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-rose-500/80 space-y-1 rounded-lg min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="font-semibold text-rose-300 text-xs truncate min-w-0">Tier 1: Critical</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 font-medium border border-rose-500/20 whitespace-nowrap shrink-0">AOG Grounding</span>
             </div>
-            <p class="text-slate-300 font-medium">P10 &le; 15 or P50 &le; 25</p>
-            <p class="text-[11px] text-slate-400">Immediate depot grounding; uncapped budget; auto-dispatch without human roadblock.</p>
+            <p class="text-slate-300 font-medium text-[11px] whitespace-nowrap truncate">P10 &le; 15 or P50 &le; 25</p>
+            <p class="text-[11px] text-slate-400 truncate">Immediate depot grounding; uncapped budget auto-dispatch</p>
           </div>
 
-          <div class="p-3.5 vision-glass-subtle border-l-4 border-amber-500/80 space-y-1 rounded-lg">
-            <div class="flex items-center justify-between">
-              <p class="font-semibold text-amber-300">Tier 2: High Priority</p>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-medium border border-amber-500/20">Shop Visit</span>
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-amber-500/80 space-y-1 rounded-lg min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="font-semibold text-amber-300 text-xs truncate min-w-0">Tier 2: High</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-medium border border-amber-500/20 whitespace-nowrap shrink-0">Shop Visit</span>
             </div>
-            <p class="text-slate-300 font-medium">P50 &le; 50 cycles</p>
-            <p class="text-[11px] text-slate-400">Schedule shop visit at next maintenance window; uncapped depot slot.</p>
+            <p class="text-slate-300 font-medium text-[11px] whitespace-nowrap truncate">P50 &le; 50 cycles</p>
+            <p class="text-[11px] text-slate-400 truncate">Schedule depot visit at next window; priority slot</p>
           </div>
 
-          <div class="p-3.5 vision-glass-subtle border-l-4 border-yellow-500/80 space-y-1 rounded-lg">
-            <div class="flex items-center justify-between">
-              <p class="font-semibold text-yellow-300">Tier 3: Medium Priority</p>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-300 font-medium border border-yellow-500/20">Scheduled</span>
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-yellow-500/80 space-y-1 rounded-lg min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="font-semibold text-yellow-300 text-xs truncate min-w-0">Tier 3: Medium</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-300 font-medium border border-yellow-500/20 whitespace-nowrap shrink-0">Scheduled</span>
             </div>
-            <p class="text-slate-300 font-medium">P50 &le; 80 or Anomaly + P50 &le; 100</p>
-            <p class="text-[11px] text-slate-400">Plan inspection; bounded by budget guardrails (max 10 work orders / maintenance window).</p>
+            <p class="text-slate-300 font-medium text-[11px] whitespace-nowrap truncate">P50 &le; 80 or Anom + P50 &le; 100</p>
+            <p class="text-[11px] text-slate-400 truncate">Plan inspection; budget guardrail (max 10 orders/window)</p>
           </div>
 
-          <div class="p-3.5 vision-glass-subtle border-l-4 border-purple-500/80 space-y-1 rounded-lg">
-            <div class="flex items-center justify-between">
-              <p class="font-semibold text-purple-300">Human Exception</p>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium border border-purple-500/20">Specialist Review</span>
+          <div class="p-3.5 vision-glass-subtle border-l-4 border-purple-500/80 space-y-1 rounded-lg min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <p class="font-semibold text-purple-300 text-xs truncate min-w-0">Human Exception</p>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium border border-purple-500/20 whitespace-nowrap shrink-0">Specialist</span>
             </div>
-            <p class="text-slate-300 font-medium">Sensor Fault or Model Disagree &gt; 25</p>
-            <p class="text-[11px] text-slate-400">Data-quality anomaly or primary vs secondary model divergence routed to queue.</p>
+            <p class="text-slate-300 font-medium text-[11px] whitespace-nowrap truncate">Fault or Divergence &gt; 25</p>
+            <p class="text-[11px] text-slate-400 truncate">Sensor spike or model divergence routed to queue</p>
           </div>
         </div>
       </div>
@@ -976,7 +976,7 @@
               <div class="p-1 rounded bg-purple-500/10 text-purple-400"><i data-lucide="user-x" class="w-5 h-5"></i></div>
               <h3 class="font-bold text-white tracking-wide">Human Exception Queue</h3>
             </div>
-            <span class="text-xs text-purple-300 font-medium px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20" id="exception-badge">0 Pending</span>
+            <span class="text-xs text-purple-300 font-medium px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 whitespace-nowrap shrink-0" id="exception-badge">0 Pending</span>
           </div>
 
           <div class="space-y-3 max-h-[32rem] overflow-y-auto pr-1" id="exceptions-list">
@@ -996,7 +996,7 @@
             <div>
               <div class="flex items-center gap-2">
                 <h3 class="font-bold text-white tracking-tight text-sm">Demo maintenance ledger</h3>
-                <span class="text-[10px] px-2 py-0.5 rounded font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Sample hash chain</span>
+                <span class="text-[10px] px-2 py-0.5 rounded font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap shrink-0">Sample hash chain</span>
               </div>
               <p class="text-xs text-slate-400 font-sans">HMAC-SHA256 chain of work-order events. The sample files use a published demo key, so this is not an FAA Part 145 or EASA M.A.306 record.</p>
             </div>
@@ -1004,12 +1004,12 @@
 
           <!-- Controls: Verify Ledger Button & Integrity Badge -->
           <div class="flex items-center gap-2.5">
-            <span id="audit-status-badge" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 inline-flex items-center gap-1.5 shadow-sm">
+            <span id="audit-status-badge" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 inline-flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               <span id="audit-status-text">Ledger 100% Intact</span>
             </span>
 
-            <button onclick="verifyAuditChain()" id="btn-verify-audit" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-200 hover:text-white font-medium text-xs transition flex items-center gap-1.5 active:scale-95 shadow-sm">
+            <button onclick="verifyAuditChain()" id="btn-verify-audit" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-200 hover:text-white font-medium text-xs transition flex items-center gap-1.5 active:scale-95 shadow-sm whitespace-nowrap shrink-0">
               <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
               <span>Verify Cryptographic Chain</span>
             </button>
@@ -1018,40 +1018,40 @@
 
         <!-- Compliance Architecture Summary Tiles -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">Ledger State</span>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 min-w-0">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block whitespace-nowrap truncate">Ledger State</span>
             <div class="flex items-baseline gap-1.5 mt-0.5">
-              <span class="text-sm font-bold text-white tabular-nums" id="audit-stat-blocks">--</span>
-              <span class="text-[10px] text-slate-400">sealed blocks</span>
+              <span class="text-sm font-bold text-white tabular-nums whitespace-nowrap" id="audit-stat-blocks">--</span>
+              <span class="text-[10px] text-slate-400 whitespace-nowrap">blocks</span>
             </div>
-            <span class="text-[10px] text-slate-500 font-sans">Strict monotonic continuity</span>
+            <span class="text-[10px] text-slate-500 font-sans block whitespace-nowrap truncate">Strict monotonic ledger</span>
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">Digest Standard</span>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 min-w-0">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block whitespace-nowrap truncate">Digest Standard</span>
             <div class="flex items-baseline gap-1.5 mt-0.5">
-              <span class="text-sm font-bold text-slate-200 font-mono">HMAC-SHA256</span>
-              <span class="text-[10px] text-slate-400">Keyed Digest</span>
+              <span class="text-sm font-bold text-slate-200 font-mono whitespace-nowrap">HMAC-SHA256</span>
+              <span class="text-[10px] text-slate-400 whitespace-nowrap">Keyed</span>
             </div>
-            <span class="text-[10px] text-slate-500 font-sans">32-byte tamper-evident MAC</span>
+            <span class="text-[10px] text-slate-500 font-sans block whitespace-nowrap truncate">32-byte tamper seal</span>
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">What this is</span>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 min-w-0">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block whitespace-nowrap truncate">What this is</span>
             <div class="flex items-baseline gap-1.5 mt-0.5">
-              <span class="text-sm font-bold text-slate-200">Student demo</span>
+              <span class="text-sm font-bold text-slate-200 whitespace-nowrap">Student demo</span>
             </div>
-            <span class="text-[10px] text-slate-500 font-sans">Not a Part 145 release</span>
+            <span class="text-[10px] text-slate-500 font-sans block whitespace-nowrap truncate">Demonstration testbed</span>
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">Chain Integrity</span>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 min-w-0">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block whitespace-nowrap truncate">Chain Integrity</span>
             <div class="flex items-baseline gap-1.5 mt-0.5">
-              <span class="text-sm font-bold text-emerald-400 flex items-center gap-1">
+              <span class="text-sm font-bold text-emerald-400 flex items-center gap-1 whitespace-nowrap">
                 <i data-lucide="check" class="w-3.5 h-3.5"></i> 0 Mismatches
               </span>
             </div>
-            <span class="text-[10px] text-slate-500 font-sans">All parent hashes verified</span>
+            <span class="text-[10px] text-slate-500 font-sans block whitespace-nowrap truncate">All hashes verified</span>
           </div>
         </div>
 
@@ -1109,72 +1109,72 @@
             </div>
           </div>
 
-          <button onclick="triggerRetrainDemo()" id="retrain-btn" class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs transition flex items-center gap-2 active:scale-95 shadow-md">
+          <button onclick="triggerRetrainDemo()" id="retrain-btn" class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs transition flex items-center gap-2 active:scale-95 shadow-md whitespace-nowrap shrink-0">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
             Execute Retraining Demo
           </button>
         </div>
 
-        <!-- 4 Gate Rules Status Banners -->
+        <!-- 4 Gate Rules Status Banners (Single-Line Badges & Compact Metrics) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           <!-- Card 1: RMSE -->
-          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">Prediction Accuracy</span>
-              <span id="badge-gate-rmse" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+          <div class="p-3.5 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-xs font-semibold text-slate-200 truncate min-w-0">Accuracy (RMSE)</span>
+              <span id="badge-gate-rmse" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>Passed
               </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-gate-rmse" class="text-xl font-bold text-white tabular-nums tracking-tight">9.67</span>
-              <span id="sub-gate-rmse" class="text-xs text-slate-400 tabular-nums">vs 9.14 Baseline</span>
+            <div class="flex items-baseline justify-between gap-2 pt-0.5">
+              <span id="val-gate-rmse" class="text-xl font-bold text-white tabular-nums tracking-tight whitespace-nowrap">9.67</span>
+              <span id="sub-gate-rmse" class="text-xs text-slate-400 tabular-nums whitespace-nowrap shrink-0">vs 9.14 Base</span>
             </div>
-            <p class="text-[11px] text-slate-500 leading-normal font-sans">Parity constraint • No degradation permitted</p>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans truncate">Parity • No degradation</p>
           </div>
 
           <!-- Card 2: NASA Loss -->
-          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">Asymmetric Mission Loss</span>
-              <span id="badge-gate-nasa" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+          <div class="p-3.5 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-xs font-semibold text-slate-200 truncate min-w-0">Mission Loss (NASA)</span>
+              <span id="badge-gate-nasa" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>Passed
               </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-gate-nasa" class="text-xl font-bold text-white tabular-nums tracking-tight">+2.5%</span>
-              <span id="sub-gate-nasa" class="text-xs text-slate-400 tabular-nums">vs 2,779 Baseline</span>
+            <div class="flex items-baseline justify-between gap-2 pt-0.5">
+              <span id="val-gate-nasa" class="text-xl font-bold text-white tabular-nums tracking-tight whitespace-nowrap">+2.5%</span>
+              <span id="sub-gate-nasa" class="text-xs text-slate-400 tabular-nums whitespace-nowrap shrink-0">vs 2,779 Base</span>
             </div>
-            <p class="text-[11px] text-slate-500 leading-normal font-sans">NASA penalty • Maximum +5.0% tolerance</p>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans truncate">Max +5.0% tolerance</p>
           </div>
 
           <!-- Card 3: Conformal Coverage -->
-          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">Conformal Coverage</span>
-              <span id="badge-gate-cov" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+          <div class="p-3.5 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-xs font-semibold text-slate-200 truncate min-w-0">Conformal Coverage</span>
+              <span id="badge-gate-cov" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>Passed
               </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-gate-cov" class="text-xl font-bold text-white tabular-nums tracking-tight">87.7%</span>
-              <span id="sub-gate-cov" class="text-xs text-slate-400 tabular-nums">Target &ge; 75.0%</span>
+            <div class="flex items-baseline justify-between gap-2 pt-0.5">
+              <span id="val-gate-cov" class="text-xl font-bold text-white tabular-nums tracking-tight whitespace-nowrap">87.7%</span>
+              <span id="sub-gate-cov" class="text-xs text-slate-400 tabular-nums whitespace-nowrap shrink-0">Target &ge; 75%</span>
             </div>
-            <p class="text-[11px] text-slate-500 leading-normal font-sans">1-sided safety envelope guarantee</p>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans truncate">1-sided safety envelope</p>
           </div>
 
           <!-- Card 4: Late Prediction -->
-          <div class="p-4 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">Late Over-Prediction</span>
-              <span id="badge-gate-late" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Passed
+          <div class="p-3.5 rounded-xl vision-glass-subtle border border-slate-800/80 hover:border-slate-700/60 transition space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-xs font-semibold text-slate-200 truncate min-w-0">Late Prediction</span>
+              <span id="badge-gate-late" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>Passed
               </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-gate-late" class="text-xl font-bold text-white tabular-nums tracking-tight">21.9%</span>
-              <span id="sub-gate-late" class="text-xs text-slate-400 tabular-nums">vs 26.3% Baseline</span>
+            <div class="flex items-baseline justify-between gap-2 pt-0.5">
+              <span id="val-gate-late" class="text-xl font-bold text-white tabular-nums tracking-tight whitespace-nowrap">21.9%</span>
+              <span id="sub-gate-late" class="text-xs text-slate-400 tabular-nums whitespace-nowrap shrink-0">vs 26.3% Base</span>
             </div>
-            <p class="text-[11px] text-slate-500 leading-normal font-sans">Late failure bias protection • &le; +5 pts</p>
+            <p class="text-[11px] text-slate-500 leading-normal font-sans truncate">Late bias limit &le; +5 pts</p>
           </div>
         </div>
       </div>
@@ -1205,10 +1205,10 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs" id="psi-bins-container">
           <!-- Bin 1 -->
-          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-300">Bin [0 - 40 cycles]</span>
-              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PSI: 0.041 (SAFE)</span>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <span class="font-bold text-slate-300 text-xs truncate min-w-0">Bin [0 - 40 cyc]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold whitespace-nowrap shrink-0">PSI: 0.041 (SAFE)</span>
             </div>
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] text-slate-400"><span>s2 Total Temp</span><span>0.032</span></div>
@@ -1218,10 +1218,10 @@
             </div>
           </div>
           <!-- Bin 2 -->
-          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-300">Bin [40 - 80 cycles]</span>
-              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PSI: 0.068 (SAFE)</span>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <span class="font-bold text-slate-300 text-xs truncate min-w-0">Bin [40 - 80 cyc]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold whitespace-nowrap shrink-0">PSI: 0.068 (SAFE)</span>
             </div>
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] text-slate-400"><span>s4 LPT Temp</span><span>0.058</span></div>
@@ -1231,10 +1231,10 @@
             </div>
           </div>
           <!-- Bin 3 -->
-          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-300">Bin [80 - 140 cycles]</span>
-              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">PSI: 0.124 (MODERATE)</span>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <span class="font-bold text-slate-300 text-xs truncate min-w-0">Bin [80 - 140 cyc]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold whitespace-nowrap shrink-0">PSI: 0.124 (MOD)</span>
             </div>
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] text-slate-400"><span>s11 Static Press</span><span>0.118</span></div>
@@ -1244,10 +1244,10 @@
             </div>
           </div>
           <!-- Bin 4 -->
-          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-300">Bin [140+ cycles]</span>
-              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">PSI: 0.142 (SAFE)</span>
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <span class="font-bold text-slate-300 text-xs truncate min-w-0">Bin [140+ cyc]</span>
+              <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold whitespace-nowrap shrink-0">PSI: 0.142 (SAFE)</span>
             </div>
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] text-slate-400"><span>s13 Corrected Nf</span><span>0.138</span></div>
@@ -1715,7 +1715,7 @@
               ${e.anomaly_score} ${e.anomaly_alert ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 ml-1.5 font-medium">Alert</span>' : ''}
             </td>
             <td class="p-3">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-medium ${badgeColor}">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-medium ${badgeColor} whitespace-nowrap shrink-0">
                 <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
                 ${statusLabel}
               </span>
@@ -2204,12 +2204,12 @@
           return `
             <div class="p-4 rounded-xl vision-glass-subtle border ${halo} space-y-3 relative overflow-hidden ticket-edge group">
               <!-- Top Header -->
-              <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                <div class="flex items-center gap-2">
-                  <span class="font-semibold text-xs text-white">${o.order_id}</span>
-                  <span class="text-[10px] px-2 py-0.5 rounded ${badge}">${label}</span>
+              <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 gap-2">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="font-semibold text-xs text-white truncate">${o.order_id}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded ${badge} whitespace-nowrap shrink-0">${label}</span>
                 </div>
-                <span class="text-xs text-sky-300 font-semibold">Unit #${o.engine_unit}</span>
+                <span class="text-xs text-sky-300 font-semibold whitespace-nowrap shrink-0">Unit #${o.engine_unit}</span>
               </div>
 
               <!-- Ticket Body -->
@@ -2282,7 +2282,7 @@
             <tr class="hover:bg-slate-800/30 transition">
               <td class="p-2.5 font-medium text-white">${o.order_id}</td>
               <td class="p-2.5 text-sky-300 font-medium">#${o.engine_unit}</td>
-              <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] ${badge}">${label}</span></td>
+              <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] ${badge} whitespace-nowrap shrink-0">${label}</span></td>
               <td class="p-2.5 text-slate-300 tabular-nums">${o.due_cycle || o.cycle}</td>
               <td class="p-2.5 text-slate-300">${o.suspect_subsystem || "HPC"}</td>
               <td class="p-2.5 text-emerald-400 font-medium">${o.status}</td>
@@ -2571,7 +2571,7 @@
       const elSubRmse = document.getElementById('sub-gate-rmse');
       const elBadgeRmse = document.getElementById('badge-gate-rmse');
       if (elValRmse) elValRmse.innerText = challRmseVal;
-      if (elSubRmse) elSubRmse.innerText = `vs ${champRmseVal} Baseline`;
+      if (elSubRmse) elSubRmse.innerText = `vs ${champ.rmse ? champ.rmse.toFixed(2) : '9.14'} Base`;
       if (elBadgeRmse) {
         elBadgeRmse.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passRmse ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passRmse ? 'Passed' : 'Blocked'}`;
         elBadgeRmse.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passRmse ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
@@ -2585,7 +2585,7 @@
       const elSubNasa = document.getElementById('sub-gate-nasa');
       const elBadgeNasa = document.getElementById('badge-gate-nasa');
       if (elValNasa) elValNasa.innerText = `${pctNasa >= 0 ? '+' : ''}${pctNasa}%`;
-      if (elSubNasa) elSubNasa.innerText = `vs ${champNasaVal.toLocaleString()} Baseline`;
+      if (elSubNasa) elSubNasa.innerText = `vs ${(champ.nasa || 2779).toLocaleString()} Base`;
       if (elBadgeNasa) {
         elBadgeNasa.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passNasa ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passNasa ? 'Passed' : 'Blocked'}`;
         elBadgeNasa.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passNasa ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
@@ -2597,7 +2597,7 @@
       const elSubCov = document.getElementById('sub-gate-cov');
       const elBadgeCov = document.getElementById('badge-gate-cov');
       if (elValCov) elValCov.innerText = `${challCovVal}%`;
-      if (elSubCov) elSubCov.innerText = `Target ≥ 75.0%`;
+      if (elSubCov) elSubCov.innerText = `Target >= 75%`;
       if (elBadgeCov) {
         elBadgeCov.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${passCov ? 'bg-emerald-400' : 'bg-rose-400'}"></span>${passCov ? 'Passed' : 'Blocked'}`;
         elBadgeCov.className = `px-2 py-0.5 rounded text-[10px] font-semibold ${passCov ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} inline-flex items-center gap-1.5`;
@@ -2779,7 +2779,7 @@
                   </td>
                   <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≤ Champion (Parity)</td>
                   <td class="py-2.5 pl-2 text-right font-sans">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffRmse <= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffRmse <= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} whitespace-nowrap shrink-0">
                       ${diffRmse <= 0 ? 'Passed' : 'Blocked'}
                     </span>
                   </td>
@@ -2793,7 +2793,7 @@
                   </td>
                   <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≤ +5.0% Rise</td>
                   <td class="py-2.5 pl-2 text-right font-sans">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffNasaPct <= 5.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffNasaPct <= 5.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} whitespace-nowrap shrink-0">
                       ${diffNasaPct <= 5.0 ? 'Passed' : 'Blocked'}
                     </span>
                   </td>
@@ -2807,7 +2807,7 @@
                   </td>
                   <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≥ 75.0% Min</td>
                   <td class="py-2.5 pl-2 text-right font-sans">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${challCov >= 75.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${challCov >= 75.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} whitespace-nowrap shrink-0">
                       ${challCov >= 75.0 ? 'Passed' : 'Blocked'}
                     </span>
                   </td>
@@ -2821,7 +2821,7 @@
                   </td>
                   <td class="py-2.5 px-2 text-right text-slate-400 font-sans text-[10px]">≤ +5.0 pts</td>
                   <td class="py-2.5 pl-2 text-right font-sans">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffLate <= 5.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${diffLate <= 5.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} whitespace-nowrap shrink-0">
                       ${diffLate <= 5.0 ? 'Passed' : 'Blocked'}
                     </span>
                   </td>
