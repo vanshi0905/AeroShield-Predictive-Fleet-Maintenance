@@ -392,7 +392,7 @@ class DataBridge:
             return tmp_db
         return original_path
 
-    def get_work_orders(self, subset: str = "FD001", limit: int = 50) -> List[Dict[str, Any]]:
+    def get_work_orders(self, subset: str = "FD001", status: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
         """Reads work orders from the SQLite database."""
         db_path = self._get_db_path(subset)
         if not os.path.exists(db_path):
@@ -402,10 +402,16 @@ class DataBridge:
             with sqlite3.connect(db_path) as conn:
                 conn.row_factory = sqlite3.Row
                 cur = conn.cursor()
-                cur.execute(
-                    "SELECT * FROM work_orders WHERE order_id NOT LIKE 'EX-%' ORDER BY cycle DESC, severity ASC LIMIT ?",
-                    (limit,),
-                )
+                if status:
+                    cur.execute(
+                        "SELECT * FROM work_orders WHERE order_id NOT LIKE 'EX-%' AND status = ? ORDER BY cycle DESC, severity ASC LIMIT ?",
+                        (status, limit),
+                    )
+                else:
+                    cur.execute(
+                        "SELECT * FROM work_orders WHERE order_id NOT LIKE 'EX-%' ORDER BY cycle DESC, severity ASC LIMIT ?",
+                        (limit,),
+                    )
                 return [dict(r) for r in cur.fetchall()]
         except Exception as e:
             print(f"Error loading work orders: {e}")
@@ -543,7 +549,12 @@ class DataBridge:
                     "COMPLETED": {"COMPLETED"},
                     "CANCELLED": {"CANCELLED"},
                 }
-                allowed = valid_transitions.get(curr_status, {new_status})
+                if curr_status not in valid_transitions:
+                    return {
+                        "success": False,
+                        "error": f"Unknown work order status '{curr_status}'. Cannot transition from an unvetted status."
+                    }
+                allowed = valid_transitions[curr_status]
                 if new_status not in allowed:
                     return {
                         "success": False,
@@ -583,7 +594,8 @@ class DataBridge:
         op1: float = 0.0,
         op2: float = 0.0,
         op3: float = 100.0,
-        sensors: Optional[Dict[str, float]] = None
+        sensors: Optional[Dict[str, float]] = None,
+        persist: bool = False
     ) -> Dict[str, Any]:
         """Executes live end-to-end inference on a raw telemetry reading.
         Calculates dynamic aerodynamic interaction ratios, computes baseline deviations,
@@ -663,7 +675,7 @@ class DataBridge:
         order_id = None
         audit_hash = None
 
-        if severity in ("CRITICAL", "HIGH", "MEDIUM") and not is_exception:
+        if persist and severity in ("CRITICAL", "HIGH", "MEDIUM") and not is_exception:
             db_path = self._get_db_path(subset)
             if os.path.exists(db_path):
                 from datetime import datetime, timezone

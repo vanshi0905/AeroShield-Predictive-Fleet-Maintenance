@@ -211,6 +211,7 @@
             80.0% Coverage
           </p>
         </div>
+        <span class="text-[10px] px-2 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono hidden md:inline-block whitespace-nowrap shrink-0" title="Authorized with published evaluation key">Operator: Active</span>
       </div>
 
 
@@ -2303,7 +2304,8 @@
         const res = await fetch('/api/work-orders/dispatch', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-API-Key': 'aeroshield-dev-key'
           },
           body: JSON.stringify({ subset: currentSubset, order_id: orderId, new_status: status })
         });
@@ -2866,7 +2868,8 @@
         const res = await fetch('/api/retrain/trigger', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-API-Key': 'aeroshield-dev-key'
           },
           body: JSON.stringify({ subset: currentSubset, scenario: selectedDriftScenario })
         });

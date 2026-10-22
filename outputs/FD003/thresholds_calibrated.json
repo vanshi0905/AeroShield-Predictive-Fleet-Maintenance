@@ -4,15 +4,15 @@
     "CRIT_P50": 15.0,
     "HIGH_P50": 30.0,
     "MED_P50": 60.0,
-    "cost": 1912.0,
+    "cost": 1924.0,
     "failures": 0.0,
-    "life_discarded": 1902.0,
+    "life_discarded": 1914.0,
     "orders": 100.0
   },
   "current_thresholds": {
-    "cost": 3868.0,
+    "cost": 3893.0,
     "failures": 0,
-    "life_discarded": 3858.0,
+    "life_discarded": 3883.0,
     "orders": 100
   },
   "engines": 100,
