@@ -15,7 +15,7 @@
 7. [Layer 4: Continuous MLOps Governance & Drift Protection](#7-layer-4-continuous-mlops-governance--drift-protection)
 8. [Layer 5: Operational Defense Cockpit & Edge Serving](#8-layer-5-operational-defense-cockpit--edge-serving)
 9. [Project Code Map & Component Index](#9-project-code-map--component-index)
-10. [Verification & Automated Test Suite (60/60 Tests)](#10-verification--automated-test-suite-6060-tests)
+10. [Verification & Automated Test Suite (84/84 Tests)](#10-verification--automated-test-suite-8484-tests)
 
 ---
 
@@ -43,10 +43,10 @@ Last-cycle test RUL, from `outputs/FD00x/metrics.json`:
 | Operating regimes | 1 | 6 | 1 | 6 |
 | Fault modes | HPC | HPC | HPC + fan | HPC + fan |
 | Test engines | 100 | 259 | 100 | 248 |
-| Capped RMSE | 11.30 | 13.97 | 11.59 | 21.49 |
-| Uncapped RMSE | 12.98 | 27.01 | 13.34 | 33.49 |
-| NASA score, uncapped truth | 213 | 8,519 | 260 | 15,018 |
-| Conformal coverage (80% target) | 84% | 88% | 79% | 81% |
+| Capped RMSE | 11.30 | 13.97 | 11.42 | 21.49 |
+| Uncapped RMSE | 12.98 | 27.01 | 13.25 | 33.49 |
+| NASA score, uncapped truth | 213 | 8,519 | 266 | 15,018 |
+| Conformal coverage (80% target) | 84% | 88% | 84% | 81% |
 
 Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100% / 4% false alarms / 38 cycles, FD002 100% / 5% / 43, FD003 69% / 2% / 39, FD004 5.6% / 4.4% / 54. On the test engines the flag rates are 29%, 38%, 19%, and 1.6%. The README keeps both tables.
 
@@ -247,7 +247,7 @@ If any condition fails, the challenger is retained in staging (`gated=true`) and
 AeroShield-Predictive-Fleet-Maintenance/
 ├── README.md                          # Concise executive README with live demo badges
 ├── LICENSE                            # MIT License
-├── pytest.ini                         # Test runner configuration (60 automated tests)
+├── pytest.ini                         # Test runner configuration (84 automated tests)
 ├── requirements.txt                   # Lean production runtime dependencies (<350 MB)
 ├── requirements-dev.txt               # Development & training dependencies (mlflow, scikit-learn)
 ├── vercel.json                        # Vercel serverless edge routing & Python 3.12 runtime
@@ -304,7 +304,7 @@ AeroShield-Predictive-Fleet-Maintenance/
 
 ---
 
-## 10. Verification & Automated Test Suite (60/60 Tests)
+## 10. Verification & Automated Test Suite (84/84 Tests)
 
 All algorithms, models, and platform endpoints are covered by automated unit and integration tests:
 
@@ -314,15 +314,16 @@ pytest -v
 
 ### Test Coverage Breakdown:
 * **`shield/tests/test_agent_rules.py` (6 tests)**: Verifies all 4 tiers of the deterministic triage matrix and budget limits.
-* **`shield/tests/test_audit_chain.py` (3 tests)**: Verifies SHA-256 cryptographic parent-hash linkage and detects simulated block tampering.
+* **`shield/tests/test_audit_chain.py` (5 tests)**: Verifies SHA-256 cryptographic parent-hash linkage and detects simulated block tampering.
 * **`shield/tests/test_calibration.py` (5 tests)**: Verifies conformal quantile bounds, non-conformity scores, and coverage guarantees.
 * **`shield/tests/test_exceptions.py` (10 tests)**: Validates sensor spike isolation ($z > 4.5$) and model divergence exceptions ($|\Delta| > 25$).
-* **`shield/tests/test_features_parity.py` (3 tests)**: Verifies gas-path interaction ratios and causal median smoothing.
-* **`shield/tests/test_improvements.py` (7 tests)**: Verifies anomaly detection rate ($>80\%$) and non-linear secondary opinion consensus.
-* **`shield/tests/test_orders_lifecycle.py` (5 tests)**: Verifies SQLite state transitions (`DRAFT` $\to$ `DISPATCHED` $\to$ `COMPLETED`).
-* **`shield/tests/test_schema.py` (4 tests)**: Verifies data ingress schema validation and missing-value rejection.
+* **`shield/tests/test_features_parity.py` (4 tests)**: Verifies gas-path interaction ratios and causal median smoothing.
+* **`shield/tests/test_improvements.py` (8 tests)**: Verifies anomaly detection rate ($>80\%$), model registry deduplication, and non-linear secondary opinion consensus.
+* **`shield/tests/test_orders_lifecycle.py` (5 tests)**: Verifies SQLite state transitions (`AUTO_CREATED` $\to$ `DISPATCHED` $\to$ `RESOLVED`).
+* **`shield/tests/test_schema.py` (5 tests)**: Verifies data ingress schema validation and missing-value rejection.
 * **`shield/tests/test_smoother.py` (4 tests)**: Verifies zero lookahead bias and causal median filter properties.
-* **`platform/test_platform.py` (13 tests)**:
+* **`shield/tests/test_sota.py` (10 tests)**: Verifies polynomial continuous normalizer, asymmetric loss GBM, stacking ensemble, and multi-scale thermal stress augmentors.
+* **`platform/test_platform.py` (22 tests)**:
   - `test_dashboard_endpoint`: Validates tactical HTML serving.
   - `test_api_subsets`: Validates C-MAPSS subset ingress (`FD001`–`FD004`).
   - `test_api_fleet_readiness`: Validates fleet health KPIs and conformal metrics.
@@ -332,7 +333,8 @@ pytest -v
   - `test_api_exceptions`: Validates human specialist queue.
   - `test_api_audit_log_and_verify`: Validates live SHA-256 chain verification.
   - `test_api_mlops`: Validates PSI drift thresholds and champion metrics.
-  - `test_api_dispatch_work_order`: Validates status updates and cryptographic hash chain block appending.
+  - `test_api_dispatch_work_order`: Validates status updates, cryptographic hash chain block appending, and write authentication (401/200).
+  - `test_api_predict`: Validates bounded parameter schema (ge=1, le=1000) and finite float checks.
   - `test_legacy_endpoints_decommissioned`: Validates that all legacy external endpoints return 404 Not Found.
 
-**Result**: `60 passed in 17.83s (100% Green)`.
+**Result**: `84 passed in 45.97s (100% Green)`.

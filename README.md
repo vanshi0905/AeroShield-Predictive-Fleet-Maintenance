@@ -3,7 +3,7 @@
 [![Live Demo: Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://aeroshield-phi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
-[![Tests: 80/80 Passed](https://img.shields.io/badge/Tests-80%2F80%20Passed-emerald.svg)](pytest.ini)
+[![Tests: 84/84 Passed](https://img.shields.io/badge/Tests-84%2F84%20Passed-emerald.svg)](pytest.ini)
 [![Conformal Coverage: Calibrated](https://img.shields.io/badge/Conformal%20Coverage-80%25%20Calibrated-sky.svg)](docs/MATHEMATICAL_FORMULATION.md)
 
 > **Autonomous predictive maintenance for connected turbofan fleets: thermodynamic feature extraction, baseline-subtracted anomaly detection, conformal remaining-useful-life (RUL) estimation ($P_{10}/P_{50}/P_{90}$), deterministic triage agent writing tamper-evident work orders, and closed-loop MLOps retraining governance.**  
@@ -28,9 +28,9 @@ Following standard literature convention, **Uncapped RMSE** compares predictions
 | Dataset | Operating Regimes | Fault Modes | Test Engines | Uncapped RMSE | NASA Score (Uncapped) | Capped RMSE (95% CI) | Late % | Conformal Coverage (80% Target) | Coverage when RUL ≤ 50 | Final-Cycle Engines Needing Human | Replay Exception Events (Cockpit) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **FD001** | 1 regime | HPC Degradation | 100 | **12.98** | **213.5** | 11.30 [9.3, 13.3] | 29.0% | **84.0%** | 100.0% | 0 | 10 |
-| **FD002** | 6 regimes | HPC Degradation | 259 | **27.01** | **8,519.2** | 13.97 [12.6, 15.3] | 19.3% | **88.4%** | 98.9% | 6 | 95 |
+| **FD002** | 6 regimes | HPC Degradation | 259 | **27.01** | **8,519.2** | 13.97 [12.6, 15.3] | 19.3% | **88.4%** | 98.9% | 6 | 97 |
 | **FD003** | 1 regime | HPC + Fan Degradation | 100 | **13.25** | **266.0** | 11.42 [9.3, 13.4] | 36.0% | **84.0%** | 93.1% | 3 | 37 |
-| **FD004** | 6 regimes | HPC + Fan Degradation | 248 | **33.49** | **15,017.6** | 21.49 [19.1, 23.8] | 35.9% | **81.5%** | 90.0% | 51 | 128 |
+| **FD004** | 6 regimes | HPC + Fan Degradation | 248 | **26.07** | **4,573.2** | 13.06 [11.2, 15.2] | 40.7% | **78.6%** | 77.5% | 3 | 74 |
 <!-- END:SCORE_TABLE -->
 
 > [!NOTE]
@@ -58,7 +58,7 @@ Anomaly detection evaluates two distinct operational settings with distinct phys
 | FD001 | 100.0% | 4.0% | 38 | 29.0% (29/100) | 2.0% | 42 |
 | FD002 | 100.0% | 5.0% | 43 | 37.8% (98/259) | 1.9% | 50 |
 | FD003 | 87.0% | 3.0% | 36 | 21.0% (21/100) | 6.0% | 56 |
-| FD004 | 5.6% | 4.4% | 54 | 1.6% (4/248) | 5.6% | 76 |
+| FD004 | 83.5% | 2.8% | 29 | 19.4% (48/248) | 2.8% | 46 |
 <!-- END:ANOMALY_TABLE -->
 
 ### 2. Multi-Regime Challenge (FD004) & The Human Exception Queue
@@ -237,10 +237,10 @@ pip install -r requirements-dev.txt
 ```bash
 pytest
 ```
-*83 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, and API endpoint security.*
+*84 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, and API endpoint security.*
 
 ### 3. Run Pipeline End-to-End
-Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset (~3–5 minutes per subset depending on CPU hardware):
+Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset (~4–8 minutes per subset with multi-threading enabled via `n_jobs=-1`, or up to 12–16 minutes on single-core environments):
 ```bash
 python run_all.py --subset FD001
 ```

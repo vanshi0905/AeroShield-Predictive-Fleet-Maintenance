@@ -2,7 +2,7 @@
   "subset": "FD003",
   "version": "v1",
   "data_source": "real",
-  "seconds": 960,
+  "seconds": 792,
   "n_features": 111,
   "n_sensors": 15,
   "regimes": 1,
@@ -98,7 +98,7 @@
     "stale_escalated": 0
   },
   "audit_ok": true,
-  "audit_msg": "Verified 381 audit entries. Integrity 100% intact.",
+  "audit_msg": "Verified 327 audit entries. Integrity 100% intact.",
   "fault_demo": {
     "4": {
       "injected": "dropout",
@@ -122,6 +122,6 @@
     "range_rate": 0.0,
     "jump_rate": 0.03452639190166305
   },
-  "config_hash": "608ee2c02a68",
+  "config_hash": "b7a75e891128",
   "data_hash": "bd16a09e6672"
 }

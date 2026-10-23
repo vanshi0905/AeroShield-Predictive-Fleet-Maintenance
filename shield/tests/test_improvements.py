@@ -83,6 +83,29 @@ def test_mlops_one_sided_coverage_gate():
     assert ok_low is False
 
 
+def test_model_registry_no_duplicate_version_archive(tmp_path):
+    """Test that register_champion does not create duplicate archived entries when re-registering same version."""
+    reg_file = str(tmp_path / "test_registry.json")
+    reg = ModelRegistry(reg_file)
+    m1 = {"rmse": 11.3, "nasa": 200.0, "coverage": 0.84, "late_share": 0.29}
+    reg.register_champion("FD001", "v1", m1, path="outputs/FD001/model_v1.joblib")
+    assert reg.champion("FD001")["version"] == "v1"
+    assert len(reg.data["FD001"]["history"]) == 0
+
+    # Re-registering v1 (e.g. pipeline re-run) should update champion without pushing duplicate v1 to history
+    m2 = {"rmse": 11.29, "nasa": 213.5, "coverage": 0.84, "late_share": 0.29}
+    reg.register_champion("FD001", "v1", m2, path="outputs/FD001/model_v1.joblib")
+    assert reg.champion("FD001")["metrics"]["rmse"] == 11.29
+    assert len(reg.data["FD001"]["history"]) == 0
+
+    # Registering a new version v2 SHOULD archive v1 to history
+    m3 = {"rmse": 10.5, "nasa": 190.0, "coverage": 0.85, "late_share": 0.25}
+    reg.register_champion("FD001", "v2", m3, path="outputs/FD001/model_v2.joblib")
+    assert reg.champion("FD001")["version"] == "v2"
+    assert len(reg.data["FD001"]["history"]) == 1
+    assert reg.data["FD001"]["history"][0]["version"] == "v1"
+
+
 def test_preprocessor_adapts_to_drift(cfg, fleet):
     """Test that Preprocessor adapts its normalization statistics when sensor distribution drifts."""
     from shield.src.data import SENS

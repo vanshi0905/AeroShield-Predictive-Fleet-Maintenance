@@ -2,8 +2,8 @@
   "subset": "FD004",
   "version": "v1",
   "data_source": "real",
-  "seconds": 228,
-  "n_features": 107,
+  "seconds": 1110,
+  "n_features": 111,
   "n_sensors": 15,
   "regimes": 6,
   "silhouette": {
@@ -14,97 +14,97 @@
     "8": 0.8980591157740894
   },
   "test_last_window": {
-    "rmse_capped_truth": 21.49280561871696,
-    "mae_capped_truth": 16.016944781111015,
-    "rmse_uncapped_truth": 33.489861458384986,
-    "nasa_capped_truth": 2825.381353925235,
-    "nasa_uncapped_truth": 15017.619990373743,
-    "late_share": 0.3588709677419355,
-    "coverage": 0.8145161290322581,
-    "coverage_rul_le_50": 0.9,
-    "coverage_rul_gt_50": 0.7738095238095238,
+    "rmse_capped_truth": 13.062803800509727,
+    "mae_capped_truth": 8.808317957848212,
+    "rmse_uncapped_truth": 26.06914930956487,
+    "nasa_capped_truth": 947.3789912607047,
+    "nasa_uncapped_truth": 4573.173861238515,
+    "late_share": 0.40725806451612906,
+    "coverage": 0.7862903225806451,
+    "coverage_rul_le_50": 0.775,
+    "coverage_rul_gt_50": 0.7916666666666666,
     "n_engines": 248,
-    "near_precision": 0.7796610169491526,
-    "near_recall": 0.8679245283018868,
-    "near_f1": 0.8214285714285714,
-    "near_pr_auc": 0.9146303030610703,
+    "near_precision": 0.9423076923076923,
+    "near_recall": 0.9245283018867925,
+    "near_f1": 0.9333333333333333,
+    "near_pr_auc": 0.9851484968102944,
     "ci95": {
       "rmse_capped_truth": [
-        19.124123205550088,
-        23.843950350348823
+        11.164922033656866,
+        15.216046858192957
       ],
       "nasa_uncapped_truth": [
-        8658.647012989557,
-        23796.295321766687
+        3150.3153695722767,
+        6137.934983214055
       ],
       "late_share": [
-        0.29838709677419356,
-        0.41935483870967744
+        0.35080645161290325,
+        0.4717741935483871
       ]
     },
     "rmse_by_predicted_fault_mode": {
-      "0": 19.787945700829727,
-      "1": 24.864321175566648
+      "0": 12.998935574728772,
+      "1": 13.125346773034188
     }
   },
   "test_all_window": {
-    "rmse": 19.12790960285093,
-    "mae": 14.186871672456958,
-    "nasa_uncapped_truth": 5808148597579308.0,
-    "late_share": 0.1525937788130247,
+    "rmse": 12.444633469525991,
+    "mae": 8.010780948892302,
+    "nasa_uncapped_truth": 4401772521067343.0,
+    "late_share": 0.17804629494831853,
     "n_windows": 41214
   },
   "oof": {
-    "late_shift": 8.0,
+    "late_shift": 4.0,
     "smoother_alpha": 0.2,
     "smoother_u_max": 2,
-    "conformal_q_standard": 3.6633260316393743e-08,
+    "conformal_q_standard": 0.06483037789144482,
     "conformal_q_short": 0.0,
-    "oof_rmse": 20.797864384067132,
-    "oof_nasa": 49871.172838043974,
-    "oof_late_share": 0.3092369477911647,
+    "oof_rmse": 13.987410407195538,
+    "oof_nasa": 33614.702732371,
+    "oof_late_share": 0.38473895582329315,
     "oof_coverage": 0.8152610441767069,
-    "oof_coverage_rul_le_50": 0.8676470588235294,
+    "oof_coverage_rul_le_50": 0.7810457516339869,
     "oof_coverage_short_history": 0.9508196721311475,
-    "raw_oof_coverage_before_conformal": 0.814859437751004,
-    "oof_rmse_before_shift_smoothing": 21.24829086650528,
-    "disagree_threshold": 33.06875753730812,
-    "fold_rmse_mean": 20.236164115631947,
-    "fold_rmse_sd": 1.2189597454433756
+    "raw_oof_coverage_before_conformal": 0.7903614457831325,
+    "oof_rmse_before_shift_smoothing": 14.342131585006175,
+    "disagree_threshold": 25.0,
+    "fold_rmse_mean": 13.422246131060472,
+    "fold_rmse_sd": 1.2454910099113163
   },
   "anomaly_oof_best": {
-    "percentile": 99.5,
-    "threshold": 0.06816253821189928,
-    "engine_false_alarm_rate": 0.04417670682730924,
-    "median_lead_time": 53.5,
-    "alerted_engines": 14,
+    "percentile": 99.7,
+    "threshold": 0.14178445405597032,
+    "engine_false_alarm_rate": 0.028112449799196786,
+    "median_lead_time": 29.0,
+    "alerted_engines": 208,
     "engines": 249,
-    "detection_rate": 0.05622489959839357,
-    "false_alerts_per_100_healthy_cycles": 0.05020821642694705
+    "detection_rate": 0.8353413654618473,
+    "false_alerts_per_100_healthy_cycles": 0.23332053516051862
   },
   "anomaly_test": {
-    "engine_false_alarm_rate": 0.056451612903225805,
-    "median_lead_time": 75.5,
-    "alerted_engines": 4,
+    "engine_false_alarm_rate": 0.028225806451612902,
+    "median_lead_time": 45.5,
+    "alerted_engines": 48,
     "engines": 248,
-    "detection_rate": 0.016129032258064516,
-    "false_alerts_per_100_healthy_cycles": 0.09969779107081658
+    "detection_rate": 0.1935483870967742,
+    "false_alerts_per_100_healthy_cycles": 0.22432002990933733
   },
   "severity_mix": {
-    "NORMAL": 124,
-    "NEEDS_HUMAN": 51,
-    "MEDIUM": 33,
-    "CRITICAL": 22,
-    "HIGH": 18
+    "NORMAL": 143,
+    "CRITICAL": 45,
+    "HIGH": 29,
+    "MEDIUM": 28,
+    "NEEDS_HUMAN": 3
   },
   "order_volume": {
-    "work_orders": 120,
-    "orders_per_100_engines_per_100_cycles": 9.956192751891676,
-    "orders_per_100_engines": 48.38709677419355,
+    "work_orders": 106,
+    "orders_per_100_engines_per_100_cycles": 8.794636930837648,
+    "orders_per_100_engines": 42.74193548387097,
     "stale_escalated": 0
   },
   "audit_ok": true,
-  "audit_msg": "Verified 2264 audit entries. Integrity 100% intact.",
+  "audit_msg": "Verified 539 audit entries. Integrity 100% intact.",
   "fault_demo": {
     "3": {
       "injected": "dropout",
@@ -116,7 +116,7 @@
       "status": "NEEDS_HUMAN",
       "reason": "[SIMULATED FAULT: stuck sensor s11] Data-quality: stuck sensor(s) s11; jump s11"
     },
-    "6": {
+    "5": {
       "injected": "spike s7",
       "status": "NEEDS_HUMAN",
       "reason": "[SIMULATED FAULT: spike s7] Data-quality: out-of-range s7; jump s7"
@@ -128,6 +128,6 @@
     "range_rate": 0.0,
     "jump_rate": 0.003154267967195613
   },
-  "config_hash": "e839d79715c9",
+  "config_hash": "35051e23c65c",
   "data_hash": "dc82743142e6"
 }
