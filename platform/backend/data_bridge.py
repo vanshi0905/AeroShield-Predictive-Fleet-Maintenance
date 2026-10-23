@@ -723,6 +723,8 @@ class DataBridge:
 
         return {
             "status": "success",
+            "model_type": "simplified_what_if_simulator",
+            "note": "Interactive what-if telemetry evaluation; production champion batch models run via run_all.py",
             "pipeline_trace": {
                 "subset": subset,
                 "engine_unit": unit,

@@ -38,8 +38,8 @@ Following standard literature convention, **Uncapped RMSE** compares predictions
 
 > [!NOTE]
 > **Reconciling Human Exception Metrics (Final Test Engines vs. Replay Events)**:
-> - **Final-Cycle Engines Needing Human (0, 6, 3, 51)**: Evaluates fleet health on the final observed test cycle for each engine. An engine is only flagged if its terminal snapshot could not be autonomously resolved (e.g. wide epistemic conformal interval $P_{90} - P_{10} > 60$ cycles). In single-regime fleets (FD001), 100% of final cycles are handled autonomously (0 exceptions).
-> - **Replay Exception Events in Cockpit / `/api/exceptions` (10, 95, 37, 128)**: Cumulative exception records in the SQLite audit ledger across the full historical simulation. This counts transient sensor data-quality violations, simulated sensor fault demonstrations, and intermediate cycles where epistemic interval width widened temporarily before narrowing as degradation progressed.
+> - **Final-Cycle Engines Needing Human (0, 6, 3, 3)**: Evaluates fleet health on the final observed test cycle for each engine. An engine is only flagged if its terminal snapshot could not be autonomously resolved (e.g. wide epistemic conformal interval $P_{90} - P_{10} > 60$ cycles). In single-regime fleets (FD001), 100% of final cycles are handled autonomously (0 exceptions).
+> - **Replay Exception Events in Cockpit / `/api/exceptions` (10, 97, 37, 74)**: Cumulative exception records in the SQLite audit ledger across the full historical simulation. This counts transient sensor data-quality violations, simulated sensor fault demonstrations, and intermediate cycles where epistemic interval width widened temporarily before narrowing as degradation progressed.
 
 ---
 
@@ -84,7 +84,7 @@ In industrial fleet operations, nominal healthy operating hours vastly outnumber
 
 ### 3. Work Order State Lifecycle & Exception Queue Rigor
 * **Test Cutoff vs. Operational Queue**:
-  * **Final-Cycle Test Snapshot**: Evaluates engines at their final recorded cycle. FD001 routes 0 units to the human queue (all 100 test engines have deterministic RUL bounds). FD002 routes 6 units, FD003 routes 3 units, and FD004 routes 51 units due to multi-regime conformal width.
+  * **Final-Cycle Test Snapshot**: Evaluates engines at their final recorded cycle. FD001 routes 0 units to the human queue (all 100 test engines have deterministic RUL bounds). FD002 routes 6 units, FD003 routes 3 units, and FD004 routes only 3 units.
   * **Cumulative Operational Event Queue**: Across all operational replay cycles in SQLite, FD001 logs 7 total exceptions: 4 transient stuck-sensor incidents and 3 injected fault-demonstration events.
   * **Preserved Work Order States**: In batch replay, 46 valid maintenance work orders (`WO-*`) remain in active `AUTO_CREATED` state ready for dispatch. Offline replay does not run synthetic staleness escalation (`flag_stale`), ensuring orders remain actionable rather than prematurely escalating to `NEEDS_HUMAN`.
 

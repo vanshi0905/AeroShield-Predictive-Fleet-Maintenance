@@ -34,21 +34,11 @@ AeroShield is an industrial predictive maintenance and digital twin platform bui
 
 ## 2. NASA C-MAPSS Benchmark Evaluation Matrix
 
-Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-Propulsion System Simulation (C-MAPSS):
+Evaluated across all four benchmark subsets of the NASA Commercial Modular Aero-Propulsion System Simulation (C-MAPSS).
 
-Last-cycle test RUL, from `outputs/FD00x/metrics.json`:
-
-| Metric | FD001 | FD002 | FD003 | FD004 |
-| :--- | :---: | :---: | :---: | :---: |
-| Operating regimes | 1 | 6 | 1 | 6 |
-| Fault modes | HPC | HPC | HPC + fan | HPC + fan |
-| Test engines | 100 | 259 | 100 | 248 |
-| Capped RMSE | 11.30 | 13.97 | 11.59 | 21.49 |
-| Uncapped RMSE | 12.98 | 27.01 | 13.34 | 33.49 |
-| NASA score, uncapped truth | 213 | 8,519 | 260 | 15,018 |
-| Conformal coverage (80% target) | 84% | 88% | 79% | 81% |
-
-Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100% / 4% false alarms / 38 cycles, FD002 100% / 5% / 43, FD003 69% / 2% / 39, FD004 5.6% / 4.4% / 54. On the test engines the flag rates are 29%, 38%, 19%, and 1.6%. The README keeps both tables.
+To guarantee complete documentation integrity without numerical drift across iterations, official benchmark metrics, conformal coverage guarantees, and anomaly detection results are programmatically derived and verified directly from `outputs/*/metrics.json`. Please refer to the verified tables in:
+* **[Root README Benchmark Results](../../README.md#benchmark-results-nasa-c-mapss)**
+* **[`outputs/benchmark_summary.csv`](../../outputs/benchmark_summary.csv)**
 
 ---
 

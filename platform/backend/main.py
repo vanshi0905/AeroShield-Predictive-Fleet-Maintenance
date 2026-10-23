@@ -333,7 +333,7 @@ def predict_live_telemetry(
     req: PredictTelemetryRequest,
     auth: str = Depends(verify_write_access)
 ):
-    """Executes live dynamic inference on raw telemetry inputs, evaluates the triage agent, and manages work order state."""
+    """Executes simplified what-if telemetry evaluation (interactive parameter simulation; production batch models run via run_all.py)."""
     _validate_subset(req.subset)
     return bridge.predict_telemetry(
         subset=req.subset,

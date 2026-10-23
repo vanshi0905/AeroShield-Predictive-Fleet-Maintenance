@@ -19,4 +19,4 @@ This folder contains the complete, dedicated, layer-by-layer architectural docum
 
 ## Benchmark Performance Highlights across NASA C-MAPSS
 
-Use the split tables in the root README. Those match `outputs/benchmark_summary.csv` and `outputs/FD00x/metrics.json`. Capped test RMSE is 11.30, 13.97, 11.59, 21.49. Uncapped NASA scores are 213, 8,519, 260, 15,018. The 100% anomaly figure is an out-of-fold training result on FD001 and FD002 only. Test-set detection is 29%, 38%, 19%, and 1.6%.
+For the single source of truth across all four C-MAPSS subsets (FD001–FD004), refer directly to the verified benchmark tables in the [Root README](../../README.md#benchmark-results-nasa-c-mapss) and [`outputs/benchmark_summary.csv`](../../outputs/benchmark_summary.csv), which are programmatically derived and verified straight from `outputs/*/metrics.json`.

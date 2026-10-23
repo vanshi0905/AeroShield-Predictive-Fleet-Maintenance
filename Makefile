@@ -15,8 +15,11 @@ test:
 verify-audit:   ## recompute SHA-256 chain; fails if any row was altered
 	python scripts/verify_audit.py $(SUBSET)
 
+serve:          ## run interactive web cockpit launcher
+	python platform/run_platform.py
+
 dashboard:      ## launch production FastAPI avionics dashboard
-	python -m uvicorn platform.backend.main:app --host 0.0.0.0 --port 8000
+	python platform/run_platform.py
 
 check-docs:     ## fail if README tables differ from outputs/*/metrics.json
 	python scripts/render_readme_tables.py --check
