@@ -78,7 +78,7 @@ AeroShield is a closed-loop autonomous predictive maintenance and digital twin p
   4. $\text{Turbine Temperature Ratio} = s_4 / s_3$
 
 ### Anomaly Detection & Conformal Calibration
-* Anomaly scores use baseline-subtracted sensor deviations against the early cycles of each engine. Out-of-fold detection is 100% on FD001 and FD002, 69% on FD003, and 5.6% on FD004. Test-set detection is 29%, 38%, 19%, and 1.6%. FD004 is not a 100% detection result.
+* Anomaly scores use baseline-subtracted sensor deviations against the early cycles of each engine. Out-of-fold detection is 100% on FD001 and FD002, 87% on FD003, and 83.5% on FD004. Test-set detection is 29%, 38%, 21%, and 19.4%. FD004 is not a 100% detection result.
 * RUL uncertainty is quantified via non-parametric conformal prediction, yielding statistically validated P10, P50, and P90 quantile intervals.
 
 ### Tamper-Evident Audit Chain
