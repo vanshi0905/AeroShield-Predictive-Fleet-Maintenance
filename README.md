@@ -34,7 +34,8 @@ Following standard literature convention, **Uncapped RMSE** compares predictions
 <!-- END:SCORE_TABLE -->
 
 > [!NOTE]
-> **Conformal Coverage Milestone**: All four subsets meet or exceed the rigorous 80% coverage target (FD001: 84.0%, FD002: 88.4%, FD003: 84.0%, FD004: 81.5%). In safety-critical near-failure operations ($RUL \le 50$), empirical coverage exceeds 90%–100% across the fleet.
+> [!NOTE]
+> **Conformal Coverage Evaluation**: FD001–FD003 meet or exceed the 80% coverage target on held-out test engines (FD001: 84.0%, FD002: 88.4%, FD003: 84.0%). FD004 reaches 78.6% (81.5% out-of-fold calibration), 1.4 points below target due to 6-regime operational variance, and 77.5% for $RUL \le 50$. In near-failure operations ($RUL \le 50$), coverage reaches 93%–100% on FD001–FD003. All four subsets safely exceed the 75.0% production deployment gate.
 
 > [!NOTE]
 > **Reconciling Human Exception Metrics (Final Test Engines vs. Replay Events)**:
@@ -61,12 +62,12 @@ Anomaly detection evaluates two distinct operational settings with distinct phys
 | FD004 | 83.5% | 2.8% | 29 | 19.4% (48/248) | 2.8% | 46 |
 <!-- END:ANOMALY_TABLE -->
 
-### 2. Multi-Regime Challenge (FD004) & The Human Exception Queue
+### 2. Multi-Regime Dynamics (FD004) & Exception Governance
 
-* **Physical Root Cause**: FD004 combines 6 operating flight regimes (altitude, Mach, throttle) with 2 simultaneous fault modes (HPC and fan degradation). When operating conditions transition between regimes, discrete clustering creates boundary discontinuities. This regime-switching variance masks subtle early-stage degradation, keeping discrete deviations small until very late in life.
-* **Fail-Safe Exception Queue**: Because conformal uncertainty intervals widen under high regime variance ($P_{90} - P_{10} > 60$ cycles), 51 FD004 test engines (20.5%) are routed to the **Human Exception Queue**. This is an intentional safety guardrail: when epistemic uncertainty is elevated, the system defers autonomous dispatch to certified human engineers rather than guessing.
-* **Concrete Next Step**: We introduced `shield/src/regime_continuous.py` (`ContinuousRegimeNormalizer`), replacing discrete cluster step-functions with smooth degree-3 polynomial Ridge regression ($R^2 > 0.94$). This models nominal sensor behavior as a continuous function of flight conditions, eliminating regime boundary switching artifacts and restoring anomaly sensitivity on multi-regime fleets.
-
+* **Physical Root Cause**: FD004 combines 6 operating flight regimes (altitude, Mach, throttle) with 2 concurrent fault modes (HPC and fan degradation). The thermodynamic feature engineering (interaction ratios and baseline deviations) resolves multi-regime degradation, achieving a **13.06 capped RMSE** and **4,573.2 NASA score** on held-out test engines.
+* **Autonomous Resolution vs. Exception Queue**: At final observed test cycles, **245 of 248 engines (98.8%)** are resolved autonomously, with only **3 engines (1.2%)** routed to the Human Exception Queue due to wide conformal intervals ($P_{90} - P_{10} > 60$ cycles).
+* **Operational Replay Exceptions**: Across all 41,214 intermediate cycle steps in FD004 replay, the system logs **74 cumulative exception events** (accounting for transient sensor noise and mid-life uncertainty before degradation patterns mature).
+* **Future Work**: The standalone `shield/src/regime_continuous.py` demonstrates polynomial Ridge normalization as a continuous alternative to discrete clustering, available for extended multi-regime research.
 ---
 
 ## Ground Rules & Data Engineering Rigor
@@ -85,7 +86,7 @@ In industrial fleet operations, nominal healthy operating hours vastly outnumber
 ### 3. Work Order State Lifecycle & Exception Queue Rigor
 * **Test Cutoff vs. Operational Queue**:
   * **Final-Cycle Test Snapshot**: Evaluates engines at their final recorded cycle. FD001 routes 0 units to the human queue (all 100 test engines have deterministic RUL bounds). FD002 routes 6 units, FD003 routes 3 units, and FD004 routes only 3 units.
-  * **Cumulative Operational Event Queue**: Across all operational replay cycles in SQLite, FD001 logs 7 total exceptions: 4 transient stuck-sensor incidents and 3 injected fault-demonstration events.
+  * **Cumulative Operational Event Queue**: Across all operational replay cycles in SQLite, FD001 logs 10 total exceptions: 7 transient stuck-sensor incidents and 3 injected fault-demonstration events.
   * **Preserved Work Order States**: In batch replay, 46 valid maintenance work orders (`WO-*`) remain in active `AUTO_CREATED` state ready for dispatch. Offline replay does not run synthetic staleness escalation (`flag_stale`), ensuring orders remain actionable rather than prematurely escalating to `NEEDS_HUMAN`.
 
 ---
@@ -240,7 +241,7 @@ pytest
 *84 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, and API endpoint security.*
 
 ### 3. Run Pipeline End-to-End
-Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset (~4–8 minutes per subset with multi-threading enabled via `n_jobs=-1`, or up to 12–16 minutes on single-core environments):
+Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset (about 4–20 minutes depending on hardware and subset complexity):
 ```bash
 python run_all.py --subset FD001
 ```
@@ -281,14 +282,14 @@ Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** in y
 | `/api/audit-verify` | `GET` | Open | Cryptographically verify HMAC-SHA256 hash chain integrity |
 | `/api/mlops` | `GET` | Open | Retrieve Champion vs. Challenger metrics, PSI drift histograms, and gate status |
 | `/api/retrain/trigger` | `POST` | `X-API-Key` | Trigger closed-loop retraining run with drift adaptation demo |
-| `/api/predict` | `POST` | Open | Ingest raw single-cycle telemetry and return real-time RUL quantiles and triage |
+| `/api/predict` | `POST` | `X-API-Key` | Ingest raw single-cycle telemetry and return real-time RUL quantiles and triage |
 
 ---
 
 ## System Boundaries & Limits
 
-1. **Continuous Normalization on FD004**: FD004 exhibits complex multi-regime drift across 6 volatile flight profiles and 2 concurrent fault modes. The baseline discrete clustering model sends 51 test engines to the human queue due to wide conformal intervals ($P_{90}-P_{10}>60$). The standalone continuous normalizer (`shield/src/regime_continuous.py`) provides the architectural roadmap to reduce this dispersion.
-2. **Asymmetric NASA Penalization**: To guarantee passenger safety and eliminate unpredicted groundings, the RUL pipeline applies a conservative late-shift penalty ($eta = 2.5$). This trades a modest degree of symmetric RMSE to reduce hazardous late predictions ($RUL_{pred} > RUL_{true}$) to under 19%–36%.
+1. **FD004 Multi-Regime Conformal Margin & Late Predictions**: On FD004 (6 flight regimes, 2 fault modes), empirical test coverage is 78.6% (1.4 points below the 80% target, but well above the 75% gate), and 77.5% for $RUL \le 50$. Concurrently, while RMSE improved to 13.06 and NASA score to 4,573, FD004's late prediction share is 40.7% (approximately 4 out of 10 engines predicted slightly later than true RUL). Operators on FD004 should configure safety buffers or widen intervals for high-severity flight hours.
+2. **Asymmetric NASA Penalization**: To guarantee passenger safety and eliminate unpredicted groundings, the RUL pipeline applies a conservative late-shift penalty ($\beta = 2.5$). On FD001–FD003, late predictions remain between 19.3% and 36.0%, while complex multi-regime FD004 registers 40.7%.
 3. **Tamper-Evident Ledger Scope**: The work order state machine uses an HMAC-SHA256 cryptographic hash chain to guarantee internal auditability and detect retroactive database tampering. The sample databases in `outputs/` are signed with the default published evaluation key. While suitable for defense and regulatory audit trails, production deployments should configure a distinct private secret via environment variables.
 
 ---

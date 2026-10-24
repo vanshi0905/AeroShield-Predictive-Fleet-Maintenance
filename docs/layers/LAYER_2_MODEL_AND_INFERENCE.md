@@ -35,7 +35,7 @@ Normalized Feature Vector from Layer 1
 5. Non-Parametric Conformal Prediction Calibration
    • Finite-sample non-conformity scores E_i on held-out calibration engines
    • Calibrated interval C(x) = [q_0.1 - q_hat, q_0.9 + q_hat]
-   • Validated empirical coverage: 84.0% to 88.4% (>= 75.0% lower gate)
+   • Validated empirical coverage: 78.6% to 88.4% (>= 75.0% lower gate)
    │
    ▼
 Inference Output Vector to Layer 3 Triage
@@ -52,7 +52,7 @@ Inference Output Vector to Layer 3 Triage
   The baseline-subtracted sensor deviation $d_{\text{base}}$ at flight cycle $t$ is:
   $$d_{\text{base}}(s_{j, t}) = \frac{s_{j, t} - \mu_{j, \text{base}}}{\sigma_{j, \text{base}}}$$
   An `IsolationForest` ensemble ($N=200$ trees) is trained on the baseline-subtracted deviation vector $\mathbf{d}_{\text{base}}$. Anomaly scores $s_t = -\text{decision\_function}(\mathbf{d}_{\text{base}})$ are smoothed with an EWMA ($\alpha = 0.3$) and confirmed when the score exceeds an out-of-fold calibrated threshold for $\ge 2$ consecutive cycles.
-* **Results**: The 100% / 100% / 69% / 5.6% detection rates, and the 38–54 cycle leads, are out-of-fold on the training engines. On the test engines the same `metrics.json` files record 29%, 38%, 19%, and 1.6%. FD004 sends 51 of 248 test engines to the human queue. Do not quote the training rate as the test rate.
+* **Results**: Out-of-fold detection on training engines is 100% (FD001), 100% (FD002), 87.0% (FD003), and 83.5% (FD004) with median leads of 29–43 cycles. On held-out test engines, flag rates are 29.0%, 37.8%, 21.0%, and 19.4% (reflecting engines entering progressive degradation before observation cutoff). On terminal test cycles, only 3 FD004 engines require human escalation.
 
 ### B. Piecewise Linear Capped Target
 In turbofan engines, physical wear is negligible during early flight cycles (crack propagation and material loss remain latent). Modeling RUL linearly from cycle 0 forces models to fit meaningless variations during healthy operation. AeroShield enforces a piecewise linear target capped at $RUL_{\text{cap}} = 125$ cycles:
@@ -87,11 +87,11 @@ To provide rigorous finite-sample coverage guarantees without assuming Gaussian 
 3. Construct the calibrated prediction band for any incoming flight cycle $x_{\text{test}}$:
    $$C(x_{\text{test}}) = [q_{0.10}(x_{\text{test}}) - \hat{q}, \;\;\; q_{0.90}(x_{\text{test}}) + \hat{q}]$$
 
-**Empirical Coverage Across NASA C-MAPSS**:
+**Empirical Coverage Across NASA C-MAPSS (Held-out Test Engines)**:
 * **FD001**: 84.0%
 * **FD002**: 88.4%
-* **FD003**: 86.0%
-* **FD004**: 87.5%
+* **FD003**: 84.0%
+* **FD004**: 78.6% (81.5% out-of-fold calibration)
 *(All safely surpass the 75.0% lower gate requirement).*
 
 ### F. NASA Asymmetric Loss Function

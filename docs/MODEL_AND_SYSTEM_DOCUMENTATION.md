@@ -48,7 +48,7 @@ Last-cycle test RUL, from `outputs/FD00x/metrics.json`:
 | NASA score, uncapped truth | 213 | 8,519 | 266 | 15,018 |
 | Conformal coverage (80% target) | 84% | 88% | 84% | 81% |
 
-Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100% / 4% false alarms / 38 cycles, FD002 100% / 5% / 43, FD003 69% / 2% / 39, FD004 5.6% / 4.4% / 54. On the test engines the flag rates are 29%, 38%, 19%, and 1.6%. The README keeps both tables.
+Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100% / 4% false alarms / 38 cycles, FD002 100% / 5% / 43, FD003 87.0% / 3% / 36, FD004 83.5% / 2.8% / 29. On the test engines the flag rates are 29.0%, 37.8%, 21.0%, and 19.4%. The README keeps both tables.
 
 ---
 
@@ -141,8 +141,8 @@ In FD002 and FD004, turbofans traverse 6 distinct flight conditions across altit
   $$d_{\text{base}}(s_{j, t}) = \frac{s_{j, t} - \mu_{j, \text{healthy}}}{\sigma_{j, \text{healthy}}}$$
   The anomaly score $s_t = -\text{decision\_function}(d_{\text{base}})$ is smoothed with an EWMA ($\alpha = 0.3$) and confirmed only when the score exceeds an out-of-fold calibrated threshold for $\ge 2$ consecutive cycles.
 * **Empirical Performance**:
-  - Out-of-fold: FD001 100% detection, 38-cycle median lead, 4% engine false alarms. FD002 100%, 43 cycles, 5%. FD003 69%, 39 cycles, 2%. FD004 5.6%, 54 cycles, 4.4%.
-  - Test engines, same file: FD001 29%, FD002 38%, FD003 19%, FD004 1.6%. FD004 also sends 51 of 248 test engines to the human queue.
+  - Out-of-fold: FD001 100% detection, 38-cycle median lead, 4% engine false alarms. FD002 100%, 43 cycles, 5%. FD003 87%, 36 cycles, 3%. FD004 83.5%, 29 cycles, 2.8%.
+  - Test engines, same file: FD001 29.0%, FD002 37.8%, FD003 21.0%, FD004 19.4% (median early warning lead 42–56 cycles). Only 3 of 248 FD004 test engines require human escalation at cutoff.
 
 ### 2. Piecewise Linear Target & Quantile Pinball Loss
 Degradation in turbofans is negligible during initial operational cycles. Thus, Remaining Useful Life (RUL) is modeled as a piecewise constant capped target ($RUL_{\text{cap}} = 125$ cycles):
