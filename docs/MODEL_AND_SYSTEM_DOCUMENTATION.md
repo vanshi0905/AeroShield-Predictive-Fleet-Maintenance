@@ -43,10 +43,10 @@ Last-cycle test RUL, from `outputs/FD00x/metrics.json`:
 | Operating regimes | 1 | 6 | 1 | 6 |
 | Fault modes | HPC | HPC | HPC + fan | HPC + fan |
 | Test engines | 100 | 259 | 100 | 248 |
-| Capped RMSE | 11.30 | 13.97 | 11.42 | 21.49 |
-| Uncapped RMSE | 12.98 | 27.01 | 13.25 | 33.49 |
-| NASA score, uncapped truth | 213 | 8,519 | 266 | 15,018 |
-| Conformal coverage (80% target) | 84% | 88% | 84% | 81% |
+| Capped RMSE | 11.30 | 13.97 | 11.42 | 13.06 |
+| Uncapped RMSE | 12.98 | 27.01 | 13.25 | 26.07 |
+| NASA score, uncapped truth | 213 | 8,519 | 266 | 4,573 |
+| Conformal coverage (80% target) | 84% | 88% | 84% | 79% |
 
 Anomaly detection is a different cut. Out-of-fold on training engines: FD001 100% / 4% false alarms / 38 cycles, FD002 100% / 5% / 43, FD003 87.0% / 3% / 36, FD004 83.5% / 2.8% / 29. On the test engines the flag rates are 29.0%, 37.8%, 21.0%, and 19.4%. The README keeps both tables.
 

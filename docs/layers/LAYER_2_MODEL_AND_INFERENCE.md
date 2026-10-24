@@ -35,7 +35,7 @@ Normalized Feature Vector from Layer 1
 5. Non-Parametric Conformal Prediction Calibration
    • Finite-sample non-conformity scores E_i on held-out calibration engines
    • Calibrated interval C(x) = [q_0.1 - q_hat, q_0.9 + q_hat]
-   • Validated empirical coverage: 78.6% to 88.4% (>= 75.0% lower gate)
+   • Validated empirical coverage: 78.6% to 88.4% (>= 75.0% retraining promotion floor)
    │
    ▼
 Inference Output Vector to Layer 3 Triage
@@ -92,7 +92,7 @@ To provide rigorous finite-sample coverage guarantees without assuming Gaussian 
 * **FD002**: 88.4%
 * **FD003**: 84.0%
 * **FD004**: 78.6% (81.5% out-of-fold calibration)
-*(All safely surpass the 75.0% lower gate requirement).*
+*(All safely surpass the 75.0% retraining promotion floor).*
 
 ### F. NASA Asymmetric Loss Function
 In aviation maintenance, late predictions ($\hat{y} > y$, predicting the engine has more life than it actually does) are far more hazardous than early predictions ($\hat{y} < y$, scheduling maintenance earlier than necessary).

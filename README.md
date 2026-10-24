@@ -34,8 +34,7 @@ Following standard literature convention, **Uncapped RMSE** compares predictions
 <!-- END:SCORE_TABLE -->
 
 > [!NOTE]
-> [!NOTE]
-> **Conformal Coverage Evaluation**: FD001–FD003 meet or exceed the 80% coverage target on held-out test engines (FD001: 84.0%, FD002: 88.4%, FD003: 84.0%). FD004 reaches 78.6% (81.5% out-of-fold calibration), 1.4 points below target due to 6-regime operational variance, and 77.5% for $RUL \le 50$. In near-failure operations ($RUL \le 50$), coverage reaches 93%–100% on FD001–FD003. All four subsets safely exceed the 75.0% production deployment gate.
+> **Conformal Coverage Evaluation**: FD001–FD003 meet or exceed the 80% coverage target on held-out test engines (FD001: 84.0%, FD002: 88.4%, FD003: 84.0%). FD004 reaches 78.6% (81.5% out-of-fold calibration), 1.4 points below target due to 6-regime operational variance, and 77.5% for $RUL \le 50$. In near-failure operations ($RUL \le 50$), coverage reaches 93%–100% on FD001–FD003. All four subsets safely exceed the 75.0% retraining promotion floor (target minus 5%).
 
 > [!NOTE]
 > **Reconciling Human Exception Metrics (Final Test Engines vs. Replay Events)**:
@@ -81,12 +80,12 @@ Anomaly detection evaluates two distinct operational settings with distinct phys
 In industrial fleet operations, nominal healthy operating hours vastly outnumber near-failure cycles ($RUL \le 50$), creating severe training distribution imbalance.
 * **Target Piece-Wise Capping**: Labels are clipped at $RUL_{cap} = 125$ cycles, preventing high-variance early-life plateaus from dominating the regression loss.
 * **Sample Loss Weighting**: Samples in the critical degradation regime ($RUL \le 50$) receive $2.0\times$ loss weight during training.
-* **Asymmetric Objective**: Quantile boosting models are tuned with an asymmetric penalty ($eta = 2.5$) penalizing over-optimistic late predictions ($RUL_{pred} > RUL_{true}$) to eliminate catastrophic unpredicted failures.
+* **Conservative Calibration**: Pinball loss quantiles ($P_{10}, P_{50}, P_{90}$) are combined with an out-of-fold calibrated downward shift (`late_shift = 3.0–8.0 cycles`) penalizing over-optimistic late predictions ($RUL_{pred} > RUL_{true}$) to prevent catastrophic unpredicted failures.
 
 ### 3. Work Order State Lifecycle & Exception Queue Rigor
 * **Test Cutoff vs. Operational Queue**:
   * **Final-Cycle Test Snapshot**: Evaluates engines at their final recorded cycle. FD001 routes 0 units to the human queue (all 100 test engines have deterministic RUL bounds). FD002 routes 6 units, FD003 routes 3 units, and FD004 routes only 3 units.
-  * **Cumulative Operational Event Queue**: Across all operational replay cycles in SQLite, FD001 logs 10 total exceptions: 7 transient stuck-sensor incidents and 3 injected fault-demonstration events.
+  * **Cumulative Operational Event Queue**: Across all operational replay cycles in SQLite, FD001 logs 10 total exceptions: 4 stuck-sensor incidents, 3 model-disagreement alerts, and 3 injected fault-demonstration events.
   * **Preserved Work Order States**: In batch replay, 46 valid maintenance work orders (`WO-*`) remain in active `AUTO_CREATED` state ready for dispatch. Offline replay does not run synthetic staleness escalation (`flag_stale`), ensuring orders remain actionable rather than prematurely escalating to `NEEDS_HUMAN`.
 
 ---
@@ -289,7 +288,7 @@ Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** in y
 ## System Boundaries & Limits
 
 1. **FD004 Multi-Regime Conformal Margin & Late Predictions**: On FD004 (6 flight regimes, 2 fault modes), empirical test coverage is 78.6% (1.4 points below the 80% target, but well above the 75% gate), and 77.5% for $RUL \le 50$. Concurrently, while RMSE improved to 13.06 and NASA score to 4,573, FD004's late prediction share is 40.7% (approximately 4 out of 10 engines predicted slightly later than true RUL). Operators on FD004 should configure safety buffers or widen intervals for high-severity flight hours.
-2. **Asymmetric NASA Penalization**: To guarantee passenger safety and eliminate unpredicted groundings, the RUL pipeline applies a conservative late-shift penalty ($\beta = 2.5$). On FD001–FD003, late predictions remain between 19.3% and 36.0%, while complex multi-regime FD004 registers 40.7%.
+2. **Asymmetric Operational Penalization (Late Shift)**: To guarantee passenger safety and eliminate unpredicted groundings, the RUL pipeline applies an out-of-fold calibrated conservative downward shift (`late_shift = 3.0–8.0 cycles`). This trades a modest degree of symmetric RMSE to reduce hazardous late predictions ($RUL_{pred} > RUL_{true}$) on FD001–FD003 to between 19.3% and 36.0%, while complex multi-regime FD004 registers 40.7%.
 3. **Tamper-Evident Ledger Scope**: The work order state machine uses an HMAC-SHA256 cryptographic hash chain to guarantee internal auditability and detect retroactive database tampering. The sample databases in `outputs/` are signed with the default published evaluation key. While suitable for defense and regulatory audit trails, production deployments should configure a distinct private secret via environment variables.
 
 ---
