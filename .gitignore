@@ -94,6 +94,10 @@ test_script.js
 live_test_script.js
 temp_*
 *.zip
+*.mp4
+*.pptx
+platform/frontend/vendor/
+
 
 .vercel
 .agents/
