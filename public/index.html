@@ -1474,6 +1474,7 @@
         document.getElementById('count-medium').innerText = data.status_counts.MEDIUM || 0;
         document.getElementById('count-normal').innerText = data.status_counts.NORMAL || 0;
         document.getElementById('count-human').innerText = data.status_counts.NEEDS_HUMAN || 0;
+        window.latestHumanCount = data.status_counts.NEEDS_HUMAN !== undefined ? data.status_counts.NEEDS_HUMAN : 0;
 
         // Render dynamic subsystem structural health cards
         renderSubsystems(data.subsystem_risk, data.total_engines);
@@ -1577,7 +1578,7 @@
       try {
         const res = await fetch(`/api/fleet/matrix?subset=${currentSubset}`);
         const data = await res.json();
-        allEngines = data.engines || [];
+        allEngines = Array.isArray(data) ? data : (data.engines || []);
         document.getElementById('matrix-count').innerText = `${allEngines.length} Engines`;
 
         // Populate Drilldown dropdown
@@ -2351,8 +2352,8 @@
         const res = await fetch(`/api/exceptions?subset=${currentSubset}`);
         const data = await res.json();
         const exc = data.exceptions || [];
-        const finalMap = { "FD001": 0, "FD002": 6, "FD003": 3, "FD004": 51 };
-        const finalCnt = finalMap[currentSubset] ?? 0;
+        const finalMap = { "FD001": 0, "FD002": 6, "FD003": 3, "FD004": 3 };
+        const finalCnt = (window.latestHumanCount !== undefined) ? window.latestHumanCount : (finalMap[currentSubset] ?? 0);
         document.getElementById('exception-badge').innerText = `${exc.length} Events (${finalCnt} Final)`;
         const subEl = document.getElementById('exception-subtitle');
         if (subEl) {
