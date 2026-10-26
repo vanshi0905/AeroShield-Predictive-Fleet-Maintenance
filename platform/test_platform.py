@@ -368,3 +368,128 @@ def test_demo_mode_is_opt_in_and_reported(monkeypatch):
                       json={"subset": "FD001", "order_id": "NOPE", "new_status": "DISPATCHED"},
                       headers={"X-API-Key": "aeroshield-dev-key"})
     assert res.status_code != 401 and res.status_code != 503   # auth passed; order simply does not exist
+
+
+def test_api_predict_production_and_simulator_modes():
+    """Validates real production champion pipeline execution vs calibrated simulator."""
+    # Production champion execution
+    payload_prod = {
+        "subset": "FD001",
+        "unit": 1,
+        "cycle": 31,
+        "mode": "production"
+    }
+    res_prod = client.post("/api/predict", json=payload_prod, headers={"X-API-Key": TEST_KEY})
+    assert res_prod.status_code == 200
+    data_prod = res_prod.json()
+    assert data_prod["status"] == "success"
+    assert data_prod["model_type"] == "production_champion_bundle"
+    assert data_prod["inference_mode"] == "production_champion"
+    trace = data_prod["pipeline_trace"]
+    assert "ridge_consensus_p50" in trace["conformal_rul_bounds"]
+    assert trace["conformal_rul_bounds"]["p50_median_rul"] > 0
+
+    # Calibrated simulator execution
+    payload_sim = {
+        "subset": "FD001",
+        "unit": 1,
+        "cycle": 31,
+        "mode": "simulator"
+    }
+    res_sim = client.post("/api/predict", json=payload_sim, headers={"X-API-Key": TEST_KEY})
+    assert res_sim.status_code == 200
+    data_sim = res_sim.json()
+    assert data_sim["status"] == "success"
+    assert data_sim["model_type"] == "simplified_what_if_simulator"
+    assert data_sim["inference_mode"] == "calibrated_simulator"
+
+
+def test_api_stream_telemetry_events():
+    """Validates Server-Sent Events (SSE) telemetry streaming for real-time sensor processing."""
+    res = client.get("/api/stream/telemetry/1?subset=FD001&speed_ms=10&max_cycles=4")
+    assert res.status_code == 200
+    assert "text/event-stream" in res.headers["content-type"]
+    text = res.text
+    assert "data:" in text
+    assert "critical_flag" in text
+    assert "p50" in text
+
+    # Unknown unit returns 404
+    res_404 = client.get("/api/stream/telemetry/9999?subset=FD001")
+    assert res_404.status_code == 404
+
+
+def test_api_self_healing_prescriptions():
+    """Validates closed-loop prescriptive self-healing recommendations."""
+    res = client.get("/api/self-healing/1?subset=FD001")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["unit"] == 1
+    assert data["subset"] == "FD001"
+    assert "thrust_derate_prescription" in data
+    assert "derate_percentage" in data["thrust_derate_prescription"]
+    assert "thermal_relief_deg_c" in data["thrust_derate_prescription"]
+    assert "extended_safe_cycles" in data["thrust_derate_prescription"]
+    assert "sensor_fault_isolation" in data
+    assert "flight_envelope_advisory" in data
+    assert "depot_routing_and_logistics" in data
+
+    # Unknown unit returns 404
+    res_404 = client.get("/api/self-healing/9999?subset=FD001")
+    assert res_404.status_code == 404
+
+
+def test_api_fleet_survival_analytics():
+    """Validates Kaplan-Meier fleet survival distribution and hazard reliability modeling."""
+    res = client.get("/api/fleet/survival?subset=FD001")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["subset"] == "FD001"
+    assert data["total_fleet_units"] == 100
+    assert data["fleet_mttf_cycles"] > 0
+    assert len(data["survival_curve"]) == 12
+
+    # Survival probability is monotonically non-increasing
+    probs = [step["survival_probability"] for step in data["survival_curve"]]
+    for i in range(len(probs) - 1):
+        assert probs[i] >= probs[i + 1]
+
+    assert "subsystem_reliability_indices" in data
+    assert "high_pressure_compressor" in data["subsystem_reliability_indices"]
+
+
+def test_api_batch_work_order_dispatch():
+    """Validates batch work order transitions and HMAC-SHA256 audit chaining."""
+    # 1. Unauthenticated -> 401
+    res_unauth = client.post(
+        "/api/work-orders/batch-dispatch",
+        json={"subset": "FD001", "order_ids": ["EX-0036-001"], "new_status": "DISPATCHED"}
+    )
+    assert res_unauth.status_code == 401
+
+    # 2. Invalid status -> 422
+    res_inv = client.post(
+        "/api/work-orders/batch-dispatch",
+        json={"subset": "FD001", "order_ids": ["EX-0036-001"], "new_status": "INVALID_STATUS"},
+        headers={"X-API-Key": TEST_KEY}
+    )
+    assert res_inv.status_code == 422
+
+    # 3. Valid authenticated batch action
+    res = client.post(
+        "/api/work-orders/batch-dispatch",
+        json={
+            "subset": "FD001",
+            "order_ids": ["EX-0036-001"],
+            "new_status": "DISPATCHED",
+            "operator": "Chief Reliability Officer",
+            "root_cause": "HPC_FOULING"
+        },
+        headers={"X-API-Key": TEST_KEY}
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["success"] is True
+    assert data["processed_count"] == 1
+    assert len(data["audit_hashes"]) == 1
+    assert "head_audit_hash" in data

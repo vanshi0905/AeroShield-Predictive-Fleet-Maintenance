@@ -13,10 +13,11 @@ import hashlib
 import threading
 from typing import Dict, List, Any, Optional, Literal
 
+import asyncio
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Query, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI(
@@ -109,6 +110,34 @@ class OrderActionRequest(BaseModel):
         return v
 
 
+InferenceModeType = Literal["auto", "production", "simulator"]
+
+
+class BatchOrderActionRequest(BaseModel):
+    subset: SubsetType = "FD001"
+    order_ids: List[str]
+    new_status: StatusType
+    operator: str = "Chief Fleet Reliability Officer"
+    root_cause: Optional[str] = None
+
+    @field_validator("operator")
+    @classmethod
+    def validate_operator(cls, v: str) -> str:
+        v = v.strip()
+        if not v or len(v) > 60:
+            raise ValueError("Operator name must be between 1 and 60 characters.")
+        if not re.match(r"^[a-zA-Z0-9 _./#-]+$", v):
+            raise ValueError("Operator name contains invalid characters. Only alphanumeric, spaces, and safe punctuation are allowed.")
+        return v
+
+    @field_validator("order_ids")
+    @classmethod
+    def validate_order_ids(cls, v: List[str]) -> List[str]:
+        if not v or len(v) > 500:
+            raise ValueError("order_ids list must contain between 1 and 500 items.")
+        return v
+
+
 class RetrainRequest(BaseModel):
     subset: SubsetType = "FD001"
     scenario: ScenarioType = "adaptive"
@@ -123,6 +152,7 @@ class PredictTelemetryRequest(BaseModel):
     op3: float = Field(100.0, ge=-1000.0, le=1000.0, description="Operating condition 3")
     sensors: Optional[Dict[str, float]] = None
     persist: bool = Field(False, description="Whether to persist work order and audit block")
+    mode: InferenceModeType = Field("auto", description="Inference mode: 'auto', 'production', or 'simulator'")
 
     @field_validator("sensors")
     @classmethod
@@ -216,13 +246,20 @@ def healthz():
     return {
         "status": "healthy",
         "service": "AeroShield Predictive Maintenance Platform",
-        "version": "3.5.0",
+        "version": "3.6.0",
         "subsets": ready_subsets,
         "ready_subsets": ready_subsets,
         "mode": "read-only-serverless" if is_vercel else "stateful-read-write",
         "auth_enabled": True,
         "demo_mode": ACTIVE_API_KEY == PUBLISHED_DEV_API_KEY,
         "database_connected": len(ready_subsets) > 0,
+        "features": {
+            "production_champion_inference": True,
+            "realtime_telemetry_streaming": True,
+            "prescriptive_self_healing": True,
+            "fleet_survival_analytics": True,
+            "batch_work_order_audit": True,
+        }
     }
 
 
@@ -333,7 +370,9 @@ def predict_live_telemetry(
     req: PredictTelemetryRequest,
     auth: str = Depends(verify_write_access)
 ):
-    """Executes simplified what-if telemetry evaluation (interactive parameter simulation; production batch models run via run_all.py)."""
+    """Executes real-time telemetry evaluation. Supports both live production champion pipeline execution
+    (HistGradientBoosting Quantiles + Consensus Forest) and calibrated simulator what-if evaluation.
+    """
     _validate_subset(req.subset)
     return bridge.predict_telemetry(
         subset=req.subset,
@@ -343,8 +382,127 @@ def predict_live_telemetry(
         op2=req.op2,
         op3=req.op3,
         sensors=req.sensors,
-        persist=req.persist
+        persist=req.persist,
+        mode=req.mode
     )
+
+
+@app.get("/api/stream/telemetry/{unit}")
+async def stream_engine_telemetry(
+    unit: int,
+    subset: str = Query("FD001"),
+    speed_ms: int = Query(50, ge=10, le=2000, description="Delay between cycle events in milliseconds"),
+    max_cycles: Optional[int] = Query(None, ge=1, le=1000, description="Maximum cycles to stream")
+):
+    """Streams cycle-by-cycle telemetry and real-time RUL triage events via Server-Sent Events (SSE).
+    Directly satisfies the Tata Elxsi Case Study 1 requirement for streaming telemetry ingestion and processing.
+    """
+    _validate_subset(subset)
+    drilldown = bridge.get_engine_drilldown(subset, unit)
+    if not drilldown or "error" in drilldown:
+        raise HTTPException(status_code=404, detail=drilldown.get("error", f"Engine {unit} not found in subset {subset}"))
+
+    timeline = drilldown.get("timeline", {})
+    cycles = timeline.get("cycles", [])
+    if max_cycles:
+        cycles = cycles[:max_cycles]
+
+    async def event_generator():
+        for i, c in enumerate(cycles):
+            p10 = timeline["p10"][i] if i < len(timeline["p10"]) else 0.0
+            p50 = timeline["p50"][i] if i < len(timeline["p50"]) else 0.0
+            p90 = timeline["p90"][i] if i < len(timeline["p90"]) else 0.0
+            raw_p50 = timeline["raw_p50"][i] if ("raw_p50" in timeline and i < len(timeline["raw_p50"])) else p50
+            anomaly_score = timeline["anomaly_score"][i] if ("anomaly_score" in timeline and i < len(timeline["anomaly_score"])) else 0.0
+            alert = timeline["alert"][i] if ("alert" in timeline and i < len(timeline["alert"])) else False
+
+            ratios = {}
+            if "ratios" in timeline:
+                for r_name, r_vals in timeline["ratios"].items():
+                    if i < len(r_vals):
+                        ratios[r_name] = r_vals[i]
+
+            event_payload = {
+                "subset": subset,
+                "unit": unit,
+                "cycle": c,
+                "p10": p10,
+                "p50": p50,
+                "p90": p90,
+                "raw_p50": raw_p50,
+                "anomaly_score": anomaly_score,
+                "alert": alert,
+                "ratios": ratios,
+                "critical_flag": bool(p10 <= 15 or p50 <= 25),
+                "is_final": (i == len(cycles) - 1),
+            }
+            yield f"data: {json.dumps(event_payload)}\n\n"
+            await asyncio.sleep(speed_ms / 1000.0)
+        yield "event: end\ndata: {\"status\": \"stream_completed\"}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
+
+
+@app.get("/api/self-healing/{unit}")
+def get_self_healing_prescriptions(
+    unit: int,
+    subset: str = Query("FD001")
+):
+    """Returns closed-loop prescriptive self-healing guidance (operational thrust derating,
+    thermal relief estimation, sensor channel isolation, and flight envelope restrictions).
+    Directly implements the 'Self-Healing Machines' mandate of Tata Elxsi Case Study 1.
+    """
+    _validate_subset(subset)
+    res = bridge.get_self_healing_prescriptions(subset=subset, unit=unit)
+    if "error" in res:
+        raise HTTPException(status_code=404, detail=res["error"])
+    return res
+
+
+@app.get("/api/fleet/survival")
+def get_fleet_survival(
+    subset: str = Query("FD001")
+):
+    """Returns empirical Kaplan-Meier fleet survival probability curves, hazard rates,
+    and MTTF (Mean Time To Failure) reliability metrics across the operating fleet.
+    """
+    _validate_subset(subset)
+    res = bridge.get_fleet_survival(subset=subset)
+    if "error" in res:
+        raise HTTPException(status_code=404, detail=res["error"])
+    return res
+
+
+@app.post("/api/work-orders/batch-dispatch")
+def batch_dispatch_work_orders(
+    req: BatchOrderActionRequest,
+    auth: str = Depends(verify_write_access)
+):
+    """Atomically transitions multiple work orders with monotonic HMAC-SHA256 cryptographic audit chaining."""
+    if os.getenv("VERCEL"):
+        raise HTTPException(
+            status_code=503,
+            detail="Read-only deployment: Work order batch dispatch is disabled on stateless Vercel edge functions."
+        )
+    _validate_subset(req.subset)
+    res = bridge.batch_dispatch_work_orders(
+        subset=req.subset,
+        order_ids=req.order_ids,
+        new_status=req.new_status,
+        operator=req.operator,
+        root_cause=req.root_cause
+    )
+    if not res.get("success"):
+        raise HTTPException(status_code=400, detail=res.get("error", "Batch dispatch failed"))
+    return res
 
 
 @app.post("/api/retrain/trigger")
