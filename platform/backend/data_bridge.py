@@ -144,6 +144,9 @@ class DataBridge:
 
     def get_fleet_readiness(self, subset: str = "FD001") -> Dict[str, Any]:
         """Calculates fleet health KPI summary for the given subset."""
+        cache_key = f"readiness_{subset}"
+        if cache_key in self._cache:
+            return self._cache[cache_key]
         m = self.load_metrics(subset)
         pred = self.load_predictions(subset)
 
@@ -186,7 +189,7 @@ class DataBridge:
         anom = m.get("anomaly_oof_best", {})
         test_anom = m.get("anomaly_test", {})
 
-        return {
+        res_dict = {
             "subset": subset,
             "version": m.get("version", "v1"),
             "data_source": m.get("data_source", "real"),
@@ -212,9 +215,14 @@ class DataBridge:
                 "test_lead_cycles": round(test_anom.get("median_lead_time", 0)),
             },
         }
+        self._cache[cache_key] = res_dict
+        return res_dict
 
     def get_fleet_matrix(self, subset: str = "FD001", status_filter: Optional[str] = None) -> List[Dict[str, Any]]:
         """Returns the engine matrix table with latest cycle stats."""
+        cache_key = f"matrix_{subset}_{status_filter}"
+        if cache_key in self._cache:
+            return self._cache[cache_key]
         pred = self.load_predictions(subset)
         if pred.empty:
             return []
@@ -247,6 +255,7 @@ class DataBridge:
                 "exception_reason": str(r.get("exception_reason", "")) if pd.notna(r.get("exception_reason")) else "",
                 "agree_count": int(r.get("agree_count", 0)),
             })
+        self._cache[cache_key] = rows
         return rows
 
     def _load_raw_test_data(self, subset: str) -> pd.DataFrame:

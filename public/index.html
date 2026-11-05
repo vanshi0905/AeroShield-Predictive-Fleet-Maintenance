@@ -11,8 +11,12 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
+  <!-- Instant Precomputed Cache for Zero-Latency Dashboard Paint -->
+  <script src="/initial_data.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
     
     :root {
       --bg-dark: #080c14;
@@ -258,7 +262,7 @@
         </div>
         <!-- Tier 2: Big Metric Value + Mini Inline Sparkline -->
         <div class="flex items-center justify-between">
-          <h2 class="text-3xl font-bold text-white tracking-tight tabular-nums whitespace-nowrap" id="kpi-health-rate">--%</h2>
+          <h2 class="text-3xl font-bold text-white tracking-tight tabular-nums whitespace-nowrap" id="kpi-health-rate">55.0%</h2>
           <!-- Smooth SVG Sparkline (5px internal padding, horizontal tangent Bézier) -->
           <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
             <path d="M 5 20 C 20 20, 35 15, 50 12 C 65 9, 70 8, 75 7" stroke="#10B981" stroke-width="2" stroke-linecap="round" fill="none" />
@@ -267,7 +271,7 @@
         </div>
         <!-- Tier 3: Context Subtitle -->
         <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
-          <span id="kpi-health-sub" class="truncate">Nominal readiness</span>
+          <span id="kpi-health-sub" class="truncate">55/100 operational</span>
           <span class="text-emerald-400 font-medium whitespace-nowrap shrink-0">+2.4% vs Base</span>
         </div>
       </div>
@@ -282,14 +286,14 @@
           <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 font-semibold border border-sky-500/20 whitespace-nowrap shrink-0" id="kpi-subset-badge">FD001 Active</span>
         </div>
         <div class="flex items-center justify-between">
-          <h2 class="text-3xl font-bold text-white tracking-tight tabular-nums whitespace-nowrap" id="kpi-active-units">--</h2>
+          <h2 class="text-3xl font-bold text-white tracking-tight tabular-nums whitespace-nowrap" id="kpi-active-units">100</h2>
           <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
             <path d="M 5 18 C 20 18, 35 18, 50 14 C 65 10, 70 8, 75 6" stroke="#0284C7" stroke-width="2" stroke-linecap="round" fill="none" />
             <circle cx="75" cy="6" r="2.5" fill="#0284C7" />
           </svg>
         </div>
         <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/60">
-          <span id="kpi-active-sub" class="truncate">NASA Turbofans</span>
+          <span id="kpi-active-sub" class="truncate">84.0% coverage</span>
           <span class="text-sky-400 font-medium whitespace-nowrap shrink-0">100% Monitored</span>
         </div>
       </div>
@@ -304,7 +308,7 @@
           <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20 whitespace-nowrap shrink-0" id="kpi-lead-badge">~38 Cyc Lead</span>
         </div>
         <div class="flex items-center justify-between">
-          <h2 class="text-3xl font-bold text-amber-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-anom-alerts">--</h2>
+          <h2 class="text-3xl font-bold text-amber-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-anom-alerts">15</h2>
           <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
             <path d="M 5 22 C 20 22, 35 20, 50 16 C 65 12, 70 10, 75 8" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none" />
             <circle cx="75" cy="8" r="2.5" fill="#F59E0B" />
@@ -326,7 +330,7 @@
           <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-semibold border border-rose-500/20 whitespace-nowrap shrink-0">RUL ≤ 25</span>
         </div>
         <div class="flex items-center justify-between">
-          <h2 class="text-3xl font-bold text-rose-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-critical-orders">--</h2>
+          <h2 class="text-3xl font-bold text-rose-300 tracking-tight tabular-nums whitespace-nowrap" id="kpi-critical-orders">18</h2>
           <svg class="w-20 h-7 overflow-visible" viewBox="0 0 80 28" fill="none">
             <path d="M 5 22 C 20 22, 35 19, 50 15 C 65 11, 70 9, 75 8" stroke="#F43F5E" stroke-width="2" stroke-linecap="round" fill="none" />
             <circle cx="75" cy="8" r="2.5" fill="#F43F5E" />
@@ -470,31 +474,31 @@
               <span class="text-rose-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
                 <span class="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0"></span> Critical (RUL &le; 25)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-critical">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-critical">18</span>
             </div>
             <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition gap-2">
               <span class="text-amber-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span> High Priority (RUL &le; 50)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-high">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-high">12</span>
             </div>
             <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/15 transition gap-2">
               <span class="text-yellow-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
                 <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 shrink-0"></span> Medium Priority (RUL &le; 80)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-medium">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-medium">15</span>
             </div>
             <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/15 transition gap-2">
               <span class="text-emerald-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span> Healthy (Nominal)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-normal">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-normal">55</span>
             </div>
             <div class="flex items-center justify-between p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/15 transition gap-2">
               <span class="text-purple-300 font-medium flex items-center gap-2 whitespace-nowrap min-w-0 truncate">
                 <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0"></span> Review Required (Exception)
               </span>
-              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-human">--</span>
+              <span class="font-bold text-white text-sm tabular-nums whitespace-nowrap shrink-0" id="count-human">0</span>
             </div>
           </div>
         </div>
@@ -1391,16 +1395,99 @@
       svg.classList.toggle('animate-spin');
     }
 
-    // Main App Initialization
-    async function initDashboard() {
+    // Helper: Apply fleet readiness data to DOM instantly
+    function applyReadinessData(data) {
+      if (!data) return;
+      const elHealth = document.getElementById('kpi-health-rate');
+      if (elHealth) elHealth.innerText = `${data.health_rate_pct}%`;
+      const operational = (data.status_counts.NORMAL || 0) + (data.status_counts.WATCH || 0);
+      const elSub = document.getElementById('kpi-health-sub');
+      if (elSub) elSub.innerText = `${operational}/${data.total_engines} operational`;
+      const elUnits = document.getElementById('kpi-active-units');
+      if (elUnits) elUnits.innerText = data.total_engines;
+      const elCov = document.getElementById('kpi-active-sub');
+      if (elCov && data.metrics) elCov.innerText = `${data.metrics.coverage_pct}% coverage`;
+      const elAlerts = document.getElementById('kpi-anom-alerts');
+      if (elAlerts) elAlerts.innerText = (data.status_counts.WATCH || 0) + (data.status_counts.MEDIUM || 0) + (data.status_counts.HIGH || 0);
+      const elCrit = document.getElementById('kpi-critical-orders');
+      if (elCrit) elCrit.innerText = data.status_counts.CRITICAL || 0;
 
-      await fetchFleetReadiness();
-      await fetchFleetMatrix();
-      await fetchWorkOrders();
-      await fetchHumanExceptions();
-      await fetchAuditLog();
-      await fetchMlopsData();
-      lucide.createIcons();
+      const leadCycles = (data.metrics && (data.metrics.anomaly_lead_cycles || data.metrics.median_lead_time)) || 38;
+      const leadBadge = document.getElementById('kpi-lead-badge');
+      if (leadBadge) leadBadge.innerText = `~${leadCycles} Cyc Lead`;
+
+      const gateKpi = document.getElementById('kpi-mlops-gate');
+      if (gateKpi && data.metrics) {
+        gateKpi.innerText = (data.metrics.coverage_pct >= 75) ? "Pass" : "Warn";
+        gateKpi.className = (data.metrics.coverage_pct >= 75) ? "text-3xl font-bold text-emerald-300 tracking-tight tabular-nums whitespace-nowrap" : "text-3xl font-bold text-amber-400 tracking-tight tabular-nums whitespace-nowrap";
+      }
+
+      const elCCrit = document.getElementById('count-critical'); if (elCCrit) elCCrit.innerText = data.status_counts.CRITICAL || 0;
+      const elCHigh = document.getElementById('count-high'); if (elCHigh) elCHigh.innerText = data.status_counts.HIGH || 0;
+      const elCMed = document.getElementById('count-medium'); if (elCMed) elCMed.innerText = data.status_counts.MEDIUM || 0;
+      const elCNorm = document.getElementById('count-normal'); if (elCNorm) elCNorm.innerText = data.status_counts.NORMAL || 0;
+      const elCHum = document.getElementById('count-human'); if (elCHum) elCHum.innerText = data.status_counts.NEEDS_HUMAN || 0;
+      window.latestHumanCount = data.status_counts.NEEDS_HUMAN !== undefined ? data.status_counts.NEEDS_HUMAN : 0;
+
+      renderSubsystems(data.subsystem_risk, data.total_engines);
+    }
+
+    // Zero-Latency Snapshot Renderer: instantly paints all numbers and tables from precomputed bundle
+    function renderInitialSnapshot(subset) {
+      if (typeof window !== 'undefined' && window.__AEROSHIELD_INITIAL_DATA__ && window.__AEROSHIELD_INITIAL_DATA__[subset]) {
+        const snap = window.__AEROSHIELD_INITIAL_DATA__[subset];
+        if (snap.readiness) {
+          applyReadinessData(snap.readiness);
+        }
+        if (snap.matrix && snap.matrix.length) {
+          allEngines = snap.matrix;
+          const elMatCount = document.getElementById('matrix-count');
+          if (elMatCount) elMatCount.innerText = `${allEngines.length} Engines`;
+          const select = document.getElementById('drilldown-unit-select');
+          if (select) {
+            select.innerHTML = '';
+            allEngines.forEach(e => {
+              const opt = document.createElement('option');
+              opt.value = e.unit;
+              opt.innerText = `Unit #${e.unit} (RUL ${e.p50_rul} cyc - ${e.status})`;
+              select.appendChild(opt);
+            });
+          }
+          filterFleetMatrix();
+        }
+        if (snap.work_orders && typeof renderWorkOrders === 'function') {
+          renderWorkOrders(snap.work_orders);
+        }
+        if (snap.exceptions && typeof renderHumanExceptions === 'function') {
+          renderHumanExceptions(snap.exceptions);
+        }
+        if (snap.audit_log && typeof renderAuditLog === 'function') {
+          renderAuditLog(snap.audit_log);
+        }
+        if (snap.mlops && typeof renderMlopsViews === 'function') {
+          currentMlopsData = snap.mlops;
+          renderMlopsViews();
+        }
+      }
+    }
+
+    // Main App Initialization with Parallel Non-Blocking Hydration
+    async function initDashboard() {
+      // 1. Paint precomputed snapshot in 0ms so user NEVER sees empty numbers
+      renderInitialSnapshot(currentSubset);
+      if (window.lucide) lucide.createIcons();
+
+      // 2. Fetch live updates in parallel (non-blocking) to update state silently
+      Promise.allSettled([
+        fetchFleetReadiness(),
+        fetchFleetMatrix(),
+        fetchWorkOrders(),
+        fetchHumanExceptions(),
+        fetchAuditLog(),
+        fetchMlopsData()
+      ]).then(() => {
+        if (window.lucide) lucide.createIcons();
+      });
     }
 
     function showTab(tabId) {
@@ -1443,43 +1530,34 @@
       if (badge) badge.innerText = `${subset} Active`;
       currentDrilldownData = null;
       showToast(`Switched telemetry pipeline to ${subset}`, 'info');
-      await initDashboard();
+
+      // Instant 0ms switch to new subset snapshot!
+      renderInitialSnapshot(subset);
+      if (window.lucide) lucide.createIcons();
+
+      // Sync live in background without blocking
+      Promise.allSettled([
+        fetchFleetReadiness(),
+        fetchFleetMatrix(),
+        fetchWorkOrders(),
+        fetchHumanExceptions(),
+        fetchAuditLog(),
+        fetchMlopsData()
+      ]).then(() => {
+        if (window.lucide) lucide.createIcons();
+      });
     }
 
-    // 1. Fetch Fleet Readiness & Dynamic Subsystems
+    // 1. Fetch Fleet Readiness & Dynamic Subsystems (Background Live Sync)
     async function fetchFleetReadiness() {
       try {
         const res = await fetch(`/api/fleet/readiness?subset=${currentSubset}`);
-        const data = await res.json();
-        document.getElementById('kpi-health-rate').innerText = `${data.health_rate_pct}%`;
-        const operational = (data.status_counts.NORMAL || 0) + (data.status_counts.WATCH || 0);
-        document.getElementById('kpi-health-sub').innerText = `${operational}/${data.total_engines} operational`;
-        document.getElementById('kpi-active-units').innerText = data.total_engines;
-        document.getElementById('kpi-active-sub').innerText = `${data.metrics.coverage_pct}% coverage`;
-        document.getElementById('kpi-anom-alerts').innerText = (data.status_counts.WATCH || 0) + (data.status_counts.MEDIUM || 0);
-        document.getElementById('kpi-critical-orders').innerText = data.status_counts.CRITICAL || 0;
-
-        const leadCycles = data.metrics.anomaly_lead_cycles || 45;
-        const leadBadge = document.getElementById('kpi-lead-badge');
-        if (leadBadge) leadBadge.innerText = `~${leadCycles} Cyc Lead`;
-
-        const gateKpi = document.getElementById('kpi-mlops-gate');
-        if (gateKpi) {
-          gateKpi.innerText = (data.metrics.coverage_pct >= 75) ? "Pass" : "Warn";
-          gateKpi.className = (data.metrics.coverage_pct >= 75) ? "text-3xl font-bold text-emerald-300 tracking-tight tabular-nums" : "text-3xl font-bold text-amber-400 tracking-tight tabular-nums";
+        if (res.ok) {
+          const data = await res.json();
+          applyReadinessData(data);
         }
-
-        document.getElementById('count-critical').innerText = data.status_counts.CRITICAL || 0;
-        document.getElementById('count-high').innerText = data.status_counts.HIGH || 0;
-        document.getElementById('count-medium').innerText = data.status_counts.MEDIUM || 0;
-        document.getElementById('count-normal').innerText = data.status_counts.NORMAL || 0;
-        document.getElementById('count-human').innerText = data.status_counts.NEEDS_HUMAN || 0;
-        window.latestHumanCount = data.status_counts.NEEDS_HUMAN !== undefined ? data.status_counts.NEEDS_HUMAN : 0;
-
-        // Render dynamic subsystem structural health cards
-        renderSubsystems(data.subsystem_risk, data.total_engines);
       } catch (e) {
-        console.error("Error fetching readiness:", e);
+        console.warn("Using offline / precomputed readiness:", e);
       }
     }
 
