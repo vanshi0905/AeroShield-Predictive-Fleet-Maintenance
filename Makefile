@@ -30,5 +30,10 @@ check-docs:     ## fail if README tables differ from outputs/*/metrics.json
 mlflow-ui:
 	mlflow ui --backend-store-uri sqlite:///outputs/mlflow.db
 
+presentation:   ## generate professional 8-slide PowerPoint pitch deck
+	python scripts/generate_pitch_deck.py
+
+deck: presentation
+
 data:           ## verify and ingest NASA C-MAPSS files into data/
 	python scripts/download_data.py
