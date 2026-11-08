@@ -3,7 +3,7 @@
 [![Live Demo: Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://aeroshield-phi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
-[![Tests: 84/84 Passed](https://img.shields.io/badge/Tests-84%2F84%20Passed-emerald.svg)](pytest.ini)
+[![Tests: 94/94 Passed](https://img.shields.io/badge/Tests-94%2F94%20Passed-emerald.svg)](pytest.ini)
 [![Conformal Coverage: Calibrated](https://img.shields.io/badge/Conformal%20Coverage-80%25%20Calibrated-sky.svg)](docs/MATHEMATICAL_FORMULATION.md)
 
 > **Autonomous predictive maintenance for connected turbofan fleets: thermodynamic feature extraction, baseline-subtracted anomaly detection, conformal remaining-useful-life (RUL) estimation ($P_{10}/P_{50}/P_{90}$), deterministic triage agent writing tamper-evident work orders, and closed-loop MLOps retraining governance.**  
@@ -204,7 +204,8 @@ AeroShield-Predictive-Fleet-Maintenance/
 │   ├── design/               # Platform visual system and interaction design
 │   └── layers/               # Deep-dive documentation for Layers 1 through 5
 ├── scripts/                  # Operational utility scripts
-│   ├── verify_audit.py       # Standalone CLI HMAC hash chain integrity checker
+│   ├── verify_audit.py       # Standalone CLI HMAC hash chain integrity checker (--all support)
+│   ├── generate_pitch_deck.py # Automated 8-slide PowerPoint pitch deck generator
 │   └── download_data.py      # Automated NASA C-MAPSS archive downloader
 ├── retrain_demo.py           # Standalone closed-loop drift adaptation & promotion demo
 ├── run_all.py                # Single-command end-to-end pipeline execution entrypoint
@@ -237,7 +238,7 @@ pip install -r requirements-dev.txt
 ```bash
 pytest
 ```
-*84 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, and API endpoint security.*
+*94 passed unit and platform tests verify feature causality, conformal calibration, deterministic triage, HMAC audit integrity, pitch deck generation, and API endpoint security.*
 
 ### 3. Run Pipeline End-to-End
 Execute the complete data engineering, training, conformal calibration, anomaly evaluation, and triage pipeline on any subset (about 4–20 minutes depending on hardware and subset complexity):
@@ -256,6 +257,14 @@ python retrain_demo.py --scenario adaptive --subset FD001
 python platform/run_platform.py
 ```
 Open **[http://127.0.0.1:8050/dashboard](http://127.0.0.1:8050/dashboard)** in your browser.
+
+### 6. Generate Pitch Deck & Presentation Artifacts
+Generate the official 8-slide widescreen PowerPoint presentation aligned with the Tata Elxsi rubric:
+```bash
+python scripts/generate_pitch_deck.py
+# or: make presentation
+```
+*Output artifact saved to `outputs/AeroShield_Pitch_Deck.pptx`. Detailed slide blueprints and spoken presenter notes are documented in **[docs/presentation/SLIDE_DECK_CONTENT_AND_SPEAKER_NOTES.md](docs/presentation/SLIDE_DECK_CONTENT_AND_SPEAKER_NOTES.md)**.*
 
 > [!TIP]
 > **Frictionless Live Evaluation**: For local evaluation and live demo presentations, the web frontend is pre-configured to send `X-API-Key: aeroshield-dev-key`. Evaluators can click **Dispatch Work Order**, transition lifecycle states, and trigger **Demo Retrain** without configuring environment variables. In locked production environments, write operations require setting a private `AEROSHIELD_API_KEY`.

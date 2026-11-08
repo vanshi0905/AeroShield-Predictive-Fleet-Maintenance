@@ -3,6 +3,8 @@
 **Problem Statement**: 1 — Self-Healing Machines (Predictive Maintenance for Industrial Turbofans)  
 **Deliverable Artifact**: `outputs/AeroShield_Pitch_Deck.pptx` (16:9 Widescreen)  
 **Submission Tag**: `v1.0-submission`  
+**Quick Build**: `python scripts/generate_pitch_deck.py` (or `make presentation`)  
+**Automated Verification**: `pytest shield/tests/test_pitch_deck.py`  
 
 ---
 
