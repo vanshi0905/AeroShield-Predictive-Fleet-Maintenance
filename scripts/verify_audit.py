@@ -67,12 +67,31 @@ def verify_audit(subset: str = "FD001") -> bool:
     return True
 
 
+def verify_all_subsets() -> bool:
+    subsets = ["FD001", "FD002", "FD003", "FD004"]
+    print(f"[*] Verifying cryptographic audit chains across all {len(subsets)} subsets...")
+    all_ok = True
+    for s in subsets:
+        ok = verify_audit(s)
+        if not ok:
+            all_ok = False
+    if all_ok:
+        print("[SUCCESS] All C-MAPSS audit chains (FD001-FD004) verified successfully.")
+    else:
+        print("[FAILURE] One or more audit chains failed cryptographic verification.")
+    return all_ok
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Verify AeroShield cryptographic audit hash chain.")
     parser.add_argument("positional_subset", nargs="?", default=None, help="Subset to verify (e.g. FD001)")
     parser.add_argument("--subset", "-s", default="FD001", help="Subset to verify (default: FD001)")
+    parser.add_argument("--all", "-a", action="store_true", help="Verify all subsets (FD001-FD004)")
     args = parser.parse_args()
 
-    target_subset = args.positional_subset or args.subset
-    ok = verify_audit(target_subset)
+    if args.all:
+        ok = verify_all_subsets()
+    else:
+        target_subset = args.positional_subset or args.subset
+        ok = verify_audit(target_subset)
     sys.exit(0 if ok else 1)

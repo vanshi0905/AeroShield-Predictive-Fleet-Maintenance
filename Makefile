@@ -15,6 +15,9 @@ test:
 verify-audit:   ## recompute SHA-256 chain; fails if any row was altered
 	python scripts/verify_audit.py $(SUBSET)
 
+verify-audit-all: ## verify cryptographic hash chain across all subsets (FD001-FD004)
+	python scripts/verify_audit.py --all
+
 serve:          ## run interactive web cockpit launcher
 	python platform/run_platform.py
 
